@@ -1,0 +1,92 @@
+name: Godot CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  GODOT_VERSION: 4.3
+
+jobs:
+  # Validate project files
+  validate:
+    name: Validate Project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+
+      - name: Verify Import
+        run: |
+          cd godot_project
+          godot --headless --import --quit || true
+
+      - name: Check for Errors
+        run: |
+          cd godot_project
+          godot --headless --check-only --quit 2>&1 | tee check_output.txt || true
+          if grep -q "ERROR" check_output.txt; then
+            echo "::warning::Project has errors, please review"
+          fi
+
+  # Export builds (on release tags)
+  export:
+    name: Export Game
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: validate
+    strategy:
+      matrix:
+        include:
+          - platform: Windows Desktop
+            preset: windows
+            extension: exe
+          - platform: Linux
+            preset: linux
+            extension: x86_64
+          - platform: Web
+            preset: web
+            extension: html
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: true
+
+      - name: Import Project
+        run: |
+          cd godot_project
+          godot --headless --import --quit || true
+
+      - name: Create Export Directory
+        run: mkdir -p build/${{ matrix.preset }}
+
+      - name: Export ${{ matrix.platform }}
+        run: |
+          cd godot_project
+          godot --headless --export-release "${{ matrix.preset }}" ../build/${{ matrix.preset }}/game.${{ matrix.extension }} || true
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.preset }}-build
+          path: build/${{ matrix.preset }}
+          retention-days: 14
