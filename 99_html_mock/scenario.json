@@ -1,0 +1,591 @@
+{
+  "meta": {
+    "title": "裂け目の放課後—迷界ユリメトリカ（高校版・非エッチ）",
+    "version": "1.0.0",
+    "rating": "CERO_B_equivalent",
+    "notes": "高校生版（非エッチ）。恋愛表現は手つなぎ／抱擁／告白まで。QTEは全て Shrinking Ring（指定ゾーンでタップ）に統一。"
+  },
+  "variables": {
+    "kizuna": 0,
+    "kegare": 0,
+    "kyoko": 0,
+    "flags": {
+      "F_LOVE_HINT": false,
+      "F_KUCHI_FAV": 0,
+      "F_TEKE_FAV": 0,
+      "F_8SHAKU_FAV": 0,
+      "F_MERRY_FAV": 0,
+      "F_DOG_FAV": 0
+    },
+    "items": {
+      "mirror_candy": false,
+      "ofuda_strengthened": false
+    }
+  },
+  "qte_preset": {
+    "type": "shrinking_ring",
+    "attempts": 3,
+    "success_threshold": 2,
+    "base_window_ms": 800,
+    "panic_window_ms": 600,
+    "target_zone": {
+      "inner_ratio": 0.65,
+      "outer_ratio": 0.80,
+      "hint": "リングが縮んでターゲットゾーンに重なった瞬間にタップ"
+    },
+    "window_modifiers": [
+      { "if": { "kyoko": { ">=": 6 } }, "window_ms": -200 },
+      { "if": { "items.ofuda_strengthened": true }, "window_ms": +100 },
+      { "if": { "scene": "4B", "items.mirror_candy": false }, "window_ms": -150 }
+    ]
+  },
+  "chapters": [
+    {
+      "id": "Prologue",
+      "scenes": [
+        {
+          "id": "P0",
+          "bg": "校舎前・夕暮れ（橙）",
+          "bgm": "薄明の通学路",
+          "events": [
+            { "type": "line", "speaker": "百合香", "text": "今日の補講、長かったね。寄り道して帰ろ。" },
+            { "type": "line", "speaker": "麻衣", "text": "うん。…風、冷たくなってきた。" }
+          ],
+          "next": "P1"
+        },
+        {
+          "id": "P1",
+          "events": [
+            { "type": "se", "name": "金属の擦れる音（ハサミ）" },
+            { "type": "line", "speaker": "口裂け女(オフ)", "text": "ねえ――私、きれい？" },
+            {
+              "type": "choices",
+              "options": [
+                {
+                  "id": "P1-C1",
+                  "text": "困ってるの？ 保健室、案内するよ。",
+                  "effects": { "kizuna": +1, "kegare": -1 },
+                  "next": "P1_SHIFT"
+                },
+                {
+                  "id": "P1-C2",
+                  "text": "……はい（合わせる）",
+                  "effects": { "kegare": +1, "flags.F_KUCHI_FAV": "+1" },
+                  "next": "P1_SHIFT"
+                },
+                {
+                  "id": "P1-C3",
+                  "text": "（沈黙して百合香の手を握る）",
+                  "effects": { "kizuna": +2, "kyoko": -1, "flags.F_LOVE_HINT": true },
+                  "next": "P1_SHIFT"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P1_SHIFT",
+          "events": [
+            { "type": "flag", "set": { "world_shift": true }, "description": "信号全黄点滅→緑逆流。掲示板が鏡写し。迷界に転移。" }
+          ],
+          "next": "P2"
+        },
+        {
+          "id": "P2",
+          "qte": {
+            "type": "shrinking_ring",
+            "attempts": 3,
+            "success_threshold": 2,
+            "labels": [ "振り向かない", "歩幅を揃える", "角で一呼吸" ],
+            "success_to": "1A",
+            "fail_to": "P2-F",
+            "effects_success": { "kyoko": -1 },
+            "effects_fail": { "kyoko": +1, "kegare": +1, "flags.F_KUCHI_FAV": "+1" }
+          }
+        },
+        {
+          "id": "P2-F",
+          "events": [
+            { "type": "flag", "description": "首筋に冷気。執着上昇。" }
+          ],
+          "effects": { "kyoko": +1, "kegare": +1, "flags.F_KUCHI_FAV": "+1" },
+          "next": "1A"
+        }
+      ]
+    },
+    {
+      "id": "Chapter1",
+      "scenes": [
+        {
+          "id": "1A",
+          "bg": "左右逆看板の商店街",
+          "bgm": "空洞の街",
+          "events": [
+            { "type": "line", "speaker": "百合香", "text": "手、放さないで。…ね？" },
+            {
+              "type": "choices",
+              "options": [
+                {
+                  "id": "1A-C1",
+                  "text": "（しっかり手を握る）",
+                  "effects": { "kizuna": +2, "flags.F_LOVE_HINT": true },
+                  "next": "1A_ITEM"
+                },
+                {
+                  "id": "1A-C2",
+                  "text": "先に様子見てくる（単独偵察）",
+                  "skill_check": {
+                    "stat": "intuition",
+                    "success": { "kegare": -1, "next": "1A_ITEM" },
+                    "fail": { "kyoko": +1, "kizuna": -1, "next": "1A_ITEM" }
+                  }
+                },
+                {
+                  "id": "1A-C3",
+                  "text": "誰かいますか！",
+                  "effects": { "kyoko": +1, "kegare": +1 },
+                  "next": "1A_ITEM"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1A_ITEM",
+          "events": [
+            { "type": "item_gain", "item": "mirror_candy", "value": true, "description": "鏡の飴を入手（包みが逆文字）。" }
+          ],
+          "next": "1B"
+        },
+        {
+          "id": "1B",
+          "events": [
+            { "type": "line", "speaker": "麻衣", "text": "映像が…遅れてる？" },
+            { "type": "line", "speaker": "百合香", "text": "鏡の世界に引っ張られてるみたい。" }
+          ],
+          "next": "1C"
+        },
+        {
+          "id": "1C",
+          "condition": { "kegare": { ">=": 3 } },
+          "qte": {
+            "type": "shrinking_ring",
+            "attempts": 3,
+            "success_threshold": 2,
+            "labels": [ "耳を塞ぐ", "視線を落とす", "足音を合わせる" ],
+            "success_to": "2A",
+            "fail_to": "1C-F",
+            "effects_success": { "kegare": -1 },
+            "effects_fail": { "kegare": +1, "flags.F_KUCHI_FAV": "+1" }
+          }
+        },
+        {
+          "id": "1C-F",
+          "events": [
+            { "type": "flag", "description": "幻聴『きれいって言って』が残響する。" }
+          ],
+          "effects": { "kegare": +1, "flags.F_KUCHI_FAV": "+1" },
+          "next": "2A"
+        }
+      ]
+    },
+    {
+      "id": "Chapter2",
+      "scenes": [
+        {
+          "id": "2A",
+          "bg": "無人の踏切・夜のホーム",
+          "events": [
+            { "type": "se", "name": "遮断機カンカン" },
+            { "type": "se", "name": "金属の引きずる高速音（接近）" },
+            { "type": "line", "speaker": "百合香", "text": "…聞こえた？ 今の…" }
+          ],
+          "next": "2B"
+        },
+        {
+          "id": "2B",
+          "qte": {
+            "type": "shrinking_ring",
+            "attempts": 3,
+            "success_threshold": 2,
+            "labels": [ "屈む", "機器箱に隠れる", "渡る" ],
+            "success_to": "2C",
+            "fail_to": "2B-F",
+            "effects_success": { "kyoko": -1 },
+            "effects_fail": { "kyoko": +2, "flags.F_TEKE_FAV": "+1" }
+          }
+        },
+        {
+          "id": "2B-F",
+          "events": [
+            { "type": "flag", "description": "追走演出。かすめ傷で恐慌上昇。" }
+          ],
+          "effects": { "kyoko": +2, "kegare": +1, "flags.F_TEKE_FAV": "+1" },
+          "next": "2C"
+        },
+        {
+          "id": "2C",
+          "bgm": "微光のパッド",
+          "events": [
+            { "type": "line", "speaker": "百合香", "text": "怖いけど…麻衣がいると平気って思えるの。" },
+            {
+              "type": "choices",
+              "options": [
+                { "id": "2C-C1", "text": "私も。ゆりかがいるから。", "effects": { "kizuna": +2, "flags.F_LOVE_HINT": true } },
+                { "id": "2C-C2", "text": "戻ったらプリン奢って。", "effects": { "kizuna": +1, "kyoko": -1 } },
+                { "id": "2C-C3", "text": "記録、撮っておく（写真）", "effects": { "kegare": +1, "flags.F_TEKE_FAV": "+1" } }
+              ]
+            }
+          ],
+          "next": "2D"
+        },
+        {
+          "id": "2D",
+          "events": [
+            { "type": "line", "speaker": "テケテケ(歪声)", "text": "――追いつける？" },
+            {
+              "type": "choices",
+              "options": [
+                {
+                  "id": "2D-C1",
+                  "text": "振り切る！",
+                  "qte_inline": {
+                    "type": "shrinking_ring",
+                    "attempts": 3,
+                    "success_threshold": 2,
+                    "labels": [ "ステップ", "ジャンプ", "駆け抜け" ],
+                    "effects_success": { "kegare": -1 }
+                  }
+                },
+                { "id": "2D-C2", "text": "走りを合わせる（試す）", "effects": { "kegare": +1, "flags.F_TEKE_FAV": "+1" } }
+              ]
+            }
+          ],
+          "next": "3A"
+        }
+      ]
+    },
+    {
+      "id": "Chapter3",
+      "scenes": [
+        {
+          "id": "3A",
+          "bg": "鳥居が連なる参道",
+          "events": [
+            { "type": "se", "name": "風鈴の低音" },
+            { "type": "line", "speaker": "百合香", "text": "視線、合わせないほうがいい…はず。" }
+          ],
+          "next": "3B"
+        },
+        {
+          "id": "3B",
+          "events": [
+            {
+              "type": "choices",
+              "options": [
+                { "id": "3B-C1", "text": "視線を落とす／影だけ見る", "effects": { "kegare": -1 }, "next": "3C" },
+                {
+                  "id": "3B-C2",
+                  "text": "御札を結び直す（霊感）",
+                  "skill_check": {
+                    "stat": "spirit",
+                    "success": { "set": { "items.ofuda_strengthened": true }, "hint": "QTE猶予+0.1s" },
+                    "fail": { "kegare": +1 }
+                  },
+                  "next": "3C"
+                },
+                {
+                  "id": "3B-C3",
+                  "text": "写真に収める（度胸）",
+                  "skill_check": {
+                    "stat": "bravery",
+                    "success": { "hint": "呼吸を合わせろ" },
+                    "fail": { "kyoko": +1, "flags.F_8SHAKU_FAV": "+1" }
+                  },
+                  "next": "3C"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3C",
+          "qte": {
+            "type": "shrinking_ring",
+            "attempts": 3,
+            "success_threshold": 2,
+            "labels": [ "吸う", "止める", "吐く" ],
+            "success_to": "4A",
+            "fail_to": "3C-F",
+            "effects_success": { "kyoko": -1 },
+            "effects_fail": { "kyoko": +1, "kegare": +1, "flags.F_8SHAKU_FAV": "+1" }
+          }
+        },
+        {
+          "id": "3C-F",
+          "events": [
+            { "type": "flag", "description": "大きな影に覆われる。" }
+          ],
+          "effects": { "kyoko": +1, "kegare": +1, "flags.F_8SHAKU_FAV": "+1" },
+          "next": "3D"
+        },
+        {
+          "id": "3D",
+          "condition": { "kegare": { ">=": 5 } },
+          "events": [
+            { "type": "line", "speaker": "八尺様(遠声)", "text": "ここなら安全。長く、遠く…守ってあげる。" },
+            {
+              "type": "choices",
+              "options": [
+                { "id": "3D-C1", "text": "戻る場所がある。", "effects": { "kizuna": +1 } },
+                { "id": "3D-C2", "text": "…少しだけ。", "effects": { "kegare": +1, "flags.F_8SHAKU_FAV": "+1" } }
+              ]
+            }
+          ],
+          "next": "4A"
+        }
+      ]
+    },
+    {
+      "id": "Chapter4",
+      "scenes": [
+        {
+          "id": "4A",
+          "bg": "教室の廊下・半消灯",
+          "events": [
+            { "type": "se", "name": "古い呼鈴の着信音" },
+            { "type": "line", "speaker": "百合香", "text": "既読つけてないのに既読がついてる…" }
+          ],
+          "next": "4B"
+        },
+        {
+          "id": "4B",
+          "qte": {
+            "type": "shrinking_ring",
+            "attempts": 3,
+            "success_threshold": 2,
+            "labels": [ "背面カメラ起動", "飴をレンズ前に", "フラッシュ" ],
+            "requires": { "items.mirror_candy": true },
+            "success_to": "4C",
+            "fail_to": "4B-F",
+            "effects_success": { "kyoko": -1 },
+            "effects_fail": { "kyoko": +1, "kegare": +1, "flags.F_MERRY_FAV": "+1" }
+          }
+        },
+        {
+          "id": "4B-F",
+          "events": [
+            { "type": "flag", "description": "画面の影から手が伸びる。" }
+          ],
+          "effects": { "kyoko": +1, "kegare": +1, "flags.F_MERRY_FAV": "+1" },
+          "next": "4C"
+        },
+        {
+          "id": "4C",
+          "bgm": "静かなアルペジオ",
+          "events": [
+            { "type": "line", "speaker": "百合香", "text": "迷いが晴れたら、ちゃんと伝える。…麻衣のこと。" },
+            {
+              "type": "choices",
+              "options": [
+                { "id": "4C-C1", "text": "待ってる。", "effects": { "kizuna": +2, "flags.F_LOVE_HINT": true } },
+                { "id": "4C-C2", "text": "一緒に帰ることが答えだよ。", "effects": { "kizuna": +1 } },
+                { "id": "4C-C3", "text": "（無言で手を握る）", "effects": { "kizuna": +1 } }
+              ]
+            }
+          ],
+          "next": "4D"
+        },
+        {
+          "id": "4D",
+          "condition": { "any": [ { "kegare": { ">=": 6 } }, { "came_from": "4B-F" } ] },
+          "events": [
+            { "type": "line", "speaker": "受話口", "text": "いつでも、そばにいるから。" },
+            {
+              "type": "choices",
+              "options": [
+                { "id": "4D-C1", "text": "通話を切る。", "effects": { "kegare": -1 } },
+                { "id": "4D-C2", "text": "……うん。", "effects": { "kegare": +1, "flags.F_MERRY_FAV": "+1" } }
+              ]
+            }
+          ],
+          "next": "5A"
+        }
+      ]
+    },
+    {
+      "id": "Chapter5",
+      "scenes": [
+        {
+          "id": "5A",
+          "bg": "灯りのない交差点",
+          "events": [
+            { "type": "se", "name": "笑い声の輪唱" },
+            { "type": "line", "speaker": "人面犬(オフ)", "text": "クスクス、道に迷った？" }
+          ],
+          "next": "5B"
+        },
+        {
+          "id": "5B",
+          "events": [
+            {
+              "type": "choices",
+              "options": [
+                { "id": "5B-C1", "text": "犬笛アプリ（交渉）", "skill_check": { "stat": "talk", "success": { "kyoko": -1 }, "fail": { "kyoko": +1 } }, "next": "5C" },
+                { "id": "5B-C2", "text": "駄菓子で道標を作る（観察）", "effects": { "kegare": -1 }, "next": "5C" },
+                { "id": "5B-C3", "text": "直進（体力）", "next": "5C" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5C",
+          "qte": {
+            "type": "shrinking_ring",
+            "attempts": 3,
+            "success_threshold": 2,
+            "labels": [ "歩幅を合わせる", "フェイント右→左", "最後に手を引く" ],
+            "success_to": "FIN",
+            "fail_to": "5C-F",
+            "effects_success": {},
+            "effects_fail": { "kyoko": +1, "flags.F_DOG_FAV": "+1" }
+          }
+        },
+        {
+          "id": "5C-F",
+          "events": [
+            { "type": "flag", "description": "群れに囲まれる。" }
+          ],
+          "effects": { "kyoko": +1, "flags.F_DOG_FAV": "+1" },
+          "next": "5D"
+        },
+        {
+          "id": "5D",
+          "events": [
+            { "type": "line", "speaker": "人面犬", "text": "ボクらの道、案内してあげようか。" },
+            {
+              "type": "choices",
+              "options": [
+                { "id": "5D-C1", "text": "大丈夫。帰る道は自分で探す。", "effects": { "kizuna": +1 }, "next": "FIN" },
+                { "id": "5D-C2", "text": "……案内して。", "effects": { "kegare": +1, "flags.F_DOG_FAV": "+1" }, "next": "FIN" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Finale",
+      "scenes": [
+        {
+          "id": "FIN",
+          "events": [
+            { "type": "flag", "description": "交差点中央に帰還の裂け目が開く。" }
+          ],
+          "endings": [
+            {
+              "id": "END-L1",
+              "name": "TRUE LOVE：放課後の約束",
+              "condition": {
+                "all": [
+                  { "kizuna": { ">=": 8 } },
+                  { "kegare": { "<=": 4 } },
+                  { "qte_success_count": { ">=": 3 } },
+                  { "flags.F_KUCHI_FAV": { "<": 2 } },
+                  { "flags.F_TEKE_FAV": { "<": 2 } },
+                  { "flags.F_8SHAKU_FAV": { "<": 2 } },
+                  { "flags.F_MERRY_FAV": { "<": 2 } },
+                  { "flags.F_DOG_FAV": { "<": 2 } }
+                ]
+              },
+              "epilogue": [
+                { "speaker": "麻衣", "text": "帰ってきた…" },
+                { "speaker": "百合香", "text": "これからも、二人で。" },
+                { "action": "抱擁" }
+              ]
+            },
+            {
+              "id": "END-L2",
+              "name": "QUIET HOPE：保留の想い",
+              "condition": { "all": [ { "kizuna": { ">=": 6 } }, { "qte_success_count": { "<": 3 } } ] },
+              "epilogue": [
+                { "speaker": "百合香", "text": "今日を忘れない。…いつか、ちゃんと。" },
+                { "speaker": "麻衣", "text": "うん。帰ろう。" }
+              ]
+            },
+            {
+              "id": "END-F",
+              "name": "FRIENDSHIP：相棒宣言",
+              "condition": { "all": [ { "kizuna": { ">=": 5 } }, { "flag": { "F_LOVE_HINT": false } } ] },
+              "epilogue": [
+                { "speaker": "二人", "text": "相棒でいよう。次に迷っても、今度はもっと上手くやる。" }
+              ]
+            },
+            {
+              "id": "END-B1",
+              "name": "BAD：すれ違う放課後",
+              "condition": { "kyoko": { ">=": 7 } },
+              "epilogue": [
+                { "narration": "麻衣だけ現実へ。百合香の声だけが残響。" },
+                { "speaker": "麻衣", "text": "必ず、迎えにいく。" }
+              ]
+            },
+            {
+              "id": "END-B2",
+              "name": "反転日常（迷界定着）",
+              "condition": { "kegare": { ">=": 9 } },
+              "epilogue": [
+                { "narration": "現実と同じ校舎、黒板の文字だけが逆。区別のつかない暮らしが始まる。" }
+              ]
+            },
+            {
+              "id": "END-K-KUCHI",
+              "name": "怪異堕ち：鏡の案内人（口裂け女）",
+              "condition": { "all": [ { "flags.F_KUCHI_FAV": { ">=": 3 } }, { "kegare": { ">=": 7 } } ] },
+              "epilogue": [ { "narration": "割れた鏡片が星のように浮遊し、迷い人を導く案内人となる。" } ]
+            },
+            {
+              "id": "END-K-TEKE",
+              "name": "怪異堕ち：走者の影（テケテケ）",
+              "condition": { "all": [ { "flags.F_TEKE_FAV": { ">=": 3 } }, { "kegare": { ">=": 7 } } ] },
+              "epilogue": [ { "narration": "終わらないプラットフォームを影が並走し続ける。" } ]
+            },
+            {
+              "id": "END-K-8SHAKU",
+              "name": "怪異堕ち：影の守り子（八尺様）",
+              "condition": { "all": [ { "flags.F_8SHAKU_FAV": { ">=": 3 } }, { "kegare": { ">=": 7 } } ] },
+              "epilogue": [ { "narration": "長い影に小さな影が寄り添い、社を守り続ける。" } ]
+            },
+            {
+              "id": "END-K-MERRY",
+              "name": "怪異堕ち：受話器の向こう（メリーさん）",
+              "condition": { "all": [ { "flags.F_MERRY_FAV": { ">=": 3 } }, { "kegare": { ">=": 7 } } ] },
+              "epilogue": [ { "narration": "受話器の向こうで安堵の吐息が続く。いつでも繋がる声となる。" } ]
+            },
+            {
+              "id": "END-K-DOG",
+              "name": "怪異堕ち：交差点の道標（人面犬）",
+              "condition": { "all": [ { "flags.F_DOG_FAV": { ">=": 3 } }, { "kegare": { ">=": 7 } } ] },
+              "epilogue": [ { "narration": "白線が矢印を描き、迷い人を導く道標となる。" } ]
+            },
+            {
+              "id": "END-HR",
+              "name": "HAREM：囲いの守護（複合守護）",
+              "condition": {
+                "all": [
+                  { "flags.F_KUCHI_FAV": { ">=": 2 } },
+                  { "flags.F_TEKE_FAV": { ">=": 2 } },
+                  { "flags.F_8SHAKU_FAV": { ">=": 2 } },
+                  { "flags.F_MERRY_FAV": { ">=": 2 } },
+                  { "flags.F_DOG_FAV": { ">=": 2 } },
+                  { "kegare": { ">=": 8 } }
+                ]
+              },
+              "epilogue": [ { "narration": "五方向の影が輪を成し、二人を『守る対象』として囲う。帰れない安寧の選択。" } ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

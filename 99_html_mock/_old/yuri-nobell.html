@@ -1,0 +1,183 @@
+```html
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>QTE UI 図解（高校版 迷界ユリメトリカ）</title>
+<style>
+  :root{
+    --bg:#0f1115;
+    --card:#171a21;
+    --ink:#e6e8ef;
+    --muted:#9aa3b2;
+    --accent:#7aa2ff;
+    --accent-2:#7affc6;
+    --stroke:#2a2f3a;
+  }
+  * { box-sizing: border-box; }
+  body{
+    margin:0; padding:32px;
+    background: radial-gradient(1200px 800px at 20% 0%, #131722 0%, var(--bg) 60%);
+    color:var(--ink); font:16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", "Helvetica Neue", Arial, sans-serif;
+  }
+  h1{ font-size: clamp(22px, 4vw, 32px); margin: 0 0 24px; letter-spacing:.02em;}
+  .grid{
+    display:grid; gap:20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .card{
+    background:
+      radial-gradient(400px 200px at 100% 0%, rgba(122,162,255,.08), transparent 60%),
+      linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    border:1px solid var(--stroke);
+    border-radius:16px; padding:16px 16px 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.02);
+  }
+  .card h2{
+    margin:0 0 12px; font-size: clamp(16px, 2.6vw, 20px);
+    display:flex; align-items:center; gap:.6em; font-weight:700;
+  }
+  .badge{
+    font-size:12px; padding:.2em .6em; border:1px solid var(--stroke);
+    color:var(--muted); border-radius:999px; letter-spacing:.03em;
+  }
+  .caption{ color:var(--muted); font-size:13px; margin:10px 2px 0; }
+  svg{ width:100%; height:auto; display:block; border-radius:12px; }
+  .hint{
+    color:var(--muted); font-size:12px; margin-top:6px;
+  }
+  /* SVG helpers */
+  .label{ font-weight:600; fill:var(--ink); font-size:16px; text-anchor:middle; }
+  .small{ font-size:12px; fill:var(--muted); }
+  .stroke{ stroke:var(--stroke); }
+  .accent{ stroke:var(--accent); fill:none; }
+  .accent-fill{ fill:var(--accent); }
+  .accent2{ stroke:var(--accent-2); }
+  .accent2-fill{ fill:var(--accent-2); }
+  .lane{ fill:rgba(255,255,255,.02); stroke:var(--stroke); }
+  .target{ fill:rgba(122,162,255,.18); stroke:rgba(122,162,255,.55); }
+  .target2{ fill:rgba(122,255,198,.18); stroke:rgba(122,255,198,.55); }
+  .ghost{ fill:rgba(255,255,255,.05); stroke:rgba(255,255,255,.2); stroke-dasharray:6 6; }
+</style>
+</head>
+<body>
+  <h1>QTE UI 図解</h1>
+
+  <div class="grid">
+    <!-- 1) Shrinking Ring（指定ゾーンでタップ） -->
+    <section class="card">
+      <h2><span class="badge">QTE-01</span> Shrinking Ring（指定ゾーンでタップ）</h2>
+      <svg viewBox="0 0 600 380" role="img" aria-label="Shrinking Ring タップ図解">
+        <!-- backdrop -->
+        <rect x="0" y="0" width="600" height="380" rx="12" class="lane"/>
+        <!-- outer ring -->
+        <circle cx="300" cy="180" r="120" class="accent" stroke-width="6"/>
+        <!-- target zone (donut) -->
+        <circle cx="300" cy="180" r="65" class="ghost" stroke-width="3"/>
+        <circle cx="300" cy="180" r="80" class="ghost" stroke-width="3"/>
+        <!-- tap label -->
+        <text x="300" y="188" class="label" style="font-size:28px;">TAP</text>
+        <text x="300" y="320" class="small">縮小してくるリングが「ターゲットゾーン」に重なった瞬間にタップ</text>
+        <!-- arrow to zone -->
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" class="accent-fill"/>
+          </marker>
+        </defs>
+        <line x1="420" y1="120" x2="365" y2="150" class="accent" stroke-width="3" marker-end="url(#arrow)"/>
+        <text x="430" y="110" class="small">ターゲットゾーン</text>
+      </svg>
+      <p class="caption">リングが縮む演出に合わせ、許容ウィンドウで入力成功判定。</p>
+    </section>
+
+    <!-- 2) Sync Gauge（二つのマーカーを枠内で重ねる） -->
+    <section class="card">
+      <h2><span class="badge">QTE-02</span> Sync Gauge（歩幅を揃える）</h2>
+      <svg viewBox="0 0 600 300" role="img" aria-label="Sync Gauge 図解">
+        <!-- lane -->
+        <rect x="40" y="100" width="520" height="80" rx="10" class="lane"/>
+        <!-- window -->
+        <rect x="260" y="106" width="80" height="68" rx="6" class="ghost"/>
+        <text x="300" y="95" class="small">同期ウィンドウ</text>
+        <!-- markers -->
+        <circle cx="160" cy="140" r="25" class="accent-fill" opacity=".35"/>
+        <circle cx="440" cy="140" r="25" class="accent2-fill" opacity=".35"/>
+        <!-- arrows showing converge -->
+        <defs>
+          <marker id="arrowThin" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g fill="none" stroke="currentColor" style="color: var(--muted);">
+          <line x1="160" y1="200" x2="260" y2="200" stroke-width="2" marker-end="url(#arrowThin)"/>
+          <line x1="440" y1="200" x2="340" y2="200" stroke-width="2" marker-end="url(#arrowThin)"/>
+        </g>
+        <text x="300" y="240" class="small">2つのマーカーを枠内で重ねると成功</text>
+      </svg>
+      <p class="caption">二人の歩幅を合わせるシーン向け。成功で恐慌低下の補正など。</p>
+    </section>
+
+    <!-- 3) Long Press（長押し→ターゲットで離す） -->
+    <section class="card">
+      <h2><span class="badge">QTE-03</span> Long Press（長押し→ターゲットで離す）</h2>
+      <svg viewBox="0 0 600 300" role="img" aria-label="Long Press 呼吸合わせ 図解">
+        <!-- bar -->
+        <rect x="40" y="120" width="520" height="60" rx="10" class="lane"/>
+        <!-- target window -->
+        <rect x="370" y="124" width="130" height="52" rx="8" class="ghost"/>
+        <text x="435" y="113" class="small">離す</text>
+        <!-- hold head -->
+        <rect x="70" y="124" width="36" height="52" rx="6" class="accent-fill" opacity=".35"/>
+        <text x="88" y="205" class="small">長押し</text>
+        <!-- progress guide -->
+        <line x1="110" y1="155" x2="365" y2="155" stroke="var(--accent)" stroke-width="3" stroke-dasharray="8 8"/>
+        <text x="300" y="220" class="small">「吸う→止める→吐く」のテンポでターゲットに合わせて離す</text>
+      </svg>
+      <p class="caption">八尺様の「ぽ…ぽ…」に呼吸を合わせる表現に最適。</p>
+    </section>
+
+    <!-- 4) Timing Lane（ターゲット拍に合わせてタップ） -->
+    <section class="card">
+      <h2><span class="badge">QTE-04</span> Timing Lane（ターゲット拍に合わせてタップ）</h2>
+      <svg viewBox="0 0 600 300" role="img" aria-label="Timing Lane 図解">
+        <!-- lane -->
+        <rect x="40" y="110" width="520" height="80" rx="10" class="lane"/>
+        <!-- beats -->
+        <rect x="210" y="116" width="22" height="68" rx="4" class="target"/>
+        <rect x="300" y="116" width="22" height="68" rx="4" class="target"/>
+        <rect x="390" y="116" width="22" height="68" rx="4" class="target"/>
+        <!-- cursor -->
+        <polygon points="150,150 170,140 170,160" class="accent-fill"/>
+        <text x="300" y="230" class="small">カーソルが拍ターゲットに重なる瞬間にタップ</text>
+      </svg>
+      <p class="caption">踏切の「渡る」やフェイント入力などテンポ依存アクションに使用。</p>
+    </section>
+
+    <!-- 5) Sequence Prompts（矢印シーケンス） -->
+    <section class="card">
+      <h2><span class="badge">QTE-05</span> Sequence Prompts（矢印シーケンス）</h2>
+      <svg viewBox="0 0 600 300" role="img" aria-label="Sequence Prompts 図解">
+        <!-- boxes -->
+        <rect x="110" y="70" width="110" height="100" rx="10" class="lane"/>
+        <rect x="245" y="70" width="110" height="100" rx="10" class="lane"/>
+        <rect x="380" y="70" width="110" height="100" rx="10" class="lane"/>
+        <!-- arrows inside -->
+        <text x="165" y="135" class="label" style="font-size:34px;">→</text>
+        <text x="300" y="135" class="label" style="font-size:34px;">↑</text>
+        <text x="435" y="135" class="label" style="font-size:34px;">↘</text>
+        <!-- timeline -->
+        <line x1="110" y1="205" x2="490" y2="205" class="stroke" stroke-width="2" stroke-dasharray="6 8"/>
+        <circle cx="165" cy="205" r="6" class="accent-fill"/>
+        <circle cx="300" cy="205" r="6" class="accent-fill"/>
+        <circle cx="435" cy="205" r="6" class="accent-fill"/>
+        <text x="300" y="240" class="small">例：フェイント右 → 上へジャンプ → 斜め右下へ離脱</text>
+      </svg>
+      <p class="caption">3手連続の基本。成功2/3でクリア扱いなどの設計に対応。</p>
+    </section>
+  </div>
+
+  <p class="hint">※本HTMLはスタンドアロンで閲覧可能な図解モックです。ゲーム実装時はSVGの要素IDに対して入力受付や成否演出を紐づけてください。</p>
+</body>
+</html>
+```

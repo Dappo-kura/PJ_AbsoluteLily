@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>都市伝説JK百合ホラー v3.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+        }
+        .character-container {
+            position: absolute;
+            bottom: 100;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70vw;
+            max-width: 1000px;
+            height: 200vh;
+            overflow: hidden;
+        }
+        .character-image {
+            width: 100%;
+            height: 120%;
+            object-fit: cover;
+            object-position: center 35%;
+        }
+        .dialog-box {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 80%;
+            max-width: 1200px;
+            height: 280px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem 1.5rem 0 0;
+            padding: 3rem;
+            padding-bottom: 2rem;
+            overflow: hidden;
+        }
+        .dialog-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            border-radius: 1.5rem 1.5rem 0 0;
+            pointer-events: none;
+        }
+        .dialog-box::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            border-radius: 0 0 1.5rem 1.5rem;
+            pointer-events: none;
+        }
+        @keyframes smokeDisappear {
+            0% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.95) translateY(-10px);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.8) translateY(-30px);
+                filter: blur(10px);
+            }
+        }
+        .smoke-out {
+            animation: smokeDisappear 0.8s ease-out forwards;
+        }
+        .red-overlay {
+            animation: redFlash 2s ease-in-out;
+        }
+        @keyframes redFlash {
+            0%, 100% { background-color: rgba(139, 0, 0, 0.3); }
+            50% { background-color: rgba(220, 38, 38, 0.8); }
+        }
+        .dialog-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            max-width: 50ch;
+        }
+        .flowchart-node {
+            transition: all 0.3s;
+        }
+        .flowchart-node:hover {
+            transform: scale(1.05);
+        }
+        .flowchart-line {
+            stroke: #4b5563;
+            stroke-width: 2;
+        }
+        .flowchart-line.visited {
+            stroke: #9333ea;
+            stroke-width: 3;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        console.log("=== 都市伝説JK百合ホラー 最新版 起動 ===");
+        console.log("バージョン: 2025-01-08 v3.0 パラメータ&フローチャート実装版");
+        
+        const IMAGES = {
+            title: 'title.png',
+            titleTrue: 'title-true.png',
+            mai: 'mai-hinata.png',
+            yui: 'yui-shitsuki.png',
+            slitMouthWoman: 'Slit-MouthWoman.png',
+            classroomEvening: 'classroom-evening.png',
+            shadowSMW: 'shadow_Slit-MouthWoman.png',
+            eventSMW001: 'event-smw001.png',
+            hallway01: 'school hallway01.png',
+            hallway02: 'school hallway02.png'
+        };
+
+        const AUDIO = {
+            title: 'title.mp3',
+            ingame: 'ingame_peace.mp3',
+            titleTrue: 'title-true.mp3'
+        };
+
+        let bgmTitle = null;
+        let bgmIngame = null;
+        let bgmTitleTrue = null;
+        let currentBGM = null;
+        let fadeInterval = null;
+        const TARGET_VOLUME = 0.25;
+        const FADE_DURATION = 2000;
+        const FADE_STEPS = 20;
+
+        let gameState = {
+            screen: 'title',
+            currentSceneId: 'scene1',
+            textDisplay: '',
+            textIndex: 0,
+            isTextComplete: false,
+            history: [],
+            qteActive: false,
+            qteChoices: [],
+            showMenu: false,
+            isMuted: false,
+            parameters: {
+                intimacy: 50,
+                fear: 50
+            }
+        };
+
+        let textTimer = null;
+        let qteChoiceTimers = [];
+
+        // エンディング回収状態をlocalStorageから読み込み
+        function loadEndingData() {
+            const saved = localStorage.getItem('novelgame_endings');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return {
+                escape: false,
+                corruption: false,
+                taken: false,
+                true: false
+            };
+        }
+
+        // エンディング回収状態を保存
+        function saveEndingData(endingId) {
+            const endings = loadEndingData();
+            endings[endingId] = true;
+            localStorage.setItem('novelgame_endings', JSON.stringify(endings));
+        }
+
+        // 訪問済みシーンをlocalStorageから読み込み
+        function loadVisitedScenes() {
+            const saved = localStorage.getItem('novelgame_visited');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return [];
+        }
+
+        // 訪問済みシーンを保存
+        function saveVisitedScene(sceneId) {
+            const visited = loadVisitedScenes();
+            if (!visited.includes(sceneId)) {
+                visited.push(sceneId);
+                localStorage.setItem('novelgame_visited', JSON.stringify(visited));
+            }
+        }
+
+        const SCENARIO = [
+            {
+                id: 'scene1',
+                background: IMAGES.classroomEvening,
+                character: { name: '日向 舞', image: IMAGES.mai },
+                text: 'ここは私立桜ヶ丘高校。\n放課後の誰もいない教室で、私は一人残っていた。',
+                nextScene: 'scene2'
+            },
+            {
+                id: 'scene2',
+                background: IMAGES.classroomEvening,
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '「あ、まだいたんだ」\n後ろから声をかけられて、振り向くと結衣ちゃんが立っていた。',
+                nextScene: 'choice1'
+            },
+            {
+                id: 'choice1',
+                type: 'choice',
+                background: IMAGES.classroomEvening,
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '「一緒に帰らない?」',
+                choices: [
+                    { text: '一緒に帰る', nextScene: 'scene3', parameters: { intimacy: 15, fear: 0 } },
+                    { text: '用事があると断る', nextScene: 'scene4', parameters: { intimacy: -10, fear: 5 } }
+                ]
+            },
+            {
+                id: 'scene3',
+                background: 'https://placehold.co/1920x1080/34495e/ffffff?text=Evening+Street',
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '夕暮れの校門を二人で出る。\n「ねえ舞ちゃん、知ってる? 最近この辺りで変な噂があるんだって」',
+                nextScene: 'scene3b'
+            },
+            {
+                id: 'scene3b',
+                background: 'https://placehold.co/1920x1080/34495e/ffffff?text=Evening+Street',
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '「口裂け女が出るって...」\n結衣ちゃんの声が少し震えている。',
+                nextScene: 'scene5'
+            },
+            {
+                id: 'scene4',
+                background: IMAGES.classroomEvening,
+                text: '「そっか...じゃあまたね」\n寂しそうな表情で結衣ちゃんは去っていった。',
+                nextScene: 'scene5'
+            },
+            {
+                id: 'scene5',
+                background: IMAGES.hallway01,
+                text: '一人で廊下を歩いていると、突然電気が消えた。\n誰かの足音が近づいてくる...\n\n冷たい空気が背筋を這う。',
+                nextScene: 'scene5b'
+            },
+            {
+                id: 'scene5b',
+                background: IMAGES.hallway02,
+                text: '暗闇の中に、不気味な影が見える。\n\nマスクをした女性のシルエット...\nゆっくりと、こちらに近づいてくる。',
+                nextScene: 'scene5c'
+            },
+            {
+                id: 'scene5c',
+                background: IMAGES.hallway02,
+                character: { name: '???', image: IMAGES.slitMouthWoman },
+                text: '「ねぇ...私、キレイ...?」\n\n低く、冷たい声が耳元で囁く。',
+                nextScene: 'qte1'
+            },
+            {
+                id: 'qte1',
+                type: 'qte-choice',
+                background: IMAGES.eventSMW001,
+                text: '何かが迫ってくる!',
+                choices: [
+                    { text: '逃げる', time: 5000, nextScene: 'ending_escape', parameters: { intimacy: 0, fear: 20 } },
+                    { text: '体当たりする', time: 3500, nextScene: 'ending_corruption', parameters: { intimacy: 0, fear: -10 } },
+                    { text: 'かばう', time: 4000, nextScene: 'ending_taken', parameters: { intimacy: 20, fear: 10 } }
+                ],
+                timeoutScene: 'scene7'
+            },
+            {
+                id: 'ending_escape',
+                endingId: 'escape',
+                background: 'https://placehold.co/1920x1080/2c5f2d/ffffff?text=Safe+Place',
+                character: { name: '日向 舞', image: IMAGES.mai },
+                text: '必死で走って逃げ切った。\n\n振り返ると、口裂け女の姿は見えない。\n学校を出て、人通りの多い道に出ることができた。\n\nでも...結衣ちゃんは大丈夫だろうか...\n\n【NORMAL END - 逃走】',
+                isEnding: true
+            },
+            {
+                id: 'ending_corruption',
+                endingId: 'corruption',
+                background: 'https://placehold.co/1920x1080/4a0e4e/ffffff?text=Corruption',
+                character: { name: '口裂け女', image: IMAGES.slitMouthWoman },
+                text: '体当たりで口裂け女を押し倒した。\n\n「あなた...強いのね」\n\n口裂け女は笑った。\nその瞬間、不思議な感覚が体を包む。\n\n「私の仲間になりなさい...」\n\n気づけば、私も彼女と同じ存在になっていた。\n\n【BAD END - 怪異堕ち】',
+                isEnding: true
+            },
+            {
+                id: 'ending_taken',
+                endingId: 'taken',
+                background: 'https://placehold.co/1920x1080/1a1a2e/ffffff?text=Taken',
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '「待って! 舞ちゃんには手を出さないで!」\n\n結衣ちゃんが私の前に飛び出した。\n\n「私が...代わりに行くから」\n\n「結衣ちゃん、ダメ!」\n\n口裂け女は結衣ちゃんの手を取り、闇の中へ消えていった。\n\n私は...何もできなかった。\n\n【BAD END - 連れ去られた】',
+                isEnding: true
+            },
+            {
+                id: 'scene7',
+                background: 'https://placehold.co/1920x1080/8b0000/000000?text=Caught',
+                backgroundRed: true,
+                character: { name: '口裂け女', image: IMAGES.slitMouthWoman },
+                text: '動けなかった...\n\n「キレイにしてあげる...」\n\n冷たい何かが私の頬に触れる。\n視界が真っ赤に染まっていく。\n\n【BAD END - 捕獲】',
+                endingId: 'corruption',
+                isEnding: true
+            },
+            {
+                id: 'check_true_ending',
+                type: 'check',
+                nextSceneHigh: 'ending_true',
+                nextSceneLow: 'qte1'
+            },
+            {
+                id: 'ending_true',
+                endingId: 'true',
+                background: 'https://placehold.co/1920x1080/9333ea/ffffff?text=True+End',
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '「舞ちゃん、怖がらないで!」\n\n結衣ちゃんが私の手を強く握る。\n\n「一緒なら、何も怖くないよ」\n\nその言葉に、心が温かくなる。\n二人の絆が、怪異を退ける力となった。\n\n口裂け女は静かに消えていく...\n\n「ありがとう、結衣ちゃん」\n「うん...これからもずっと一緒だよ」\n\n二人は手を繋いだまま、夕暮れの道を歩いていく。\n\n【TRUE END - 絆の力】',
+                isEnding: true
+            }
+        ];
+
+        function initBGM() {
+            bgmTitle = new Audio(AUDIO.title);
+            bgmTitle.loop = true;
+            bgmTitle.volume = 0;
+
+            bgmIngame = new Audio(AUDIO.ingame);
+            bgmIngame.loop = true;
+            bgmIngame.volume = 0;
+
+            bgmTitleTrue = new Audio(AUDIO.titleTrue);
+            bgmTitleTrue.loop = true;
+            bgmTitleTrue.volume = 0;
+            
+            console.log("BGM初期化完了 - 目標音量: 25%");
+        }
+
+        function playBGM(type) {
+            if (fadeInterval) {
+                clearInterval(fadeInterval);
+                fadeInterval = null;
+            }
+
+            if (currentBGM) {
+                currentBGM.pause();
+                currentBGM.currentTime = 0;
+                currentBGM.volume = 0;
+            }
+
+            if (type === 'title') {
+                const endings = loadEndingData();
+                const allCollected = endings.escape && endings.corruption && endings.taken && endings.true;
+                currentBGM = allCollected ? bgmTitleTrue : bgmTitle;
+            } else if (type === 'ingame') {
+                currentBGM = bgmIngame;
+            }
+
+            if (currentBGM && !gameState.isMuted) {
+                currentBGM.volume = 0;
+                currentBGM.play().catch(err => console.log('BGM再生エラー:', err));
+                
+                let currentStep = 0;
+                const volumeStep = TARGET_VOLUME / FADE_STEPS;
+                const timeStep = FADE_DURATION / FADE_STEPS;
+                
+                fadeInterval = setInterval(() => {
+                    currentStep++;
+                    if (currentStep >= FADE_STEPS) {
+                        currentBGM.volume = TARGET_VOLUME;
+                        clearInterval(fadeInterval);
+                        fadeInterval = null;
+                    } else {
+                        currentBGM.volume = volumeStep * currentStep;
+                    }
+                }, timeStep);
+            }
+        }
+
+        function toggleMute() {
+            gameState.isMuted = !gameState.isMuted;
+            
+            if (gameState.isMuted) {
+                if (fadeInterval) {
+                    clearInterval(fadeInterval);
+                    fadeInterval = null;
+                }
+                if (currentBGM) currentBGM.pause();
+            } else {
+                if (currentBGM) {
+                    currentBGM.volume = 0;
+                    currentBGM.play().catch(err => console.log('BGM再生エラー:', err));
+                    
+                    let currentStep = 0;
+                    const volumeStep = TARGET_VOLUME / FADE_STEPS;
+                    const timeStep = FADE_DURATION / FADE_STEPS;
+                    
+                    fadeInterval = setInterval(() => {
+                        currentStep++;
+                        if (currentStep >= FADE_STEPS) {
+                            currentBGM.volume = TARGET_VOLUME;
+                            clearInterval(fadeInterval);
+                            fadeInterval = null;
+                        } else {
+                            currentBGM.volume = volumeStep * currentStep;
+                        }
+                    }, timeStep);
+                }
+            }
+            
+            render();
+        }
+
+        function getCurrentScene() {
+            return SCENARIO.find(s => s.id === gameState.currentSceneId);
+        }
+
+        function applyParameters(params) {
+            if (params) {
+                gameState.parameters.intimacy = Math.max(0, Math.min(100, gameState.parameters.intimacy + (params.intimacy || 0)));
+                gameState.parameters.fear = Math.max(0, Math.min(100, gameState.parameters.fear + (params.fear || 0)));
+            }
+        }
+
+        function checkTrueEndingCondition() {
+            return gameState.parameters.intimacy >= 70 && gameState.parameters.fear <= 40;
+        }
+
+        function renderTitle() {
+            const endings = loadEndingData();
+            const endingCount = Object.values(endings).filter(v => v).length;
+            const totalEndings = 4;
+            const completionRate = Math.round((endingCount / totalEndings) * 100);
+            
+            const allCollected = endingCount === totalEndings;
+            const titleImage = allCollected ? IMAGES.titleTrue : IMAGES.title;
+            
+            return `
+                <div class="relative w-full h-screen overflow-hidden">
+                    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('${titleImage}')"></div>
+                    <div class="absolute inset-0 bg-black/30"></div>
+                    
+                    <div class="relative z-10 h-full flex flex-col items-center justify-center gap-8">
+                        <h1 class="text-6xl font-bold text-white drop-shadow-2xl mb-12" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                            都市伝説JK百合ホラー
+                        </h1>
+                        
+                        <div class="text-white text-xl mb-4">
+                            エンディング回収率: ${completionRate}% (${endingCount}/${totalEndings})
+                        </div>
+                        
+                        <div class="flex flex-col gap-4 min-w-[300px]">
+                            <button onclick="startGame()" class="px-12 py-4 bg-purple-600 hover:bg-purple-700 text-white text-xl font-bold rounded-lg transition-all transform hover:scale-105 shadow-2xl">
+                                ゲームスタート
+                            </button>
+                            
+                            <button onclick="loadGame()" class="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white text-xl font-bold rounded-lg transition-all transform hover:scale-105 shadow-2xl">
+                                ロード
+                            </button>
+                            
+                            <button onclick="showFlowchart()" class="px-12 py-4 bg-green-600 hover:bg-green-700 text-white text-xl font-bold rounded-lg transition-all transform hover:scale-105 shadow-2xl">
+                                フローチャート
+                            </button>
+                        </div>
+
+                        <div class="absolute bottom-8 text-white text-sm">
+                            © 2025 Urban Legend JK Yuri Horror v3.0
+                        </div>
+                    </div>
+
+                    <div class="absolute top-4 right-4 z-10">
+                        <button onclick="toggleMute();" class="p-3 bg-gray-800 rounded-full text-white hover:bg-gray-700 transition-all">
+                            ${gameState.isMuted ? '🔇' : '🔊'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFlowchart() {
+            const visited = loadVisitedScenes();
+            const endings = loadEndingData();
+            
+            const nodes = [
+                { id: 'scene1', x: 400, y: 50, name: '教室', type: 'scene' },
+                { id: 'scene2', x: 400, y: 120, name: '結衣登場', type: 'scene' },
+                { id: 'choice1', x: 400, y: 190, name: '選択：帰宅', type: 'choice' },
+                { id: 'scene3', x: 250, y: 260, name: '一緒に帰る', type: 'scene' },
+                { id: 'scene4', x: 550, y: 260, name: '断る', type: 'scene' },
+                { id: 'scene5', x: 400, y: 330, name: '廊下', type: 'scene' },
+                { id: 'scene5b', x: 400, y: 400, name: '影発見', type: 'scene' },
+                { id: 'scene5c', x: 400, y: 470, name: '口裂け女', type: 'scene' },
+                { id: 'qte1', x: 400, y: 540, name: 'QTE選択', type: 'qte' },
+                { id: 'ending_escape', x: 150, y: 610, name: 'NORMAL END', type: 'ending', endingId: 'escape' },
+                { id: 'ending_corruption', x: 400, y: 610, name: 'BAD END①', type: 'ending', endingId: 'corruption' },
+                { id: 'ending_taken', x: 550, y: 610, name: 'BAD END②', type: 'ending', endingId: 'taken' },
+                { id: 'ending_true', x: 250, y: 680, name: 'TRUE END', type: 'ending', endingId: 'true' }
+            ];
+            
+            const connections = [
+                ['scene1', 'scene2'],
+                ['scene2', 'choice1'],
+                ['choice1', 'scene3'],
+                ['choice1', 'scene4'],
+                ['scene3', 'scene5'],
+                ['scene4', 'scene5'],
+                ['scene5', 'scene5b'],
+                ['scene5b', 'scene5c'],
+                ['scene5c', 'qte1'],
+                ['qte1', 'ending_escape'],
+                ['qte1', 'ending_corruption'],
+                ['qte1', 'ending_taken'],
+                ['qte1', 'ending_true']
+            ];
+            
+            const linesHTML = connections.map(([from, to]) => {
+                const fromNode = nodes.find(n => n.id === from);
+                const toNode = nodes.find(n => n.id === to);
+                const isVisited = visited.includes(from) && visited.includes(to);
+                return `<line x1="${fromNode.x}" y1="${fromNode.y}" x2="${toNode.x}" y2="${toNode.y}" class="flowchart-line ${isVisited ? 'visited' : ''}"/>`;
+            }).join('');
+            
+            const nodesHTML = nodes.map(node => {
+                const isVisited = visited.includes(node.id);
+                const isEnding = node.type === 'ending';
+                const endingCollected = isEnding ? endings[node.endingId] : false;
+                
+                let bgColor = '#4b5563';
+                let borderColor = '#6b7280';
+                
+                if (isEnding) {
+                    if (endingCollected) {
+                        bgColor = node.endingId === 'true' ? '#9333ea' : (node.endingId === 'escape' ? '#16a34a' : '#dc2626');
+                        borderColor = node.endingId === 'true' ? '#c084fc' : (node.endingId === 'escape' ? '#22c55e' : '#ef4444');
+                    } else {
+                        bgColor = '#1f2937';
+                        borderColor = '#374151';
+                    }
+                } else if (isVisited) {
+                    bgColor = '#7e22ce';
+                    borderColor = '#a855f7';
+                }
+                
+                const displayName = (isEnding && !endingCollected) ? '???' : node.name;
+                
+                return `
+                    <g class="flowchart-node">
+                        <rect x="${node.x - 60}" y="${node.y - 20}" width="120" height="40" rx="8" fill="${bgColor}" stroke="${borderColor}" stroke-width="2"/>
+                        <text x="${node.x}" y="${node.y + 5}" text-anchor="middle" fill="white" font-size="12" font-weight="bold">${displayName}</text>
+                    </g>
+                `;
+            }).join('');
+            
+            return `
+                <div class="relative w-full h-screen overflow-hidden bg-gray-900">
+                    <div class="absolute inset-0 flex flex-col items-center">
+                        <div class="w-full bg-gray-800 p-4 flex justify-between items-center">
+                            <h2 class="text-white text-2xl font-bold">フローチャート</h2>
+                            <button onclick="gameState.screen='title'; render();" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+                                タイトルに戻る
+                            </button>
+                        </div>
+                        
+                        <div class="flex-1 overflow-auto p-8">
+                            <svg width="800" height="800" style="min-width: 800px; min-height: 800px;">
+                                ${linesHTML}
+                                ${nodesHTML}
+                            </svg>
+                        </div>
+                        
+                        <div class="w-full bg-gray-800 p-4 text-white text-center">
+                            <div class="flex justify-center gap-8">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-purple-700 rounded"></div>
+                                    <span>到達済み</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-gray-600 rounded"></div>
+                                    <span>未到達</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-green-600 rounded"></div>
+                                    <span>NORMAL回収</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-purple-600 rounded"></div>
+                                    <span>TRUE回収</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGame() {
+            const scene = getCurrentScene();
+            if (!scene) return '';
+
+            let characterHTML = '';
+            if (scene.character && scene.character.image) {
+                characterHTML = `
+                    <div class="character-container">
+                        <img src="${scene.character.image}" alt="${scene.character.name}" class="character-image">
+                    </div>
+                `;
+            }
+
+            let qteHTML = '';
+            if (gameState.qteActive && scene.type === 'qte-choice') {
+                const choicesHTML = gameState.qteChoices.map((choice, idx) => {
+                    if (choice.disappeared) return '';
+                    
+                    const progress = (choice.timeLeft / choice.time) * 100;
+                    const circumference = 2 * Math.PI * 70;
+                    
+                    return `
+                        <div class="${choice.timeLeft <= 0 ? 'smoke-out' : ''}" 
+                            style="display: inline-block; margin: 0 20px; cursor: pointer;"
+                            onclick="event.stopPropagation(); handleQteChoiceClick(${idx});">
+                            <div style="position: relative;">
+                                <svg style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-90deg); pointer-events: none;" width="160" height="160">
+                                    <circle cx="80" cy="80" r="70" fill="none" stroke="#444" stroke-width="6"/>
+                                    <circle cx="80" cy="80" r="70" fill="none" stroke="#ef4444" stroke-width="6" 
+                                        stroke-dasharray="${circumference}" 
+                                        stroke-dashoffset="${circumference * (1 - progress / 100)}"
+                                        style="transition: stroke-dashoffset 0.1s linear;"/>
+                                </svg>
+                                
+                                <div style="position: relative; width: 160px; height: 160px; border-radius: 50%; background: linear-gradient(to bottom right, #9333ea, #7e22ce); color: white; font-weight: bold; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid #c084fc; cursor: pointer; user-select: none;">
+                                    <div style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.25rem; pointer-events: none;">${choice.text}</div>
+                                    <div style="font-size: 0.875rem; pointer-events: none;">${(choice.timeLeft / 1000).toFixed(1)}秒</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                qteHTML = `
+                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); z-index: 30;" onclick="event.stopPropagation();">
+                        <div style="font-size: 3rem; font-weight: bold; color: white; margin-bottom: 3rem; animation: pulse 0.5s ease-in-out infinite; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                            ${scene.text}
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 2rem;">
+                            ${choicesHTML}
+                        </div>
+                    </div>
+                `;
+            }
+
+            let dialogHTML = '';
+            if (scene.type !== 'qte-choice') {
+                const cursor = !gameState.isTextComplete ? '<span style="animation: pulse 2s ease-in-out infinite;">▼</span>' : '';
+                
+                let contentHTML = '';
+                if (scene.type === 'choice') {
+                    const choicesHTML = scene.choices.map((choice) => 
+                        `<button onclick="handleChoice('${choice.nextScene}', ${JSON.stringify(choice.parameters).replace(/"/g, '&quot;')})" style="width: 100%; padding: 1.25rem; background: rgba(88, 28, 135, 0.8); color: white; font-size: 1.5rem; border-radius: 0.5rem; border: 2px solid #a855f7; margin-top: 1rem; cursor: pointer; transition: all 0.3s;">${choice.text}</button>`
+                    ).join('');
+                    
+                    contentHTML = `<div class="dialog-text" style="color: white; font-size: 1.5rem; margin-bottom: 1.5rem;">${scene.text}</div>${choicesHTML}`;
+                } else {
+                    contentHTML = `<div class="dialog-text" style="color: white; font-size: 1.5rem; line-height: 2; white-space: pre-wrap;">${gameState.textDisplay}${cursor}</div>`;
+                }
+
+                const endingButton = scene.isEnding ? `<div style="margin-top: 2rem;"><button onclick="returnToTitle()" style="padding: 1rem 2rem; background: #9333ea; color: white; font-size: 1.25rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s;">タイトルに戻る</button></div>` : '';
+
+                dialogHTML = `
+                    <div class="dialog-box">
+                        ${scene.character ? `<div style="color: white; font-size: 1.875rem; font-weight: bold; margin-bottom: 1.5rem; text-align: left; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">${scene.character.name}</div>` : ''}
+                        <div style="text-align: left;">${contentHTML}${endingButton}</div>
+                    </div>
+                `;
+            }
+
+            const menuHTML = gameState.showMenu ? `
+                <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 40;">
+                    <div style="background: #1f2937; padding: 2rem; border-radius: 0.5rem; min-width: 300px;">
+                        <h2 style="color: white; font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem;">メニュー</h2>
+                        <button onclick="toggleMenu()" style="width: 100%; padding: 1rem; background: #9333ea; color: white; border-radius: 0.5rem; margin-bottom: 1rem; cursor: pointer;">
+                            ゲームに戻る
+                        </button>
+                        <button onclick="saveGame()" style="width: 100%; padding: 1rem; background: #2563eb; color: white; border-radius: 0.5rem; margin-bottom: 1rem; cursor: pointer;">
+                            セーブ
+                        </button>
+                        <button onclick="loadGame()" style="width: 100%; padding: 1rem; background: #16a34a; color: white; border-radius: 0.5rem; margin-bottom: 1rem; cursor: pointer;">
+                            ロード
+                        </button>
+                        <button onclick="returnToTitle()" style="width: 100%; padding: 1rem; background: #4b5563; color: white; border-radius: 0.5rem; cursor: pointer;">
+                            タイトルに戻る
+                        </button>
+                    </div>
+                </div>
+            ` : '';
+
+            return `
+                <div style="position: relative; width: 100%; height: 100vh; overflow: hidden; background: black;" onclick="handleClick(event)">
+                    <div style="position: absolute; inset: 0; background-size: cover; background-position: center; transition: all 1s; background-image: url('${scene.background}');"></div>
+                    
+                    ${scene.backgroundRed ? '<div class="red-overlay" style="position: absolute; inset: 0;"></div>' : ''}
+                    
+                    ${characterHTML}
+                    ${qteHTML}
+                    ${dialogHTML}
+                    
+                    <div style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 30;">
+                        <button onclick="toggleMute(); event.stopPropagation();" style="padding: 0.75rem; background: #1f2937; border-radius: 50%; color: white; cursor: pointer;">
+                            ${gameState.isMuted ? '🔇' : '🔊'}
+                        </button>
+                        <button onclick="saveGame(); event.stopPropagation();" style="padding: 0.75rem; background: #1f2937; border-radius: 50%; color: white; cursor: pointer;">
+                            💾
+                        </button>
+                        <button onclick="toggleMenu(); event.stopPropagation();" style="padding: 0.75rem; background: #1f2937; border-radius: 50%; color: white; cursor: pointer;">
+                            ☰
+                        </button>
+                    </div>
+                    
+                    ${menuHTML}
+                </div>
+            `;
+        }
+
+        function render() {
+            const app = document.getElementById('app');
+            if (gameState.screen === 'title') {
+                app.innerHTML = renderTitle();
+            } else if (gameState.screen === 'flowchart') {
+                app.innerHTML = renderFlowchart();
+            } else {
+                app.innerHTML = renderGame();
+            }
+        }
+
+        function startTextAnimation() {
+            const scene = getCurrentScene();
+            
+            // シーン訪問を記録
+            saveVisitedScene(scene.id);
+            
+            // エンディング到達を記録
+            if (scene.isEnding && scene.endingId) {
+                saveEndingData(scene.endingId);
+            }
+            
+            // チェックポイントでトゥルーエンド判定
+            if (scene.type === 'check') {
+                if (checkTrueEndingCondition()) {
+                    gameState.currentSceneId = scene.nextSceneHigh;
+                } else {
+                    gameState.currentSceneId = scene.nextSceneLow;
+                }
+                startTextAnimation();
+                return;
+            }
+            
+            if (!scene || scene.type === 'choice' || scene.type === 'qte-choice') {
+                gameState.textDisplay = scene?.text || '';
+                gameState.isTextComplete = true;
+                render();
+                return;
+            }
+
+            gameState.textDisplay = '';
+            gameState.textIndex = 0;
+            gameState.isTextComplete = false;
+
+            if (textTimer) clearInterval(textTimer);
+            
+            textTimer = setInterval(() => {
+                const scene = getCurrentScene();
+                if (gameState.textIndex < scene.text.length) {
+                    gameState.textDisplay = scene.text.slice(0, gameState.textIndex + 1);
+                    gameState.textIndex++;
+                    render();
+                } else {
+                    gameState.isTextComplete = true;
+                    clearInterval(textTimer);
+                    render();
+                }
+            }, 50);
+        }
+
+        function startQTE() {
+            const scene = getCurrentScene();
+            
+            if (scene.type === 'qte-choice') {
+                gameState.qteActive = true;
+                gameState.qteChoices = scene.choices.map(choice => ({
+                    text: choice.text,
+                    time: choice.time,
+                    timeLeft: choice.time,
+                    nextScene: choice.nextScene,
+                    parameters: choice.parameters,
+                    disappeared: false
+                }));
+                
+                render();
+
+                qteChoiceTimers.forEach(timer => clearInterval(timer));
+                qteChoiceTimers = [];
+
+                gameState.qteChoices.forEach((choice, idx) => {
+                    const timer = setInterval(() => {
+                        gameState.qteChoices[idx].timeLeft -= 100;
+                        
+                        if (gameState.qteChoices[idx].timeLeft <= 0) {
+                            clearInterval(timer);
+                            gameState.qteChoices[idx].disappeared = true;
+                            
+                            const allDisappeared = gameState.qteChoices.every(c => c.disappeared);
+                            if (allDisappeared) {
+                                setTimeout(() => {
+                                    qteChoiceTimers.forEach(t => clearInterval(t));
+                                    gameState.qteActive = false;
+                                    gameState.currentSceneId = scene.timeoutScene;
+                                    startTextAnimation();
+                                }, 800);
+                            }
+                        }
+                        render();
+                    }, 100);
+                    qteChoiceTimers.push(timer);
+                });
+            }
+        }
+
+        function startGame() {
+            gameState.screen = 'playing';
+            gameState.currentSceneId = 'scene1';
+            gameState.history = [];
+            gameState.parameters = { intimacy: 50, fear: 50 };
+            playBGM('ingame');
+            render();
+            startTextAnimation();
+        }
+
+        function handleClick(event) {
+            const scene = getCurrentScene();
+            if (scene.type === 'choice' || scene.type === 'qte-choice' || gameState.qteActive) return;
+            
+            if (!gameState.isTextComplete) {
+                gameState.textDisplay = scene.text;
+                gameState.textIndex = scene.text.length;
+                gameState.isTextComplete = true;
+                if (textTimer) clearInterval(textTimer);
+                render();
+            } else {
+                if (scene.nextScene) {
+                    gameState.history.push(gameState.currentSceneId);
+                    gameState.currentSceneId = scene.nextScene;
+                    const nextScene = getCurrentScene();
+                    if (nextScene.type === 'qte-choice') {
+                        render();
+                        startQTE();
+                    } else {
+                        startTextAnimation();
+                    }
+                }
+            }
+        }
+
+        function handleChoice(nextScene, parameters) {
+            applyParameters(parameters);
+            gameState.history.push(gameState.currentSceneId);
+            gameState.currentSceneId = nextScene;
+            const scene = getCurrentScene();
+            if (scene.type === 'qte-choice') {
+                render();
+                startQTE();
+            } else {
+                startTextAnimation();
+            }
+        }
+
+        function handleQteChoiceClick(choiceIndex) {
+            if (!gameState.qteActive) return;
+            
+            const choice = gameState.qteChoices[choiceIndex];
+            if (!choice || choice.disappeared || choice.timeLeft <= 0) return;
+            
+            applyParameters(choice.parameters);
+            
+            gameState.qteActive = false;
+            qteChoiceTimers.forEach(timer => clearInterval(timer));
+            qteChoiceTimers = [];
+            
+            gameState.currentSceneId = choice.nextScene;
+            startTextAnimation();
+        }
+
+        function saveGame() {
+            const saveData = {
+                currentSceneId: gameState.currentSceneId,
+                history: gameState.history,
+                parameters: gameState.parameters,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('novelgame_save', JSON.stringify(saveData));
+            alert('セーブしました');
+        }
+
+        function loadGame() {
+            const saveData = localStorage.getItem('novelgame_save');
+            if (saveData) {
+                const data = JSON.parse(saveData);
+                gameState.currentSceneId = data.currentSceneId;
+                gameState.history = data.history;
+                gameState.parameters = data.parameters || { intimacy: 50, fear: 50 };
+                gameState.screen = 'playing';
+                gameState.showMenu = false;
+                playBGM('ingame');
+                startTextAnimation();
+                alert('ロードしました');
+            } else {
+                alert('セーブデータがありません');
+            }
+        }
+
+        function returnToTitle() {
+            gameState.screen = 'title';
+            gameState.currentSceneId = 'scene1';
+            gameState.history = [];
+            gameState.showMenu = false;
+            gameState.parameters = { intimacy: 50, fear: 50 };
+            playBGM('title');
+            render();
+        }
+
+        function toggleMenu() {
+            gameState.showMenu = !gameState.showMenu;
+            render();
+        }
+
+        function showFlowchart() {
+            gameState.screen = 'flowchart';
+            render();
+        }
+
+        initBGM();
+        render();
+        playBGM('title');
+    </script>
+</body>
+</html>

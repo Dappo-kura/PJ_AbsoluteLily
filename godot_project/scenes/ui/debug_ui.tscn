@@ -1,0 +1,179 @@
+[gd_scene load_steps=2 format=3 uid="uid://debug_ui_scene"]
+
+[ext_resource type="Script" path="res://scripts/ui/debug_ui.gd" id="1"]
+
+[node name="DebugUI" type="CanvasLayer"]
+layer = 1000
+script = ExtResource("1")
+
+[node name="DebugPanel" type="Panel" parent="."]
+anchors_preset = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 350.0
+offset_bottom = 500.0
+
+[node name="VBox" type="VBoxContainer" parent="DebugPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="DebugPanel/VBox"]
+layout_mode = 2
+text = "=== Scenario Director ==="
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+
+[node name="SceneList" type="ItemList" parent="DebugPanel/VBox"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+
+[node name="SceneIDInput" type="LineEdit" parent="DebugPanel/VBox"]
+layout_mode = 2
+placeholder_text = "シーンID入力..."
+
+[node name="JumpButton" type="Button" parent="DebugPanel/VBox"]
+layout_mode = 2
+text = "シーンジャンプ"
+
+[node name="ReloadButton" type="Button" parent="DebugPanel/VBox"]
+layout_mode = 2
+text = "シナリオリロード (Hot Reload)"
+
+[node name="Separator1" type="HSeparator" parent="DebugPanel/VBox"]
+layout_mode = 2
+
+[node name="ParamTitle" type="Label" parent="DebugPanel/VBox"]
+layout_mode = 2
+text = "=== パラメータ編集 ==="
+horizontal_alignment = 1
+
+[node name="FearLabel" type="Label" parent="DebugPanel/VBox"]
+layout_mode = 2
+text = "恐怖値:"
+
+[node name="FearHBox" type="HBoxContainer" parent="DebugPanel/VBox"]
+layout_mode = 2
+
+[node name="FearSlider" type="HSlider" parent="DebugPanel/VBox/FearHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+
+[node name="FearValue" type="Label" parent="DebugPanel/VBox/FearHBox"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "0"
+horizontal_alignment = 2
+
+[node name="KizunaLabel" type="Label" parent="DebugPanel/VBox"]
+layout_mode = 2
+text = "絆:"
+
+[node name="KizunaHBox" type="HBoxContainer" parent="DebugPanel/VBox"]
+layout_mode = 2
+
+[node name="KizunaSlider" type="HSlider" parent="DebugPanel/VBox/KizunaHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+
+[node name="KizunaValue" type="Label" parent="DebugPanel/VBox/KizunaHBox"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "0"
+horizontal_alignment = 2
+
+[node name="KegareLabel" type="Label" parent="DebugPanel/VBox"]
+layout_mode = 2
+text = "穢れ:"
+
+[node name="KegareHBox" type="HBoxContainer" parent="DebugPanel/VBox"]
+layout_mode = 2
+
+[node name="KegareSlider" type="HSlider" parent="DebugPanel/VBox/KegareHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+
+[node name="KegareValue" type="Label" parent="DebugPanel/VBox/KegareHBox"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "0"
+horizontal_alignment = 2
+
+[node name="QTEPanel" type="Panel" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -350.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 300.0
+grow_horizontal = 0
+
+[node name="VBox" type="VBoxContainer" parent="QTEPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="QTEPanel/VBox"]
+layout_mode = 2
+text = "=== QTE Tuner ==="
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+
+[node name="DurationLabel" type="Label" parent="QTEPanel/VBox"]
+layout_mode = 2
+text = "Duration (秒):"
+
+[node name="DurationSlider" type="HSlider" parent="QTEPanel/VBox"]
+layout_mode = 2
+min_value = 0.5
+max_value = 5.0
+step = 0.1
+value = 2.0
+
+[node name="SizeLabel" type="Label" parent="QTEPanel/VBox"]
+layout_mode = 2
+text = "Ring Size (px):"
+
+[node name="SizeSlider" type="HSlider" parent="QTEPanel/VBox"]
+layout_mode = 2
+min_value = 100.0
+max_value = 500.0
+step = 10.0
+value = 300.0
+
+[node name="TextLabel" type="Label" parent="QTEPanel/VBox"]
+layout_mode = 2
+text = "表示テキスト:"
+
+[node name="TextInput" type="LineEdit" parent="QTEPanel/VBox"]
+layout_mode = 2
+placeholder_text = "タップ!"
+
+[node name="TestButton" type="Button" parent="QTEPanel/VBox"]
+layout_mode = 2
+text = "Test Run"
+
+[node name="CopyButton" type="Button" parent="QTEPanel/VBox"]
+layout_mode = 2
+text = "JSONコピー"

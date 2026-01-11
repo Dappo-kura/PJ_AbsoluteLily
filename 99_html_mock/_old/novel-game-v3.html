@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>都市伝説JK百合ホラー v3.3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+        }
+        .character-container {
+            position: absolute;
+            bottom: 100;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70vw;
+            max-width: 1000px;
+            height: 200vh;
+            overflow: hidden;
+            z-index: 32;
+            pointer-events: none;
+        }
+        .character-image {
+            width: 100%;
+            height: 120%;
+            object-fit: cover;
+            object-position: center 35%;
+        }
+        .dialog-box {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 84%;
+            max-width: 1200px;
+            height: 230px;
+            background: rgba(5, 8, 15, 0.92);
+            border: 1.5px solid #1f2937;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.6);
+            border-radius: 12px 12px 0 0;
+            clip-path: polygon(2% 0, 98% 0, 100% 14%, 100% 100%, 0 100%, 0 14%);
+            padding: 2rem 2.5rem;
+            overflow: hidden;
+            z-index: 40;
+        }
+        /* removed gradient overlay */
+        .dialog-name {
+            display: inline-flex; align-items: center; gap: 10px;
+            color: #a7f3d0; font-size: 1.125rem; font-weight: 800; letter-spacing: .02em;
+            text-shadow: 0 0 8px rgba(16,185,129,.25);
+            margin-bottom: 0.75rem;
+        }
+        .name-diamond { width: 14px; height: 14px; transform: rotate(45deg); background: #10b981; border: 2px solid #34d399; border-radius: 2px; box-shadow: 0 0 8px rgba(16,185,129,.4); }
+        @keyframes smokeDisappear {
+            0% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.95) translateY(-10px);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.8) translateY(-30px);
+                filter: blur(10px);
+            }
+        }
+        .smoke-out {
+            animation: smokeDisappear 0.8s ease-out forwards;
+        }
+        .red-overlay {
+            animation: redFlash 2s ease-in-out;
+        }
+        @keyframes redFlash {
+            0%, 100% { background-color: rgba(139, 0, 0, 0.3); }
+            50% { background-color: rgba(220, 38, 38, 0.8); }
+        }
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+            }
+            40% {
+                transform: translate(-2px, -2px);
+            }
+            60% {
+                transform: translate(2px, 2px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+        @keyframes glitch-scan {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 100% 100%;
+            }
+        }
+        .glitch-effect {
+            position: relative;
+        }
+        .glitch-effect::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 255, 0, 0.03) 0px,
+                rgba(0, 255, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            animation: glitch-scan 0.3s linear infinite;
+            pointer-events: none;
+            z-index: 20;
+        }
+        .glitch-effect::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                linear-gradient(90deg, rgba(255,0,0,0.1) 0%, transparent 10%, transparent 90%, rgba(0,255,255,0.1) 100%);
+            animation: glitch 0.3s infinite;
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0.6;
+        }
+        .dialog-text {
+            line-height: 1.1;
+            white-space: pre-wrap;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        .flowchart-node {
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .flowchart-node:hover {
+            transform: scale(1.05);
+        }
+        .flowchart-preview {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #9333ea;
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+        }
+        .flowchart-preview.show {
+            opacity: 1;
+        }
+        .flowchart-preview img {
+            width: 200px;
+            height: auto;
+            display: block;
+            border-radius: 4px;
+        }
+        .flowchart-line {
+            stroke: #4b5563;
+            stroke-width: 2;
+        }
+        .flowchart-line.visited {
+            stroke: #9333ea;
+            stroke-width: 3;
+        }
+        /* VN frame UI */
+        .ui-topbar, .ui-bottombar {
+            position: absolute; left: 0; right: 0; height: 64px;
+            background: #05080f;
+            background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+            background-size: 8px 8px;
+            opacity: .9; pointer-events: none; z-index: 8;
+        }
+        .ui-topbar { top: 0; border-bottom: 1px solid #1f2937; }
+        .ui-bottombar { bottom: 0; border-top: 1px solid #1f2937; }
+        .ui-icons {
+            position: absolute; top: 12px; right: 12px;
+            display: flex; gap: 12px; pointer-events: auto;
+        }
+        .icon-diamond {
+            width: 44px; height: 44px; transform: rotate(45deg);
+            background: linear-gradient(180deg,#10b981,#059669);
+            border: 2px solid #34d399; border-radius: 8px;
+            box-shadow: 0 0 12px rgba(16,185,129,.5);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        .icon-diamond span { transform: rotate(-45deg); color: #001b14; font-size: 20px; }
+        .icon-diamond:hover { filter: brightness(1.1); }
+        .cg-frame {
+            position: absolute; inset: 80px 48px; pointer-events: none; z-index: 6;
+        }
+        .cg-frame::before {
+            content: ''; position: absolute; inset: 0;
+            border: 2px solid rgba(255,255,255,.08); border-radius: 12px;
+            box-shadow: 0 0 24px rgba(0,0,0,.6);
+        }
+        .cg-frame::after {
+            content: ''; position: absolute; inset: 0;
+            clip-path: polygon(3% 0, 97% 0, 100% 7%, 100% 93%, 97% 100%, 3% 100%, 0 93%, 0 7%);
+            border: 0; border-radius: 14px;
+        }
+        .cg-frame .cg-inner {
+            position: absolute; inset: 8px; border-radius: 12px; overflow: hidden;
+            background-size: cover; background-position: center; filter: none;
+            clip-path: polygon(3% 0, 97% 0, 100% 7%, 100% 93%, 97% 100%, 3% 100%, 0 93%, 0 7%);
+        }
+        /* QTE button precise hit area */
+        .qte-button {
+            -webkit-clip-path: circle(var(--r,70px) at 50% 50%);
+            clip-path: circle(var(--r,70px) at 50% 50%);
+        }
+        /* Title particles */
+        .title-particles {
+            position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 5;
+        }
+        .title-particles .particle {
+            position: absolute; bottom: -20px; width: var(--s,4px); height: var(--s,4px);
+            background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 60%);
+            border-radius: 50%; box-shadow: 0 0 12px rgba(147,51,234,.35);
+            filter: blur(.2px);
+            animation: title-rise var(--d,12s) linear infinite; animation-delay: var(--delay,0s);
+            opacity: var(--o,.75); transform: translateX(0) scale(var(--scale,1));
+        }
+        @keyframes title-rise {
+            0% { transform: translate(0, 0) scale(var(--scale,1)); opacity: 0; }
+            10% { opacity: var(--o,.8); }
+            100% { transform: translate(var(--drift,40px), -110vh) scale(var(--scale,1)); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        console.log("=== 都市伝説JK百合ホラー 最新版 起動 ===");
+        console.log("バージョン: 2025-01-08 v3.3 エンディング画像修正&フローチャートプレビュー実装版");
+        
+        const IMAGES = {
+            title: 'title.png',
+            titleTrue: 'title-true.png',
+            mai: 'mai-hinata.png',
+            yui: 'yui-shitsuki.png',
+            slitMouthWoman: 'Slit-MouthWoman.png',
+            classroomEvening: 'classroom-evening.png',
+            shadowSMW: 'shadow_Slit-MouthWoman.png',
+            eventSMW001: 'event-smw001.png',
+            hallway01: 'school hallway01.png',
+            hallway02: 'school hallway02.png',
+            statusMai: 'status_mai-hinata.gif',
+            statusYui: 'status_yui-shitsuki.gif',
+            endingCorruption: 'SMDend.png',
+            endingTrue: 'trueend.png'
+        };
+
+        const AUDIO = {
+            title: 'title.mp3',
+            ingame: 'ingame_peace.mp3',
+            titleTrue: 'title-true.mp3'
+        };
+
+        let bgmTitle = null;
+        let bgmIngame = null;
+        let bgmTitleTrue = null;
+        let currentBGM = null;
+        let fadeInterval = null;
+        const TARGET_VOLUME = 0.25;
+        const FADE_DURATION = 2000;
+        const FADE_STEPS = 20;
+
+        let gameState = {
+            screen: 'title',
+            currentSceneId: 'scene1',
+            textDisplay: '',
+            textIndex: 0,
+            isTextComplete: false,
+            history: [],
+            qteActive: false,
+            qteChoices: [],
+            showMenu: false,
+            showBacklog: false,
+            isMuted: false,
+            showChoices: false,
+            backlog: [],
+            _backlogLoggedForScene: false,
+            settings: {
+                textSpeedMs: 50,
+                auto: false,
+                autoDelayMs: 800,
+                skipRead: true,
+                skipping: false,
+                bgmVolume: 0.25,
+                sfxVolume: 0.7,
+                vibration: false
+            },
+            parameters: {
+                intimacy: 50,
+                fear: 50
+            },
+            parametersHidden: {
+                courage: 0,
+                curiosity: 0
+            },
+            showSettings: false,
+            language: (localStorage.getItem('novelgame_lang') || 'ja'),
+            strings: {},
+            entitlements: {
+                removeAds: false,
+                hintPack: false,
+                qteAssist: false,
+                album: false,
+                episodes: [],
+                subActiveUntil: null
+            },
+            flowchartHintsRevealed: {},
+            isMobile: /Mobi|Android/i.test(navigator.userAgent || '')
+        };
+
+        let textTimer = null;
+        let qteChoiceTimers = [];
+
+        function loadEndingData() {
+            const saved = localStorage.getItem('novelgame_endings');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return {
+                escape: false,
+                corruption: false,
+                taken: false,
+                true: false
+            };
+        }
+
+        function saveEndingData(endingId) {
+            const endings = loadEndingData();
+            endings[endingId] = true;
+            localStorage.setItem('novelgame_endings', JSON.stringify(endings));
+        }
+
+        function loadVisitedScenes() {
+            const saved = localStorage.getItem('novelgame_visited');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return [];
+        }
+
+        function saveVisitedScene(sceneId) {
+            const visited = loadVisitedScenes();
+            if (!visited.includes(sceneId)) {
+                visited.push(sceneId);
+                localStorage.setItem('novelgame_visited', JSON.stringify(visited));
+            }
+        }
+
+        const FALLBACK_SCENARIO = [
+            {
+                id: 'scene1',
+                background: IMAGES.classroomEvening,
+                character: { name: '日向 舞', image: IMAGES.mai },
+                text: 'ここは私立桜ヶ丘高校。\n放課後の誰もいない教室で、私は一人残っていた。',
+                nextScene: 'scene2',
+                thumbnail: IMAGES.classroomEvening
+            },
+            {
+                id: 'scene2',
+                background: IMAGES.classroomEvening,
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '「あ、まだいたんだ」\n後ろから声をかけられて、振り向くと結衣ちゃんが立っていた。',
+                nextScene: 'choice1',
+                thumbnail: IMAGES.classroomEvening
+            },
+            {
+                id: 'choice1',
+                type: 'choice',
+                background: IMAGES.classroomEvening,
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '「一緒に帰らない?」',
+                choices: [
+                    { text: '一緒に帰る', nextScene: 'scene3', parameters: { intimacy: 15, fear: 0 } },
+                    { text: '用事があると断る', nextScene: 'scene4', parameters: { intimacy: -10, fear: 5 } }
+                ],
+                thumbnail: IMAGES.yui
+            },
+            {
+                id: 'scene3',
+                background: 'https://placehold.co/1920x1080/34495e/ffffff?text=Evening+Street',
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '夕暮れの校門を二人で出る。\n「ねえ舞ちゃん、知ってる? 最近この辺りで変な噂があるんだって」',
+                nextScene: 'scene3b',
+                thumbnail: 'https://placehold.co/1920x1080/34495e/ffffff?text=Evening+Street'
+            },
+            {
+                id: 'scene3b',
+                background: 'https://placehold.co/1920x1080/34495e/ffffff?text=Evening+Street',
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '「口裂け女が出るって...」\n結衣ちゃんの声が少し震えている。',
+                nextScene: 'scene5',
+                thumbnail: 'https://placehold.co/1920x1080/34495e/ffffff?text=Evening+Street'
+            },
+            {
+                id: 'scene4',
+                background: IMAGES.classroomEvening,
+                text: '「そっか...じゃあまたね」\n寂しそうな表情で結衣ちゃんは去っていった。',
+                nextScene: 'scene5',
+                thumbnail: IMAGES.classroomEvening
+            },
+            {
+                id: 'scene5',
+                background: IMAGES.hallway01,
+                text: '一人で廊下を歩いていると、突然電気が消えた。\n誰かの足音が近づいてくる...\n\n冷たい空気が背筋を這う。',
+                nextScene: 'scene5b',
+                thumbnail: IMAGES.hallway01
+            },
+            {
+                id: 'scene5b',
+                background: IMAGES.hallway02,
+                text: '暗闇の中に、不気味な影が見える。\n\nマスクをした女性のシルエット...\nゆっくりと、こちらに近づいてくる。',
+                nextScene: 'scene5c',
+                thumbnail: IMAGES.hallway02
+            },
+            {
+                id: 'scene5c',
+                background: IMAGES.hallway02,
+                character: { name: '???', image: IMAGES.slitMouthWoman },
+                text: '「ねぇ...私、キレイ...?」\n\n低く、冷たい声が耳元で囁く。',
+                nextScene: 'qte1',
+                glitch: true,
+                thumbnail: IMAGES.slitMouthWoman
+            },
+            {
+                id: 'qte1',
+                type: 'qte-choice',
+                background: IMAGES.eventSMW001,
+                text: '何かが迫ってくる!',
+                choices: [
+                    { text: '逃げる', time: 5000, nextScene: 'ending_escape', parameters: { intimacy: 0, fear: 20 } },
+                    { text: '体当たりする', time: 3500, nextScene: 'ending_corruption', parameters: { intimacy: 0, fear: -10 } },
+                    { text: 'かばう', time: 4000, nextScene: 'ending_taken', parameters: { intimacy: 20, fear: 10 } }
+                ],
+                timeoutScene: 'scene7',
+                glitch: true,
+                thumbnail: IMAGES.eventSMW001
+            },
+            {
+                id: 'ending_escape',
+                endingId: 'escape',
+                background: IMAGES.endingTrue,
+                character: { name: '日向 舞', image: IMAGES.mai },
+                text: '必死で走って逃げ切った。\n\n振り返ると、口裂け女の姿は見えない。\n学校を出て、人通りの多い道に出ることができた。\n\nでも...結衣ちゃんは大丈夫だろうか...\n\n【NORMAL END - 逃走】',
+                isEnding: true,
+                thumbnail: IMAGES.endingTrue
+            },
+            {
+                id: 'ending_corruption',
+                endingId: 'corruption',
+                background: IMAGES.endingCorruption,
+                character: { name: '口裂け女', image: IMAGES.slitMouthWoman },
+                text: '体当たりで口裂け女を押し倒した。\n\n「あなた...強いのね」\n\n口裂け女は笑った。\nその瞬間、不思議な感覚が体を包む。\n\n「私の仲間になりなさい...」\n\n気づけば、私も彼女と同じ存在になっていた。\n\n【BAD END - 怪異堕ち】',
+                isEnding: true,
+                glitch: true,
+                thumbnail: IMAGES.endingCorruption
+            },
+            {
+                id: 'ending_taken',
+                endingId: 'taken',
+                background: IMAGES.endingTrue,
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '「待って! 舞ちゃんには手を出さないで!」\n\n結衣ちゃんが私の前に飛び出した。\n\n「私が...代わりに行くから」\n\n「結衣ちゃん、ダメ!」\n\n口裂け女は結衣ちゃんの手を取り、闇の中へ消えていった。\n\n私は...何もできなかった。\n\n【BAD END - 連れ去られた】',
+                isEnding: true,
+                thumbnail: IMAGES.endingTrue
+            },
+            {
+                id: 'scene7',
+                background: IMAGES.endingTrue,
+                backgroundRed: true,
+                character: { name: '口裂け女', image: IMAGES.slitMouthWoman },
+                text: '動けなかった...\n\n「キレイにしてあげる...」\n\n冷たい何かが私の頬に触れる。\n視界が真っ赤に染まっていく。\n\n【BAD END - 捕獲】',
+                endingId: 'corruption',
+                isEnding: true,
+                glitch: true,
+                thumbnail: IMAGES.endingTrue
+            },
+            {
+                id: 'check_true_ending',
+                type: 'check',
+                nextSceneHigh: 'ending_true',
+                nextSceneLow: 'qte1'
+            },
+            {
+                id: 'ending_true',
+                endingId: 'true',
+                background: IMAGES.endingTrue,
+                character: { name: '四月 結衣', image: IMAGES.yui },
+                text: '「舞ちゃん、怖がらないで!」\n\n結衣ちゃんが私の手を強く握る。\n\n「一緒なら、何も怖くないよ」\n\nその言葉に、心が温かくなる。\n二人の絆が、怪異を退ける力となった。\n\n口裂け女は静かに消えていく...\n\n「ありがとう、結衣ちゃん」\n「うん...これからもずっと一緒だよ」\n\n二人は手を繋いだまま、夕暮れの道を歩いていく。\n\n【TRUE END - 絆の力】',
+                isEnding: true,
+                thumbnail: IMAGES.endingTrue
+            }
+        ];
+
+        let SCENARIO = FALLBACK_SCENARIO;
+
+        async function loadScenario() {
+            try {
+                const res = await fetch('scenario.json', { cache: 'no-cache' });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data)) {
+                        SCENARIO = data;
+                        console.log('SCENARIO loaded from scenario.json', SCENARIO.length);
+                    } else if (Array.isArray(data?.scenes)) {
+                        SCENARIO = data.scenes;
+                        console.log('SCENARIO loaded from scenario.json (scenes)', SCENARIO.length);
+                    }
+                }
+            } catch (e) {
+                console.warn('Failed to load scenario.json, using fallback', e);
+            }
+        }
+
+        async function loadStrings() {
+            const langs = ['ja', 'en'];
+            gameState.strings = {};
+            for (const lang of langs) {
+                try {
+                    const res = await fetch(`strings/${lang}.json`, { cache: 'no-cache' });
+                    if (res.ok) {
+                        const table = await res.json();
+                        gameState.strings[lang] = table || {};
+                    }
+                } catch (e) {
+                    console.warn(`Failed to load strings for ${lang}`, e);
+                    gameState.strings[lang] = gameState.strings[lang] || {};
+                }
+            }
+        }
+
+        function initBGM() {
+            bgmTitle = new Audio(AUDIO.title);
+            bgmTitle.loop = true;
+            bgmTitle.volume = 0;
+
+            bgmIngame = new Audio(AUDIO.ingame);
+            bgmIngame.loop = true;
+            bgmIngame.volume = 0;
+
+            bgmTitleTrue = new Audio(AUDIO.titleTrue);
+            bgmTitleTrue.loop = true;
+            bgmTitleTrue.volume = 0;
+            
+            console.log("BGM初期化完了 - 目標音量: 25%");
+        }
+
+        function playBGM(type) {
+            if (fadeInterval) {
+                clearInterval(fadeInterval);
+                fadeInterval = null;
+            }
+
+            if (currentBGM) {
+                currentBGM.pause();
+                currentBGM.currentTime = 0;
+                currentBGM.volume = 0;
+            }
+
+            if (type === 'title') {
+                const endings = loadEndingData();
+                const allCollected = endings.escape && endings.corruption && endings.taken && endings.true;
+                currentBGM = allCollected ? bgmTitleTrue : bgmTitle;
+            } else if (type === 'ingame') {
+                currentBGM = bgmIngame;
+            }
+
+            if (currentBGM && !gameState.isMuted) {
+                currentBGM.volume = 0;
+                currentBGM.play().catch(err => console.log('BGM再生エラー:', err));
+                
+                let currentStep = 0;
+                const target = getTargetVolume();
+                const volumeStep = target / FADE_STEPS;
+                const timeStep = FADE_DURATION / FADE_STEPS;
+                
+                fadeInterval = setInterval(() => {
+                    currentStep++;
+                    if (currentStep >= FADE_STEPS) {
+                        currentBGM.volume = target;
+                        clearInterval(fadeInterval);
+                        fadeInterval = null;
+                    } else {
+                        currentBGM.volume = volumeStep * currentStep;
+                    }
+                }, timeStep);
+            }
+        }
+
+        function toggleMute() {
+            gameState.isMuted = !gameState.isMuted;
+            
+            if (gameState.isMuted) {
+                if (fadeInterval) {
+                    clearInterval(fadeInterval);
+                    fadeInterval = null;
+                }
+                if (currentBGM) currentBGM.pause();
+            } else {
+                if (currentBGM) {
+                    currentBGM.volume = 0;
+                    currentBGM.play().catch(err => console.log('BGM再生エラー:', err));
+                    
+                    let currentStep = 0;
+                    const target = getTargetVolume();
+                    const volumeStep = target / FADE_STEPS;
+                    const timeStep = FADE_DURATION / FADE_STEPS;
+                    
+                    fadeInterval = setInterval(() => {
+                        currentStep++;
+                        if (currentStep >= FADE_STEPS) {
+                            currentBGM.volume = target;
+                            clearInterval(fadeInterval);
+                            fadeInterval = null;
+                        } else {
+                            currentBGM.volume = volumeStep * currentStep;
+                        }
+                    }, timeStep);
+                }
+            }
+            
+            render();
+        }
+
+        function getCurrentScene() {
+            return SCENARIO.find(s => s.id === gameState.currentSceneId);
+        }
+
+        function applyParameters(params) {
+            if (params) {
+                gameState.parameters.intimacy = Math.max(0, Math.min(100, gameState.parameters.intimacy + (params.intimacy || 0)));
+                gameState.parameters.fear = Math.max(0, Math.min(100, gameState.parameters.fear + (params.fear || 0)));
+                if (typeof params.courage === 'number') {
+                    gameState.parametersHidden.courage = Math.max(0, Math.min(100, gameState.parametersHidden.courage + params.courage));
+                }
+                if (typeof params.curiosity === 'number') {
+                    gameState.parametersHidden.curiosity = Math.max(0, Math.min(100, gameState.parametersHidden.curiosity + params.curiosity));
+                }
+            }
+        }
+
+        function checkTrueEndingCondition() {
+            return gameState.parameters.intimacy >= 70 && gameState.parameters.fear <= 40;
+        }
+
+        function renderTitle() {
+            const endings = loadEndingData();
+            const endingCount = Object.values(endings).filter(v => v).length;
+            const totalEndings = 4;
+            const completionRate = Math.round((endingCount / totalEndings) * 100);
+            
+            const allCollected = endingCount === totalEndings;
+            const titleImage = allCollected ? IMAGES.titleTrue : IMAGES.title;
+            
+            return `
+                <div style="position: relative; width: 100%; height: 100vh; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; background-size: cover; background-position: center; background-image: url('${titleImage}');"></div>
+                    <div class="title-particles">
+                        ${Array.from({length: 30}).map((_,i)=>`<i class="particle" style="left:${Math.random()*100}%; --s:${2+Math.random()*5}px; --o:${0.4+Math.random()*0.5}; --scale:${0.8+Math.random()*0.6}; --d:${10+Math.random()*8}s; --delay:${-Math.random()*8}s; --drift:${-40+Math.random()*80}px;"></i>`).join('')}
+                    </div>
+                    
+                    <div style="position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center;">
+                        <h1 style="font-size: 4rem; font-weight: bold; color: white; margin-bottom: 1rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 20px rgba(147,51,234,0.5);">
+                            都市伝説JK百合ホラー
+                        </h1>
+                        
+                        <div style="color: white; font-size: 1.125rem; font-weight: 600; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                            エンディング回収率: ${completionRate}% (${endingCount}/${totalEndings})
+                        </div>
+                    </div>
+                    
+                    <div style="position: absolute; bottom: 3rem; left: 3rem; z-index: 10; display: grid; grid-template-columns: repeat(2, minmax(220px, auto)); gap: 0.75rem 1rem; align-items: end;">
+                        <button onclick="startGame()" style="width: 100%; padding: 0.875rem 2.5rem; background: rgba(147, 51, 234, 0.9); color: white; font-size: 1.125rem; font-weight: bold; border-radius: 0.5rem; border: 2px solid rgb(192, 132, 252); cursor: pointer; transition: all 0.3s; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); backdrop-filter: blur(4px);" onmouseover="this.style.background='rgba(126, 34, 206, 1)'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(147, 51, 234, 0.9)'; this.style.transform='scale(1)';">
+                            ゲームスタート
+                        </button>
+                        <button onclick="loadGame()" style="width: 100%; padding: 0.875rem 2.5rem; background: rgba(37, 99, 235, 0.9); color: white; font-size: 1.125rem; font-weight: bold; border-radius: 0.5rem; border: 2px solid rgb(96, 165, 250); cursor: pointer; transition: all 0.3s; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); backdrop-filter: blur(4px);" onmouseover="this.style.background='rgba(29, 78, 216, 1)'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(37, 99, 235, 0.9)'; this.style.transform='scale(1)';">
+                            ロード
+                        </button>
+                        <button onclick="openShop()" style="width: 100%; padding: 0.875rem 2.5rem; background: rgba(234, 88, 12, 0.9); color: white; font-size: 1.125rem; font-weight: bold; border-radius: 0.5rem; border: 2px solid rgb(251, 146, 60); cursor: pointer; transition: all 0.3s; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); backdrop-filter: blur(4px);" onmouseover="this.style.background='rgba(194, 65, 12, 1)'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(234, 88, 12, 0.9)'; this.style.transform='scale(1)';">
+                            ショップ
+                        </button>
+                        <button onclick="showSlots()" style="width: 100%; padding: 0.875rem 2.5rem; background: rgba(75, 85, 99, 0.9); color: white; font-size: 1.125rem; font-weight: bold; border-radius: 0.5rem; border: 2px solid rgb(156, 163, 175); cursor: pointer; transition: all 0.3s; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); backdrop-filter: blur(4px);" onmouseover="this.style.background='rgba(55, 65, 81, 1)'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(75, 85, 99, 0.9)'; this.style.transform='scale(1)';">
+                            スロット管理
+                        </button>
+                        ${gameState.entitlements.album ? `
+                        <button onclick="openGallery()" style="width: 100%; padding: 0.875rem 2.5rem; background: rgba(16, 185, 129, 0.9); color: white; font-size: 1.125rem; font-weight: bold; border-radius: 0.5rem; border: 2px solid rgb(52, 211, 153); cursor: pointer; transition: all 0.3s; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); backdrop-filter: blur(4px);" onmouseover="this.style.background='rgba(5, 150, 105, 1)'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(16, 185, 129, 0.9)'; this.style.transform='scale(1)';">
+                            ギャラリー
+                        </button>
+                        ` : ''}
+                        <button onclick="showFlowchart()" style="width: 100%; padding: 0.875rem 2.5rem; background: rgba(22, 163, 74, 0.9); color: white; font-size: 1.125rem; font-weight: bold; border-radius: 0.5rem; border: 2px solid rgb(74, 222, 128); cursor: pointer; transition: all 0.3s; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); backdrop-filter: blur(4px);" onmouseover="this.style.background='rgba(21, 128, 61, 1)'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(22, 163, 74, 0.9)'; this.style.transform='scale(1)';">
+                            フローチャート
+                        </button>
+                    </div>
+
+                    <div style="position: absolute; bottom: 1rem; right: 1rem; color: white; font-size: 0.75rem; z-index: 10; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+                        © 2025 Urban Legend JK Yuri Horror v3.3
+                    </div>
+
+                    <div style="position: absolute; top: 1rem; right: 1rem; z-index: 10;">
+                        <button onclick="toggleMute();" style="padding: 0.75rem; background: rgba(31, 41, 55, 0.8); border-radius: 50%; color: white; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(4px);" onmouseover="this.style.background='rgba(55, 65, 81, 1)';" onmouseout="this.style.background='rgba(31, 41, 55, 0.8)';">
+                            ${gameState.isMuted ? '🔇' : '🔊'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFlowchart() {
+            const visited = loadVisitedScenes();
+            const endings = loadEndingData();
+            
+            const nodes = [
+                { id: 'scene1', x: 400, y: 50, name: '教室', type: 'scene' },
+                { id: 'scene2', x: 400, y: 120, name: '結衣登場', type: 'scene' },
+                { id: 'choice1', x: 400, y: 190, name: '選択：帰宅', type: 'choice' },
+                { id: 'scene3', x: 250, y: 260, name: '一緒に帰る', type: 'scene' },
+                { id: 'scene4', x: 550, y: 260, name: '断る', type: 'scene' },
+                { id: 'scene5', x: 400, y: 330, name: '廊下', type: 'scene' },
+                { id: 'scene5b', x: 400, y: 400, name: '影発見', type: 'scene' },
+                { id: 'scene5c', x: 400, y: 470, name: '口裂け女', type: 'scene' },
+                { id: 'qte1', x: 400, y: 540, name: 'QTE選択', type: 'qte' },
+                { id: 'ending_escape', x: 150, y: 610, name: 'NORMAL END', type: 'ending', endingId: 'escape' },
+                { id: 'ending_corruption', x: 400, y: 610, name: 'BAD END①', type: 'ending', endingId: 'corruption' },
+                { id: 'ending_taken', x: 550, y: 610, name: 'BAD END②', type: 'ending', endingId: 'taken' },
+                { id: 'ending_true', x: 250, y: 680, name: 'TRUE END', type: 'ending', endingId: 'true' }
+            ];
+            
+            const connections = [
+                ['scene1', 'scene2'],
+                ['scene2', 'choice1'],
+                ['choice1', 'scene3'],
+                ['choice1', 'scene4'],
+                ['scene3', 'scene5'],
+                ['scene4', 'scene5'],
+                ['scene5', 'scene5b'],
+                ['scene5b', 'scene5c'],
+                ['scene5c', 'qte1'],
+                ['qte1', 'ending_escape'],
+                ['qte1', 'ending_corruption'],
+                ['qte1', 'ending_taken'],
+                ['qte1', 'ending_true']
+            ];
+            
+            const linesHTML = connections.map(([from, to]) => {
+                const fromNode = nodes.find(n => n.id === from);
+                const toNode = nodes.find(n => n.id === to);
+                const isVisited = visited.includes(from) && visited.includes(to);
+                return `<line x1="${fromNode.x}" y1="${fromNode.y}" x2="${toNode.x}" y2="${toNode.y}" class="flowchart-line ${isVisited ? 'visited' : ''}"/>`;
+            }).join('');
+            
+            const nodesHTML = nodes.map(node => {
+                const isVisited = visited.includes(node.id);
+                const isEnding = node.type === 'ending';
+                const endingCollected = isEnding ? endings[node.endingId] : false;
+                const sceneData = SCENARIO.find(s => s.id === node.id);
+                const hasThumbnail = sceneData && sceneData.thumbnail && isVisited;
+                
+                let bgColor = '#4b5563';
+                let borderColor = '#6b7280';
+                
+                if (isEnding) {
+                    if (endingCollected) {
+                        bgColor = node.endingId === 'true' ? '#9333ea' : (node.endingId === 'escape' ? '#16a34a' : '#dc2626');
+                        borderColor = node.endingId === 'true' ? '#c084fc' : (node.endingId === 'escape' ? '#22c55e' : '#ef4444');
+                    } else {
+                        bgColor = '#1f2937';
+                        borderColor = '#374151';
+                    }
+                } else if (isVisited) {
+                    bgColor = '#7e22ce';
+                    borderColor = '#a855f7';
+                }
+                
+                const displayName = (isEnding && !endingCollected) ? '???' : node.name;
+                const thumbnailUrl = hasThumbnail ? sceneData.thumbnail : '';
+                const canShowHint = !isEnding && !isVisited && (gameState.entitlements.hintPack || gameState.flowchartHintsRevealed[node.id]);
+                const hintBtn = (!isEnding && !isVisited) ? `<g>
+                    <rect x="${node.x + 68}" y="${node.y - 18}" width="40" height="16" rx="4" fill="#2563eb" stroke="#93c5fd" stroke-width="1" onclick="revealHint('${node.id}')"/>
+                    <text x="${node.x + 88}" y="${node.y - 6}" text-anchor="middle" fill="white" font-size="10" font-weight="bold" onclick="revealHint('${node.id}')">ヒント</text>
+                </g>` : '';
+                const hintText = canShowHint ? (sceneData?.hint || '') : '';
+                
+                const clickAttr = isVisited ? `onclick="gameState.screen='playing'; gameState.currentSceneId='${node.id}'; gameState.history=[]; gameState.showChoices=false; render(); startTextAnimation();"` : '';
+                return `
+                    <g class="flowchart-node" ${clickAttr} onmouseenter="showPreview(event, '${thumbnailUrl}')" onmouseleave="hidePreview()">
+                        <rect x="${node.x - 60}" y="${node.y - 20}" width="120" height="40" rx="8" fill="${bgColor}" stroke="${borderColor}" stroke-width="2"/>
+                        <text x="${node.x}" y="${node.y + 5}" text-anchor="middle" fill="white" font-size="12" font-weight="bold" style="pointer-events: none;">${displayName}</text>
+                        ${hintBtn}
+                        ${hintText ? `<text x="${node.x}" y="${node.y + 22}" text-anchor="middle" fill="#93c5fd" font-size="10">${hintText}</text>` : ''}
+                    </g>
+                `;
+            }).join('');
+            
+            return `
+                <div class="relative w-full h-screen overflow-hidden bg-gray-900">
+                    <div class="absolute inset-0 flex flex-col items-center">
+                        <div class="w-full bg-gray-800 p-4 flex justify-between items-center">
+                            <h2 class="text-white text-2xl font-bold">フローチャート</h2>
+                            <button onclick="gameState.screen='title'; render();" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+                                タイトルに戻る
+                            </button>
+                        </div>
+                        
+                        <div class="flex-1 overflow-auto p-8">
+                            <svg width="800" height="800" style="min-width: 800px; min-height: 800px;">
+                                ${linesHTML}
+                                ${nodesHTML}
+                            </svg>
+                        </div>
+                        
+                        <div class="w-full bg-gray-800 p-4 text-white text-center">
+                            <div class="flex justify-center gap-8">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-purple-700 rounded"></div>
+                                    <span>到達済み</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-gray-600 rounded"></div>
+                                    <span>未到達</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-green-600 rounded"></div>
+                                    <span>NORMAL回収</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-purple-600 rounded"></div>
+                                    <span>TRUE回収</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="flowchart-preview" class="flowchart-preview">
+                        <img id="flowchart-preview-img" src="" alt="Preview">
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGame() {
+            const scene = getCurrentScene();
+            if (!scene) return '';
+            
+            console.log('現在のシーン:', scene.id, 'isEnding:', scene.isEnding, 'background:', scene.background);
+
+            let characterHTML = '';
+            if (scene.character && scene.character.image && !scene.isEnding) {
+                characterHTML = `
+                    <div class="character-container">
+                        <img src="${scene.character.image}" alt="${scene.character.name}" class="character-image">
+                    </div>
+                `;
+            }
+
+            const maiStatusHTML = `
+                <div style="position: absolute; left: 20px; bottom: 300px; z-index: 25; display: flex; flex-direction: column; align-items: center;">
+                    <img src="${IMAGES.statusMai}" alt="舞" style="width: 200px; height: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    <div style="margin-top: 10px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 8px; border: 2px solid #ef4444;">
+                        <div style="color: #ef4444; font-size: 1rem; font-weight: bold; text-align: center; text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);">
+                            恐怖度: ${gameState.parameters.fear}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const yuiStatusHTML = `
+                <div style="position: absolute; right: 20px; bottom: 300px; z-index: 25; display: flex; flex-direction: column; align-items: center;">
+                    <img src="${IMAGES.statusYui}" alt="結衣" style="width: 200px; height: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    <div style="margin-top: 10px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 8px; border: 2px solid #ec4899;">
+                        <div style="color: #ec4899; font-size: 1rem; font-weight: bold; text-align: center; text-shadow: 0 0 10px rgba(236, 72, 153, 0.8);">
+                            親密度: ${gameState.parameters.intimacy}
+                        </div>
+                        <div style="color: #ef4444; font-size: 1rem; font-weight: bold; text-align: center; margin-top: 4px; text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);">
+                            恐怖度: ${gameState.parameters.fear}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            let qteHTML = '';
+            if (gameState.qteActive && scene.type === 'qte-choice') {
+                const assist = gameState.entitlements?.qteAssist;
+                const bonusWindow = assist ? 1.2 : 1.0; // 判定猶予+20%
+                const choicesHTML = gameState.qteChoices.map((choice, idx) => {
+                    if (choice.disappeared) return '';
+                    
+                    const adjTime = choice.time * bonusWindow;
+                    const progress = (choice.timeLeft / adjTime) * 100;
+                    const circumference = 2 * Math.PI * 70;
+                    
+                    return `
+                        <div style="display: inline-block; margin: 0 20px; position: relative;">
+                            <button onclick="handleQteButtonClick(event, ${idx});" class="qte-button ${choice.timeLeft <= 0 ? 'smoke-out' : ''}" style="--r:70px; position: relative; width: 160px; height: 160px; border-radius: 50%; background: linear-gradient(to bottom right, #9333ea, #7e22ce); color: white; font-weight: bold; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 4px solid #c084fc; cursor: pointer; user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0;">
+                                <svg style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-90deg); pointer-events: none; z-index: 1;" width="160" height="160">
+                                    <circle cx="80" cy="80" r="70" fill="none" stroke="#444" stroke-width="6"/>
+                                    <circle cx="80" cy="80" r="70" fill="none" stroke="#ef4444" stroke-width="6" 
+                                        stroke-dasharray="${circumference}" 
+                                        stroke-dashoffset="${circumference * (1 - progress / 100)}"
+                                        style="transition: stroke-dashoffset 0.1s linear;"/>
+                                </svg>
+                                <div style="position: relative; z-index: 2; pointer-events: none;">
+                                    <div style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.25rem;">${choice.text}</div>
+                                    <div style="font-size: 0.875rem;">${(choice.timeLeft / 1000).toFixed(1)}秒</div>
+                                </div>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+                
+                qteHTML = `
+                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); z-index: 30;">
+                        <div style="font-size: 3rem; font-weight: bold; color: white; margin-bottom: 3rem; animation: pulse 0.5s ease-in-out infinite; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                            ${scene.text}
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 2rem;">
+                            ${choicesHTML}
+                        </div>
+                    </div>
+                `;
+            }
+
+            let dialogHTML = '';
+            let choiceHTML = '';
+            let endingButtonHTML = '';
+            
+            if (scene.type !== 'qte-choice') {
+                const cursor = !gameState.isTextComplete ? '<span style="animation: pulse 2s ease-in-out infinite;">▼</span>' : '';
+                
+                if (scene.type === 'choice') {
+                    if (!gameState.showChoices) {
+                        dialogHTML = `
+                            <div class="dialog-box">
+                                ${scene.character ? `<div class="dialog-name"><span class="name-diamond"></span><span>${scene.character.name}</span></div>` : ''}
+                                <div style="text-align: left;">
+                                    <div class="dialog-text" style="color: #e5e7eb; font-size: 1.1rem; white-space: pre-wrap;">${gameState.textDisplay}${cursor}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        choiceHTML = `
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 42; display: flex; flex-direction: column; gap: 1rem; min-width: 500px;">
+                                ${scene.choices.map((choice) => {
+                                    const locked = choice.lock && !evaluateChoiceLock(choice.lock);
+                                    const label = locked ? '？？？' : choice.text;
+                                    const disabledAttr = locked ? 'disabled' : '';
+                                    const hint = locked && choice.lock?.hint ? `<div style=\"font-size:0.85rem; color:#9ca3af; margin-top:4px;\">${choice.lock.hint}</div>` : '';
+                                    return `<div>
+                                        <button ${disabledAttr} onclick=\"event.stopPropagation(); ${locked ? '' : `handleChoice('${choice.nextScene}', ${JSON.stringify(choice.parameters).replace(/"/g, '&quot;')}, ${JSON.stringify(choice.text).replace(/"/g, '&quot;')})`}\" style=\"width: 100%; padding: 1.5rem; background: ${locked ? 'rgba(55,65,81,0.9)' : 'rgba(147, 51, 234, 0.9)'}; color: white; font-size: 1.5rem; font-weight: bold; border-radius: 0.75rem; border: 2px solid ${locked ? '#374151' : '#a855f7'}; cursor: ${locked ? 'not-allowed' : 'pointer'}; transition: all 0.3s; box-shadow: 0 8px 16px rgba(0,0,0,0.5); backdrop-filter: blur(8px);\" onmouseover=\"this.style.background='${locked ? 'rgba(55,65,81,1)' : 'rgba(126, 34, 206, 1)'}'; this.style.transform='scale(1.05)';\" onmouseout=\"this.style.background='${locked ? 'rgba(55,65,81,0.9)' : 'rgba(147, 51, 234, 0.9)'}'; this.style.transform='scale(1)';\">${label}</button>
+                                        ${hint}
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                        `;
+                        dialogHTML = '';
+                    }
+                } else {
+                    dialogHTML = `
+                        <div class="dialog-box">
+                            ${scene.character ? `<div class="dialog-name"><span class="name-diamond"></span><span>${scene.character.name}</span></div>` : ''}
+                            <div style="text-align: left;">
+                                <div class="dialog-text" style="color: #e5e7eb; font-size: 1.1rem; white-space: pre-wrap;">${gameState.textDisplay}${cursor}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    if (scene.isEnding && gameState.isTextComplete) {
+                        endingButtonHTML = `
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 35;">
+                                <button onclick="event.stopPropagation(); returnToTitle();" style="padding: 1.5rem 3rem; background: #9333ea; color: white; font-size: 1.5rem; font-weight: bold; border-radius: 0.75rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 16px rgba(147, 51, 234, 0.4); border: 2px solid #a855f7;" onmouseover="this.style.background='#7e22ce'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='#9333ea'; this.style.transform='scale(1)';">タイトルに戻る</button>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            const menuHTML = gameState.showMenu ? `
+                <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 40;">
+                    <div style="background: #1f2937; padding: 2rem; border-radius: 0.5rem; min-width: 300px;">
+                        <h2 style="color: white; font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem;">メニュー</h2>
+                        <button onclick="toggleMenu()" style="width: 100%; padding: 1rem; background: #9333ea; color: white; border-radius: 0.5rem; margin-bottom: 1rem; cursor: pointer;">
+                            ゲームに戻る
+                        </button>
+                        <button onclick="saveGame()" style="width: 100%; padding: 1rem; background: #2563eb; color: white; border-radius: 0.5rem; margin-bottom: 1rem; cursor: pointer;">
+                            セーブ
+                        </button>
+                        <button onclick="loadGame()" style="width: 100%; padding: 1rem; background: #16a34a; color: white; border-radius: 0.5rem; margin-bottom: 1rem; cursor: pointer;">
+                            ロード
+                        </button>
+                        <button onclick="returnToTitle()" style="width: 100%; padding: 1rem; background: #4b5563; color: white; border-radius: 0.5rem; cursor: pointer;">
+                            タイトルに戻る
+                        </button>
+                    </div>
+                </div>
+            ` : '';
+
+            return `
+                <div style="position: relative; width: 100%; height: 100vh; overflow: hidden; background: black;" class="${scene.glitch ? 'glitch-effect' : ''}" onclick="handleClick(event)">
+                    <div style="position: absolute; inset: 0; background-size: cover; background-position: center; background-repeat: no-repeat; transition: all 1s; background-image: url('${scene.background}'); filter: brightness(0.55) blur(2px);"></div>
+                    
+                    ${scene.backgroundRed ? '<div class="red-overlay" style="position: absolute; inset: 0;"></div>' : ''}
+                    <div class="ui-topbar">
+                        <div class="ui-icons">
+                            <button class="icon-diamond" onclick="toggleSettings(); event.stopPropagation();"><span>⚙️</span></button>
+                            <button class="icon-diamond" onclick="gameState.settings.skipping = !gameState.settings.skipping; render(); event.stopPropagation();"><span>⏩</span></button>
+                        </div>
+                    </div>
+                    <div class="cg-frame"><div class="cg-inner" style="background-image:url('${scene.background}');"></div></div>
+                    <div class="ui-bottombar"></div>
+                    
+                    ${dialogHTML}
+                    ${choiceHTML}
+                    ${qteHTML}
+                    ${characterHTML}
+                    ${maiStatusHTML}
+                    ${yuiStatusHTML}
+                    ${endingButtonHTML}
+                    
+                    <div style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 30;">
+                        <button onclick="toggleMute(); event.stopPropagation();" style="padding: 0.75rem; background: #1f2937; border-radius: 50%; color: white; cursor: pointer;">
+                            ${gameState.isMuted ? '🔇' : '🔊'}
+                        </button>
+                        <button onclick="saveGame(); event.stopPropagation();" style="padding: 0.75rem; background: #1f2937; border-radius: 50%; color: white; cursor: pointer;">
+                            💾
+                        </button>
+                        <button onclick="toggleBacklog(); event.stopPropagation();" style="padding: 0.75rem; background: #1f2937; border-radius: 50%; color: white; cursor: pointer;">
+                            📜
+                        </button>
+                        <button onclick="gameState.settings.auto = !gameState.settings.auto; render(); event.stopPropagation();" style="padding: 0.75rem; background: #1f2937; border-radius: 50%; color: white; cursor: pointer;">
+                            ${gameState.settings.auto ? '▶️' : '⏸️'}
+                        </button>
+                        <button onclick="gameState.settings.skipping = !gameState.settings.skipping; render(); event.stopPropagation();" style="padding: 0.75rem; background: #1f2937; border-radius: 50%; color: white; cursor: pointer;">
+                            ${gameState.settings.skipping ? '⏩' : '⏭️'}
+                        </button>
+                        <button onclick="toggleMenu(); event.stopPropagation();" style="padding: 0.75rem; background: #1f2937; border-radius: 50%; color: white; cursor: pointer;">
+                            ☰
+                        </button>
+                    </div>
+                    
+                    ${menuHTML}
+
+                    ${gameState.showBacklog ? `
+                    <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 50;" onclick="event.stopPropagation();">
+                        <div style="width: min(900px, 90vw); max-height: 80vh; background: #111827; border: 2px solid #4c1d95; box-shadow: 0 20px 60px rgba(0,0,0,0.6); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #1f2937; border-bottom: 1px solid #4c1d95; color: white;">
+                                <div style="font-weight: bold;">バックログ</div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="toggleBacklog(); event.stopPropagation();" style="padding: 6px 12px; background: #9333ea; color: white; border-radius: 6px;">閉じる</button>
+                                </div>
+                            </div>
+                        <div style="flex: 1; overflow: auto; padding: 16px;">
+                                ${gameState.backlog.map(entry => `
+                                    <div style=\"margin-bottom: 12px;\">
+                                        <div style=\"display:flex; align-items:center; gap:8px; margin-bottom:4px;\">
+                                            ${entry.name ? `<div style=\"color: #93c5fd; font-weight: 700;\">${entry.name}</div>` : ''}
+                                            <div style=\"color:#9ca3af; font-size: 0.85rem;\">[${entry.sceneId || ''}] ${entry.timestamp || ''}</div>
+                                        </div>
+                                        <div style=\"white-space: pre-wrap; color: ${entry.type === 'choice' ? '#c084fc' : '#e5e7eb'};\">${entry.type === 'choice' ? '▶ ' : ''}${entry.text}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function render() {
+            const app = document.getElementById('app');
+            if (gameState.screen === 'title') {
+                app.innerHTML = renderTitle();
+            } else if (gameState.screen === 'flowchart') {
+                app.innerHTML = renderFlowchart();
+            } else {
+                app.innerHTML = renderGame();
+            }
+        }
+
+        function t(key, fallback) {
+            const table = gameState.strings?.[gameState.language] || {};
+            return table[key] || fallback;
+        }
+
+        function toggleLanguage() {
+            gameState.language = gameState.language === 'ja' ? 'en' : 'ja';
+            localStorage.setItem('novelgame_lang', gameState.language);
+            render();
+        }
+
+        function startTextAnimation() {
+            const scene = getCurrentScene();
+            
+            saveVisitedScene(scene.id);
+            
+            if (scene.isEnding && scene.endingId) {
+                saveEndingData(scene.endingId);
+            }
+            
+            if (scene.type === 'check') {
+                if (checkTrueEndingCondition()) {
+                    gameState.currentSceneId = scene.nextSceneHigh;
+                } else {
+                    gameState.currentSceneId = scene.nextSceneLow;
+                }
+                startTextAnimation();
+                return;
+            }
+            
+            if (scene.type === 'qte-choice') {
+                gameState.textDisplay = scene?.text || '';
+                gameState.isTextComplete = true;
+                render();
+                startQTE();
+                return;
+            }
+            
+            gameState.textDisplay = '';
+            gameState.textIndex = 0;
+            gameState.isTextComplete = false;
+            gameState.showChoices = false;
+            gameState._backlogLoggedForScene = false;
+
+            if (textTimer) clearInterval(textTimer);
+            
+            const visited = loadVisitedScenes();
+            const isRead = visited.includes(scene.id);
+            const speed = gameState.settings.textSpeedMs;
+            const shouldSkipTyping = (gameState.settings.skipping && isRead) || (gameState.settings.skipRead && isRead);
+
+            if (shouldSkipTyping) {
+                gameState.textDisplay = scene.text;
+                gameState.textIndex = scene.text.length;
+                gameState.isTextComplete = true;
+                onTextCompleted(scene);
+                render();
+                maybeAutoAdvance(scene);
+                return;
+            }
+
+            const maxCharsPerLine = 25;
+            const maxLines = 3;
+            const maxChars = maxCharsPerLine * maxLines;
+
+            textTimer = setInterval(() => {
+                const scene = getCurrentScene();
+                const full = scene.text || '';
+                const limited = full.slice(0, maxChars);
+                if (gameState.textIndex < limited.length) {
+                    gameState.textDisplay = limited.slice(0, gameState.textIndex + 1);
+                    gameState.textIndex++;
+                    render();
+                } else {
+                    gameState.isTextComplete = true;
+                    clearInterval(textTimer);
+                    onTextCompleted(scene);
+                    render();
+                    maybeAutoAdvance(scene);
+                }
+            }, Math.max(10, speed));
+        }
+
+        function maybeAutoAdvance(scene) {
+            if (!scene) return;
+            if (!gameState.settings.auto) return;
+            if (!scene.nextScene) return;
+            setTimeout(() => {
+                // Scene might have changed in the meantime
+                const current = getCurrentScene();
+                if (current && current.id === scene.id && gameState.isTextComplete && !gameState.qteActive && !scene.isEnding && scene.type !== 'choice') {
+                    gameState.history.push(gameState.currentSceneId);
+                    gameState.currentSceneId = scene.nextScene;
+                    const nextScene = getCurrentScene();
+                    if (nextScene.type === 'qte-choice') {
+                        render();
+                        startQTE();
+                    } else {
+                        startTextAnimation();
+                    }
+                }
+            }, Math.max(0, gameState.settings.autoDelayMs));
+        }
+
+        function startQTE() {
+            const scene = getCurrentScene();
+            
+            if (scene.type === 'qte-choice') {
+                gameState.qteActive = true;
+                gameState.qteChoices = scene.choices.map(choice => ({
+                    text: choice.text,
+                    time: choice.time,
+                    timeLeft: choice.time,
+                    nextScene: choice.nextScene,
+                    parameters: choice.parameters,
+                    disappeared: false,
+                    qteType: choice.qteType || 'click',
+                    targetPresses: choice.targetPresses || 0,
+                    currentPresses: 0,
+                    holdDuration: choice.holdDuration || 0,
+                    currentHold: 0
+                }));
+                if (scene.text) {
+                    appendBacklogEntry({ type: 'system', text: scene.text, sceneId: scene.id });
+                }
+                
+                render();
+
+                qteChoiceTimers.forEach(timer => clearInterval(timer));
+                qteChoiceTimers = [];
+
+                const assist = gameState.entitlements?.qteAssist;
+                const slowFactor = assist ? 0.7 : 1.0; // アシスト時は時間の減少を30%抑制
+                gameState.qteChoices.forEach((choice, idx) => {
+                    const timer = setInterval(() => {
+                        gameState.qteChoices[idx].timeLeft -= Math.round(100 * slowFactor);
+                        
+                        if (gameState.qteChoices[idx].timeLeft <= 0) {
+                            clearInterval(timer);
+                            gameState.qteChoices[idx].disappeared = true;
+                            
+                            const allDisappeared = gameState.qteChoices.every(c => c.disappeared);
+                            if (allDisappeared) {
+                                setTimeout(() => {
+                                    qteChoiceTimers.forEach(t => clearInterval(t));
+                                    gameState.qteActive = false;
+                                    gameState.currentSceneId = scene.timeoutScene;
+                                    startTextAnimation();
+                                }, 800);
+                            }
+                        }
+                        render();
+                    }, 100);
+                    qteChoiceTimers.push(timer);
+                });
+            }
+        }
+
+        function startGame() {
+            gameState.screen = 'playing';
+            gameState.currentSceneId = 'scene1';
+            gameState.history = [];
+            gameState.parameters = { intimacy: 50, fear: 50 };
+            gameState.showChoices = false;
+            gameState.backlog = [];
+            gameState.showBacklog = false;
+            gameState._backlogLoggedForScene = false;
+            playBGM('ingame');
+            render();
+            startTextAnimation();
+        }
+
+        function handleClick(event) {
+            const scene = getCurrentScene();
+            
+            if (scene.type === 'qte-choice' || gameState.qteActive || scene.isEnding) return;
+            
+            if (scene.type === 'choice') {
+                if (!gameState.isTextComplete) {
+                    const maxCharsPerLine = 25; const maxLines = 3; const maxChars = maxCharsPerLine * maxLines;
+                    const full = scene.text || ''; const limited = full.slice(0, maxChars);
+                    gameState.textDisplay = limited;
+                    gameState.textIndex = limited.length;
+                    gameState.isTextComplete = true;
+                    if (textTimer) clearInterval(textTimer);
+                    onTextCompleted(scene);
+                    render();
+                } else if (!gameState.showChoices) {
+                    gameState.showChoices = true;
+                    render();
+                }
+                return;
+            }
+            
+            if (!gameState.isTextComplete) {
+                const maxCharsPerLine = 25; const maxLines = 3; const maxChars = maxCharsPerLine * maxLines;
+                const full = scene.text || ''; const limited = full.slice(0, maxChars);
+                gameState.textDisplay = limited;
+                gameState.textIndex = limited.length;
+                gameState.isTextComplete = true;
+                if (textTimer) clearInterval(textTimer);
+                onTextCompleted(scene);
+                render();
+            } else {
+                if (scene.nextScene) {
+                    gameState.history.push(gameState.currentSceneId);
+                    gameState.currentSceneId = scene.nextScene;
+                    const nextScene = getCurrentScene();
+                    if (nextScene.type === 'qte-choice') {
+                        render();
+                        startQTE();
+                    } else {
+                        startTextAnimation();
+                    }
+                }
+            }
+        }
+
+        function handleChoice(nextScene, parameters, choiceText) {
+            if (choiceText) {
+                appendBacklogEntry({ type: 'choice', text: choiceText });
+            }
+            applyParameters(parameters);
+            gameState.history.push(gameState.currentSceneId);
+            gameState.currentSceneId = nextScene;
+            gameState.showChoices = false;
+            const scene = getCurrentScene();
+            if (scene.type === 'qte-choice') {
+                render();
+                startQTE();
+            } else {
+                startTextAnimation();
+            }
+        }
+
+        function handleQteChoiceClick(choiceIndex) {
+            if (!gameState.qteActive) return;
+            
+            const choice = gameState.qteChoices[choiceIndex];
+            if (!choice || choice.disappeared || choice.timeLeft <= 0) return;
+            // すべてのQTEタイプを単発クリックで反応させる
+            applyParameters(choice.parameters);
+            endQteTo(choice.nextScene, choice.text);
+        }
+
+        function handleQteButtonClick(event, idx) {
+            event.stopPropagation();
+            handleQteChoiceClick(idx);
+        }
+
+        function endQteTo(nextScene, labelText) {
+            gameState.qteActive = false;
+            qteChoiceTimers.forEach(timer => clearInterval(timer));
+            qteChoiceTimers = [];
+            appendBacklogEntry({ type: 'choice', text: labelText, sceneId: gameState.currentSceneId });
+            gameState.currentSceneId = nextScene;
+            startTextAnimation();
+        }
+
+        function saveGame() {
+            const saveData = {
+                currentSceneId: gameState.currentSceneId,
+                history: gameState.history,
+                parameters: gameState.parameters,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('novelgame_save', JSON.stringify(saveData));
+            alert('セーブしました');
+        }
+
+        function loadGame() {
+            const saveData = localStorage.getItem('novelgame_save');
+            if (saveData) {
+                const data = JSON.parse(saveData);
+                gameState.currentSceneId = data.currentSceneId;
+                gameState.history = data.history;
+                gameState.parameters = data.parameters || { intimacy: 50, fear: 50 };
+                gameState.screen = 'playing';
+                gameState.showMenu = false;
+                gameState.showChoices = false;
+                gameState.backlog = [];
+                gameState.showBacklog = false;
+                gameState._backlogLoggedForScene = false;
+                playBGM('ingame');
+                startTextAnimation();
+                alert('ロードしました');
+            } else {
+                alert('セーブデータがありません');
+            }
+        }
+
+        function returnToTitle() {
+            gameState.screen = 'title';
+            gameState.currentSceneId = 'scene1';
+            gameState.history = [];
+            gameState.showMenu = false;
+            gameState.parameters = { intimacy: 50, fear: 50 };
+            gameState.showChoices = false;
+            gameState.backlog = [];
+            gameState.showBacklog = false;
+            gameState._backlogLoggedForScene = false;
+            playBGM('title');
+            render();
+        }
+
+        function toggleMenu() {
+            gameState.showMenu = !gameState.showMenu;
+            render();
+        }
+
+        function toggleBacklog() {
+            gameState.showBacklog = !gameState.showBacklog;
+            render();
+        }
+
+        function closeBacklog() {
+            if (!gameState.showBacklog) return;
+            gameState.showBacklog = false;
+            render();
+        }
+
+        function toggleSettings() {
+            gameState.showSettings = !gameState.showSettings;
+            render();
+        }
+
+        function setTextSpeed(v) {
+            gameState.settings.textSpeedMs = Number(v);
+        }
+
+        function setAutoDelay(v) {
+            gameState.settings.autoDelayMs = Number(v);
+        }
+
+        function setSkipRead(v) {
+            gameState.settings.skipRead = !!v;
+        }
+
+        function setVibration(v) {
+            gameState.settings.vibration = !!v;
+        }
+
+        function getTargetVolume() {
+            return Math.max(0, Math.min(1, gameState.settings?.bgmVolume ?? 0.25));
+        }
+
+        function setBgmVolume(v) {
+            const val = Number(v);
+            gameState.settings.bgmVolume = Math.max(0, Math.min(1, val));
+            if (currentBGM && !gameState.isMuted) {
+                currentBGM.volume = getTargetVolume();
+            }
+        }
+
+        function setSfxVolume(v) {
+            const val = Number(v);
+            gameState.settings.sfxVolume = Math.max(0, Math.min(1, val));
+        }
+
+        function saveSettings() {
+            const toSave = {
+                textSpeedMs: gameState.settings.textSpeedMs,
+                auto: gameState.settings.auto,
+                autoDelayMs: gameState.settings.autoDelayMs,
+                skipRead: gameState.settings.skipRead,
+                bgmVolume: gameState.settings.bgmVolume,
+                sfxVolume: gameState.settings.sfxVolume,
+                vibration: gameState.settings.vibration
+            };
+            localStorage.setItem('novelgame_settings', JSON.stringify(toSave));
+            alert('設定を保存しました');
+        }
+
+        function loadSettings() {
+            const raw = localStorage.getItem('novelgame_settings');
+            if (!raw) return;
+            try {
+                const parsed = JSON.parse(raw);
+                gameState.settings.textSpeedMs = Number(parsed.textSpeedMs ?? gameState.settings.textSpeedMs);
+                gameState.settings.auto = !!parsed.auto;
+                gameState.settings.autoDelayMs = Number(parsed.autoDelayMs ?? gameState.settings.autoDelayMs);
+                gameState.settings.skipRead = !!parsed.skipRead;
+                gameState.settings.bgmVolume = Number(parsed.bgmVolume ?? gameState.settings.bgmVolume);
+                gameState.settings.sfxVolume = Number(parsed.sfxVolume ?? gameState.settings.sfxVolume);
+                gameState.settings.vibration = !!parsed.vibration;
+            } catch {}
+        }
+
+        function loadEntitlements() {
+            const raw = localStorage.getItem('novelgame_entitlements');
+            if (!raw) return;
+            try {
+                const parsed = JSON.parse(raw);
+                gameState.entitlements = Object.assign({}, gameState.entitlements, parsed);
+            } catch {}
+        }
+
+        function saveEntitlements() {
+            localStorage.setItem('novelgame_entitlements', JSON.stringify(gameState.entitlements));
+        }
+
+        function openShop() {
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed'; overlay.style.inset = '0';
+            overlay.style.background = 'rgba(0,0,0,0.85)'; overlay.style.zIndex = '1000';
+            overlay.style.display = 'flex'; overlay.style.alignItems = 'center'; overlay.style.justifyContent = 'center';
+            const panel = document.createElement('div');
+            panel.style.width = 'min(700px, 92vw)'; panel.style.background = '#111827'; panel.style.border = '2px solid #fb923c'; panel.style.borderRadius = '12px'; panel.style.color = 'white'; panel.style.padding = '16px';
+            const title = document.createElement('div'); title.textContent = 'ショップ'; title.style.fontWeight = 'bold'; title.style.marginBottom = '12px'; panel.appendChild(title);
+
+            const list = document.createElement('div'); list.style.display = 'grid'; list.style.gap = '10px';
+            const items = [
+                { key: 'removeAds', name: '広告除去（買い切り）', desc: '広告をすべて非表示にします。', price: '¥600' },
+                { key: 'hintPack', name: 'ヒントパック', desc: '分岐条件ヒントを常時表示します。', price: '¥300' },
+                { key: 'qteAssist', name: 'QTEアシスト', desc: 'QTEの時間延長・判定緩和を常時有効化。', price: '¥300' },
+                { key: 'album', name: 'フォトアルバム解禁', desc: '高解像度CG/壁紙保存とビューワを解禁。', price: '¥360' }
+            ];
+            items.forEach(it => {
+                const row = document.createElement('div');
+                row.style.border = '1px solid #374151'; row.style.borderRadius = '8px'; row.style.padding = '10px 12px';
+                const name = document.createElement('div'); name.textContent = it.name; name.style.fontWeight = 'bold';
+                const desc = document.createElement('div'); desc.textContent = it.desc; desc.style.color = '#d1d5db'; desc.style.fontSize = '0.9rem'; desc.style.marginTop = '2px';
+                const actions = document.createElement('div'); actions.style.display = 'flex'; actions.style.gap = '8px'; actions.style.marginTop = '8px';
+                const own = !!gameState.entitlements[it.key];
+                const btn = document.createElement('button'); btn.textContent = own ? '所有済み' : `購入 ${it.price}`; btn.disabled = own;
+                btn.style.background = own ? '#374151' : '#ef4444'; btn.style.borderRadius = '6px'; btn.style.padding = '6px 12px'; btn.style.color = 'white';
+                btn.onclick = () => { if (!own) { gameState.entitlements[it.key] = true; saveEntitlements(); overlay.remove(); alert(`${it.name}を解放しました`); }};
+                actions.appendChild(btn);
+                row.appendChild(name); row.appendChild(desc); row.appendChild(actions);
+                list.appendChild(row);
+            });
+
+            const close = document.createElement('div'); close.style.marginTop = '12px'; const cbtn = document.createElement('button');
+            cbtn.textContent = '閉じる'; cbtn.style.background = '#4b5563'; cbtn.style.borderRadius = '6px'; cbtn.style.padding = '6px 12px'; cbtn.style.color = 'white';
+            cbtn.onclick = () => overlay.remove(); close.appendChild(cbtn);
+
+            panel.appendChild(list); panel.appendChild(close); overlay.appendChild(panel); document.body.appendChild(overlay);
+        }
+
+        function showFlowchart() {
+            gameState.screen = 'flowchart';
+            render();
+        }
+
+        function showSlots() {
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.inset = '0';
+            overlay.style.background = 'rgba(0,0,0,0.85)';
+            overlay.style.zIndex = '1000';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+
+            const panel = document.createElement('div');
+            panel.style.width = 'min(600px, 90vw)';
+            panel.style.background = '#111827';
+            panel.style.border = '2px solid #6b7280';
+            panel.style.borderRadius = '12px';
+            panel.style.padding = '16px';
+            panel.style.color = 'white';
+
+            const title = document.createElement('div');
+            title.textContent = 'スロット管理';
+            title.style.fontWeight = 'bold';
+            title.style.marginBottom = '12px';
+            panel.appendChild(title);
+
+            const list = document.createElement('div');
+            list.style.display = 'flex';
+            list.style.flexDirection = 'column';
+            list.style.gap = '8px';
+
+            for (let i = 1; i <= 3; i++) {
+                const key = `novelgame_save_${i}`;
+                const saved = localStorage.getItem(key);
+                const row = document.createElement('div');
+                row.style.display = 'flex';
+                row.style.justifyContent = 'space-between';
+                row.style.alignItems = 'center';
+                row.style.border = '1px solid #374151';
+                row.style.borderRadius = '8px';
+                row.style.padding = '8px 12px';
+
+                const label = document.createElement('div');
+                label.textContent = `スロット${i}` + (saved ? `：${JSON.parse(saved).timestamp}` : '：空');
+                row.appendChild(label);
+
+                const actions = document.createElement('div');
+                actions.style.display = 'flex';
+                actions.style.gap = '8px';
+
+                const saveBtn = document.createElement('button');
+                saveBtn.textContent = 'セーブ';
+                saveBtn.style.background = '#9333ea';
+                saveBtn.style.borderRadius = '6px';
+                saveBtn.style.padding = '6px 12px';
+                saveBtn.style.color = 'white';
+                saveBtn.onclick = () => { saveGameToSlot(i); overlay.remove(); };
+                actions.appendChild(saveBtn);
+
+                const loadBtn = document.createElement('button');
+                loadBtn.textContent = 'ロード';
+                loadBtn.style.background = '#16a34a';
+                loadBtn.style.borderRadius = '6px';
+                loadBtn.style.padding = '6px 12px';
+                loadBtn.style.color = 'white';
+                loadBtn.onclick = () => { loadGameFromSlot(i); overlay.remove(); };
+                actions.appendChild(loadBtn);
+
+                row.appendChild(actions);
+                list.appendChild(row);
+            }
+
+            const close = document.createElement('div');
+            close.style.marginTop = '12px';
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '閉じる';
+            closeBtn.style.background = '#4b5563';
+            closeBtn.style.borderRadius = '6px';
+            closeBtn.style.padding = '6px 12px';
+            closeBtn.style.color = 'white';
+            closeBtn.onclick = () => overlay.remove();
+            close.appendChild(closeBtn);
+
+            panel.appendChild(list);
+            panel.appendChild(close);
+
+            overlay.appendChild(panel);
+            document.body.appendChild(overlay);
+        }
+
+        function showPreview(event, thumbnailUrl) {
+            if (!thumbnailUrl) return;
+            
+            const preview = document.getElementById('flowchart-preview');
+            const img = document.getElementById('flowchart-preview-img');
+            
+            if (preview && img) {
+                img.src = thumbnailUrl;
+                preview.style.left = (event.pageX + 20) + 'px';
+                preview.style.top = (event.pageY + 20) + 'px';
+                preview.classList.add('show');
+            }
+        }
+
+        function hidePreview() {
+            const preview = document.getElementById('flowchart-preview');
+            if (preview) {
+                preview.classList.remove('show');
+            }
+        }
+
+        function revealHint(nodeId) {
+            if (gameState.entitlements.hintPack) {
+                gameState.flowchartHintsRevealed[nodeId] = true;
+                render();
+                return;
+            }
+            // 非所有: リワード広告想定のモーダル（ここでは即時解放のプレースホルダ）
+            const ok = confirm('ヒントを見るには短い広告を視聴しますか？（開発中: 今は即時解放）');
+            if (ok) {
+                gameState.flowchartHintsRevealed[nodeId] = true;
+                render();
+            }
+        }
+
+        function getUnlockedCGs() {
+            const endings = loadEndingData();
+            const cgList = [];
+            if (endings.true) cgList.push({ id: 'true', title: 'TRUE END', url: IMAGES.endingTrue });
+            if (endings.corruption) cgList.push({ id: 'corruption', title: 'BAD END①', url: IMAGES.endingCorruption });
+            if (endings.escape) cgList.push({ id: 'escape', title: 'NORMAL END', url: IMAGES.endingTrue });
+            if (endings.taken) cgList.push({ id: 'taken', title: 'BAD END②', url: IMAGES.endingTrue });
+            return cgList;
+        }
+
+        function openGallery() {
+            if (!gameState.entitlements.album) {
+                alert('フォトアルバムは未購入です');
+                return;
+            }
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed'; overlay.style.inset = '0';
+            overlay.style.background = 'rgba(0,0,0,0.9)'; overlay.style.zIndex = '1000';
+            overlay.style.display = 'flex'; overlay.style.alignItems = 'center'; overlay.style.justifyContent = 'center';
+
+            const panel = document.createElement('div');
+            panel.style.width = 'min(960px, 95vw)'; panel.style.maxHeight = '90vh'; panel.style.overflow = 'hidden';
+            panel.style.background = '#0f172a'; panel.style.border = '2px solid #10b981'; panel.style.borderRadius = '12px'; panel.style.color = 'white';
+
+            const header = document.createElement('div');
+            header.style.display = 'flex'; header.style.justifyContent = 'space-between'; header.style.alignItems = 'center';
+            header.style.padding = '12px 16px'; header.style.background = '#111827';
+            const title = document.createElement('div'); title.textContent = 'ギャラリー'; title.style.fontWeight = 'bold';
+            const closeBtn = document.createElement('button'); closeBtn.textContent = '閉じる'; closeBtn.style.background = '#4b5563'; closeBtn.style.borderRadius = '6px'; closeBtn.style.padding = '6px 12px'; closeBtn.style.color = 'white'; closeBtn.onclick = () => overlay.remove();
+            header.appendChild(title); header.appendChild(closeBtn);
+
+            const body = document.createElement('div'); body.style.padding = '16px'; body.style.maxHeight = 'calc(90vh - 56px)'; body.style.overflow = 'auto';
+            const grid = document.createElement('div'); grid.style.display = 'grid'; grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(220px, 1fr))'; grid.style.gap = '12px';
+
+            const cgs = getUnlockedCGs();
+            if (cgs.length === 0) {
+                const empty = document.createElement('div'); empty.textContent = '解禁されたCGがありません'; empty.style.color = '#d1d5db';
+                body.appendChild(empty);
+            } else {
+                cgs.forEach(cg => {
+                    const card = document.createElement('div'); card.style.border = '1px solid #1f2937'; card.style.borderRadius = '8px'; card.style.overflow = 'hidden';
+                    const img = document.createElement('img'); img.src = cg.url; img.alt = cg.title; img.style.width = '100%'; img.style.display = 'block';
+                    const bar = document.createElement('div'); bar.style.display = 'flex'; bar.style.justifyContent = 'space-between'; bar.style.alignItems = 'center'; bar.style.padding = '8px 10px'; bar.style.background = '#111827';
+                    const label = document.createElement('div'); label.textContent = cg.title;
+                    const btns = document.createElement('div'); btns.style.display = 'flex'; btns.style.gap = '8px';
+                    const viewBtn = document.createElement('button'); viewBtn.textContent = '拡大'; viewBtn.style.background = '#10b981'; viewBtn.style.borderRadius = '6px'; viewBtn.style.padding = '6px 12px'; viewBtn.style.color = 'white';
+                    viewBtn.onclick = () => openCGViewer(cg);
+                    const saveBtn = document.createElement('a'); saveBtn.textContent = '保存'; saveBtn.style.background = '#2563eb'; saveBtn.style.borderRadius = '6px'; saveBtn.style.padding = '6px 12px'; saveBtn.style.color = 'white'; saveBtn.style.textDecoration = 'none';
+                    saveBtn.href = cg.url; saveBtn.download = `${cg.id}.png`;
+                    btns.appendChild(viewBtn); btns.appendChild(saveBtn);
+                    bar.appendChild(label); bar.appendChild(btns);
+                    card.appendChild(img); card.appendChild(bar);
+                    grid.appendChild(card);
+                });
+                body.appendChild(grid);
+            }
+
+            panel.appendChild(header); panel.appendChild(body); overlay.appendChild(panel); document.body.appendChild(overlay);
+        }
+
+        function openCGViewer(cg) {
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed'; overlay.style.inset = '0'; overlay.style.background = 'rgba(0,0,0,0.95)'; overlay.style.zIndex = '1100';
+            const img = document.createElement('img'); img.src = cg.url; img.alt = cg.title; img.style.maxWidth = '95vw'; img.style.maxHeight = '95vh'; img.style.display = 'block'; img.style.margin = 'auto'; img.style.border = '2px solid #10b981'; img.style.borderRadius = '12px';
+            overlay.onclick = () => overlay.remove();
+            overlay.appendChild(img); document.body.appendChild(overlay);
+        }
+
+        function evaluateChoiceLock(lock) {
+            if (!lock) return true;
+            // 条件は AND で評価
+            if (typeof lock.minIntimacy === 'number' && gameState.parameters.intimacy < lock.minIntimacy) return false;
+            if (typeof lock.maxFear === 'number' && gameState.parameters.fear > lock.maxFear) return false;
+            if (typeof lock.minCourage === 'number' && gameState.parametersHidden.courage < lock.minCourage) return false;
+            if (typeof lock.minCuriosity === 'number' && gameState.parametersHidden.curiosity < lock.minCuriosity) return false;
+            if (Array.isArray(lock.requiredEndings)) {
+                const endings = loadEndingData();
+                for (const eid of lock.requiredEndings) {
+                    if (!endings[eid]) return false;
+                }
+            }
+            return true;
+        }
+
+        function appendBacklogEntry(entry) {
+            if (!entry || !entry.text) return;
+            const now = new Date();
+            const timeText = now.toLocaleTimeString('ja-JP', { hour12: false });
+            gameState.backlog.push({
+                name: entry.name || '',
+                text: entry.text,
+                type: entry.type || 'dialog',
+                sceneId: entry.sceneId || gameState.currentSceneId,
+                timestamp: entry.timestamp || timeText
+            });
+        }
+
+        function onTextCompleted(scene) {
+            if (gameState._backlogLoggedForScene) return;
+            if (!scene || !scene.text) return;
+            if (scene.type === 'qte-choice') return;
+            appendBacklogEntry({
+                name: scene.character ? scene.character.name : '',
+                text: scene.text,
+                type: 'dialog',
+                sceneId: scene.id
+            });
+            gameState._backlogLoggedForScene = true;
+        }
+
+        (async () => {
+            await Promise.all([loadScenario(), loadStrings()]);
+            loadEntitlements();
+            initBGM();
+            render();
+            playBGM('title');
+        })();
+
+        // Keybindings: B to toggle backlog, Esc to close, F5/F9 quick save/load
+        document.addEventListener('keydown', (e) => {
+            // Avoid interfering with input fields (future-proof)
+            const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+            if (tag === 'input' || tag === 'textarea') return;
+            if (e.key === 'b' || e.key === 'B') {
+                toggleBacklog();
+            } else if (e.key === 'Escape') {
+                closeBacklog();
+            } else if (e.key === 'F5') {
+                e.preventDefault();
+                saveGameToSlot(1);
+            } else if (e.key === 'F9') {
+                e.preventDefault();
+                loadGameFromSlot(1);
+            }
+        });
+    </script>
+</body>
+</html>
