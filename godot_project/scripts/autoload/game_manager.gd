@@ -44,6 +44,12 @@ var hidden_params: Dictionary = {
 # QTE成功カウント
 var qte_success_count: int = 0
 
+# セーブスロット数
+const SAVE_SLOT_COUNT: int = 3
+
+# タイトル画面「つづきから」用: main.tscn 起動後にこのスロットをロードする（-1 = 新規開始）
+var pending_load_slot: int = -1
+
 # 既読シーン
 var visited_scenes: Array[String] = []
 
@@ -133,7 +139,8 @@ func save_game(slot: int) -> void:
 		"hidden_params": hidden_params,
 		"qte_success_count": qte_success_count,
 		"current_scene": ScenarioManager.current_scene_id,
-		"current_event_index": ScenarioManager.current_event_index
+		"current_event_index": ScenarioManager.current_event_index,
+		"timestamp": Time.get_datetime_string_from_system(false, true)
 	}
 	var file = FileAccess.open("user://save_%d.json" % slot, FileAccess.WRITE)
 	if file:
@@ -142,20 +149,49 @@ func save_game(slot: int) -> void:
 		print("[GameManager] Saved to slot %d" % slot)
 
 func load_game(slot: int) -> bool:
+	var data = read_save_data(slot)
+	if data.is_empty():
+		return false
+	fear = data.get("fear", 0)
+	kizuna = data.get("kizuna", 0)
+	kegare = data.get("kegare", 0)
+	flags = data.get("flags", {})
+	hidden_params = data.get("hidden_params", {"courage": 0, "curiosity": 0})
+	qte_success_count = data.get("qte_success_count", 0)
+	current_state = GameState.GAME
+	print("[GameManager] Loaded from slot %d" % slot)
+	return true
+
+# セーブデータをファイルから読むだけ（状態には反映しない）。存在しなければ空Dictionary。
+func read_save_data(slot: int) -> Dictionary:
 	var path = "user://save_%d.json" % slot
-	if FileAccess.file_exists(path):
-		var file = FileAccess.open(path, FileAccess.READ)
-		if file:
-			var data = JSON.parse_string(file.get_as_text())
-			file.close()
-			if data:
-				fear = data.get("fear", 0)
-				kizuna = data.get("kizuna", 0)
-				kegare = data.get("kegare", 0)
-				flags = data.get("flags", {})
-				hidden_params = data.get("hidden_params", {"courage": 0, "curiosity": 0})
-				qte_success_count = data.get("qte_success_count", 0)
-				current_state = GameState.GAME
-				print("[GameManager] Loaded from slot %d" % slot)
-				return true
+	if not FileAccess.file_exists(path):
+		return {}
+	var file = FileAccess.open(path, FileAccess.READ)
+	if not file:
+		return {}
+	var data = JSON.parse_string(file.get_as_text())
+	file.close()
+	if typeof(data) != TYPE_DICTIONARY:
+		return {}
+	return data
+
+func has_any_save() -> bool:
+	for slot in range(1, SAVE_SLOT_COUNT + 1):
+		if FileAccess.file_exists("user://save_%d.json" % slot):
+			return true
 	return false
+
+# ロード後にシナリオをセーブ地点から再開する
+func resume_from_save(slot: int) -> bool:
+	var data = read_save_data(slot)
+	if data.is_empty():
+		return false
+	if not load_game(slot):
+		return false
+	var scene_id = data.get("current_scene", "")
+	var event_index = int(data.get("current_event_index", 0))
+	if scene_id == "":
+		return false
+	ScenarioManager.start_scene_at(scene_id, event_index)
+	return true

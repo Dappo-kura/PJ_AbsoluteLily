@@ -9,6 +9,7 @@ signal choices_display_requested(choices: Array)
 signal qte_requested(qte_data: Dictionary)
 signal command_executed(command: Dictionary)
 signal scenario_reloaded()
+signal ending_reached(scene: Dictionary)
 
 var scenario_data: Dictionary = {}
 var current_chapter_id: String = ""
@@ -216,6 +217,7 @@ func handle_ending(scene: Dictionary) -> void:
 	GameManager.collect_ending(ending_id)
 	GameManager.current_state = GameManager.GameState.ENDING
 	print("[ScenarioManager] Ending reached: %s" % ending_id)
+	ending_reached.emit(scene)
 
 func execute_command(command: Dictionary) -> void:
 	command_executed.emit(command)
@@ -243,23 +245,49 @@ func select_choice(choice_index: int) -> void:
 			process_next_event()
 
 func handle_qte_result(success: bool, qte_data: Dictionary) -> void:
-	if success:
-		GameManager.qte_success_count += 1
-		if qte_data.has("effects_success"):
-			GameManager.apply_effects(qte_data["effects_success"])
-		if qte_data.has("success_to"):
-			start_scene(qte_data["success_to"])
-		else:
-			current_event_index += 1
-			process_next_event()
+	handle_qte_result_typed("success" if success else "fail", qte_data)
+
+# QTE結果を3ルート（success / fail / harem）で処理する。
+# harem は遷移先未定義なら success にフォールバックする。
+func handle_qte_result_typed(result: String, qte_data: Dictionary) -> void:
+	if result == "harem" and not qte_data.has("harem_to") and not qte_data.has("effects_harem"):
+		result = "success"
+	match result:
+		"success":
+			GameManager.qte_success_count += 1
+			if qte_data.has("effects_success"):
+				GameManager.apply_effects(qte_data["effects_success"])
+			_goto_after_qte(qte_data, "success_to")
+		"harem":
+			GameManager.qte_success_count += 1
+			if qte_data.has("effects_harem"):
+				GameManager.apply_effects(qte_data["effects_harem"])
+			_goto_after_qte(qte_data, "harem_to")
+		_:
+			if qte_data.has("effects_fail"):
+				GameManager.apply_effects(qte_data["effects_fail"])
+			_goto_after_qte(qte_data, "fail_to")
+
+func _goto_after_qte(qte_data: Dictionary, to_key: String) -> void:
+	if qte_data.has(to_key):
+		start_scene(qte_data[to_key])
 	else:
-		if qte_data.has("effects_fail"):
-			GameManager.apply_effects(qte_data["effects_fail"])
-		if qte_data.has("fail_to"):
-			start_scene(qte_data["fail_to"])
-		else:
-			current_event_index += 1
-			process_next_event()
+		current_event_index += 1
+		process_next_event()
+
+# セーブデータ復帰用: 指定イベント位置からシーンを再開
+func start_scene_at(scene_id: String, event_index: int) -> void:
+	var scene = find_scene(scene_id)
+	if scene.is_empty():
+		push_error("[ScenarioManager] Scene not found for resume: %s" % scene_id)
+		return
+	current_scene_id = scene_id
+	current_scene_events = scene.get("events", [])
+	current_event_index = clamp(event_index, 0, current_scene_events.size())
+	_root_content_processed = false
+	scene_changed.emit(scene)
+	print("[ScenarioManager] Resuming scene %s at event %d" % [scene_id, current_event_index])
+	process_next_event()
 
 # デバッグ用: 任意のシーンにジャンプ
 func jump_to_scene(scene_id: String) -> void:

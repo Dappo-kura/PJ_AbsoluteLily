@@ -1,0 +1,43 @@
+{
+  "notes": [
+    "scenario_converter.py が生成した scenario.json にシーン単位で適用されるパッチ。",
+    "値 null はキー削除。_delete: true はシーン削除。",
+    "C5_Q1_SUCCESS: 成功ルートの合流先は『地下通路』(C5_S3)。C5_S2 はハーレムルート専用の場面。",
+    "C7_Q2_HAREM: ハーレムルートはエンディングB (C7_S6→C7_S7) へ分岐。",
+    "C7_S5: エンディングA（トゥルーエンド）。C7_S7: エンディングB（ハーレムエンド）。"
+  ],
+  "scene_overrides": {
+    "C5_Q1_SUCCESS": {
+      "next": "C5_S3"
+    },
+    "C7_Q2_HAREM": {
+      "next": "C7_S6"
+    },
+    "C7_S2": {
+      "_comment": "台本ではハーレム分岐は『体質の暴発』で選択肢が存在しないため、仮の選択肢ラベルを付与（要シナリオ確認）",
+      "qte": {
+        "text": "生き残れ！",
+        "labels": ["目を閉じて、舞の手を握る"],
+        "harem_label": "舞に抱きつく（体質が暴発する）",
+        "duration": 5000,
+        "success_to": "C7_Q2_SUCCESS",
+        "fail_to": "C7_Q2_FAIL",
+        "harem_to": "C7_Q2_HAREM"
+      }
+    },
+    "C7_S5": {
+      "title": "エンディングA：体質が消えた朝",
+      "next": null,
+      "isEnding": true,
+      "endingId": "true_end",
+      "ending_label": "エンディングA：体質が消えた朝",
+      "ending_image": "trueend.png"
+    },
+    "C7_S7": {
+      "title": "エンディングB：満員電車の君へ",
+      "endingId": "harem_end",
+      "ending_label": "エンディングB：満員電車の君へ",
+      "ending_image": "SMDend.png"
+    }
+  }
+}

@@ -1,1185 +1,5940 @@
 {
   "meta": {
-    "title": "裂け目の放課後—迷界ユリメトリカ（高校版・非エッチ）",
-    "version": "1.0.0",
-    "rating": "CERO_B_equivalent",
-    "notes": "高校生版（非エッチ）。恋愛表現は手つなぎ／抱擁／告白まで。QTEは全て Shrinking Ring（指定ゾーンでタップ）に統一。"
-  },
-  "variables": {
-    "kizuna": 0,
-    "kegare": 0,
-    "kyoko": 0,
-    "flags": {
-      "F_LOVE_HINT": false,
-      "F_KUCHI_FAV": 0,
-      "F_TEKE_FAV": 0,
-      "F_8SHAKU_FAV": 0,
-      "F_MERRY_FAV": 0,
-      "F_DOG_FAV": 0
-    },
-    "items": {
-      "mirror_candy": false,
-      "ofuda_strengthened": false
-    }
-  },
-  "qte_preset": {
-    "type": "shrinking_ring",
-    "attempts": 3,
-    "success_threshold": 2,
-    "base_window_ms": 800,
-    "panic_window_ms": 600,
-    "target_zone": {
-      "inner_ratio": 0.65,
-      "outer_ratio": 0.80,
-      "hint": "リングが縮んでターゲットゾーンに重なった瞬間にタップ"
-    },
-    "window_modifiers": [
-      {
-        "if": {
-          "kyoko": {
-            ">=": 6
-          }
-        },
-        "window_ms": -200
-      },
-      {
-        "if": {
-          "items.ofuda_strengthened": true
-        },
-        "window_ms": 100
-      },
-      {
-        "if": {
-          "scene": "4B",
-          "items.mirror_candy": false
-        },
-        "window_ms": -150
-      }
-    ]
+    "title": "迷界ユリメトリカ",
+    "version": "2.0.0",
+    "generated_by": "tools/scenario_converter.py",
+    "generated_from": "scenario/*.txt",
+    "generated_at": "2026-07-05 16:48:54",
+    "notes": "自動生成ファイル。手動編集せず、台本(.txt)と scenario_overrides.json を編集して再生成すること。"
   },
   "chapters": [
     {
-      "id": "Prologue",
+      "id": "C0",
+      "title": "序章 噂のプリクラ",
       "scenes": [
         {
-          "id": "P0",
-          "bg": "classroom-evening.png",
-          "bgm": "ingame_peace.mp3",
+          "id": "C0_S1",
+          "title": "放課後の廊下。窓から夕日が差し込んでいる。",
+          "bg": "school hallway01.png",
           "events": [
             {
               "type": "line",
-              "speaker": "百合香",
-              "text": "今日の補講、長かったね。寄り道して帰ろ。",
+              "speaker": "",
+              "text": "（廊下の隅で、制服姿の女子二人がひそひそと話し込んでいる）"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子①",
+              "text": "ねえねえ、聞いた？　最近流行ってる話"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子②",
+              "text": "なになに？　また怖い話？"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子①",
+              "text": "サンリフモール……あそこのゲーセンに古いプリクラあるじゃん"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子②",
+              "text": "あー！　端っこにある古いやつ？　なんかいつも誰も使ってないよね"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子①",
+              "text": "そう、あれ。あのプリクラで、特定のハンドサインを作りながら撮影すると……"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（女子①が声をひそめ、意味深な間を置く）"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子②",
+              "text": "……と？"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子①",
+              "text": "異世界に行けるんだって"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子②",
+              "text": "えっ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しばらく沈黙）"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子②",
+              "text": "…………え？"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子①",
+              "text": "だから！　異世界！　に！　行ける！　の！"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子②",
+              "text": "う、うそでしょ！？"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子①",
+              "text": "本当らしいって。しかも帰り方まであって、異世界で何か一つモノを持ってきて、もう一回同じプリクラで撮影すると元の世界に戻れるらしいよ"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子②",
+              "text": "うわぁ……なんかルールが複雑じゃん……"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子①",
+              "text": "しかも！　戻ってくるときに、一つだけ願いが叶うんだって"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子②",
+              "text": "…………"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しばらく考えてから）"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子②",
+              "text": "試せるわけないじゃん……"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子①",
+              "text": "だよねー。でも気になるよね？"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人は顔を見合わせて苦笑する）"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子①",
+              "text": "まあ、信じる人は信じるし。でも本当だったらすごくない？願いが叶うんだよ？　何でも"
+            },
+            {
+              "type": "line",
+              "speaker": "噂好き女子②",
+              "text": "（ちょっと遠い目をして）「……何でも、か」"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（廊下に夕日がさらに傾く。二人の笑い声が響いて、場面が暗転する）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗転）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "願いが叶う、異世界。それが、私たちの物語の始まりだった"
+            }
+          ],
+          "next": "C2_S1"
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "title": "第2章 異世界へ行く",
+      "scenes": [
+        {
+          "id": "C2_S1",
+          "title": "放課後の教室",
+          "bg": "classroom-evening.png",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（夕暮れに染まる教室。ほとんどの生徒はすでに帰宅し、窓際の席で結が一人ぼんやりと外を眺めている）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（……また、なんにも考えてなかった。何時間経ったんだろ）",
               "character": "yui-shitsuki.png"
             },
             {
               "type": "line",
-              "speaker": "麻衣",
-              "text": "うん。…風、冷たくなってきた。",
+              "speaker": "",
+              "text": "（机に頬杖をつき、窓の外を流れる雲を目で追う）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（部活もやめて、友達ともあんまり話せなくて。このまま卒業とかしたら、私の高校生活って……何だったんだろ）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ガラッ、と勢いよく教室のドアが開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆーい！　まだいた！　よかった！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（小暮舞が息を切らして飛び込んでくる。セーラー服の裾が乱れているのも気にせず、結の席まで一直線に駆けてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……ま、舞。どうしたの、そんな慌てて",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "どうしたのじゃないよ！　今日暇でしょ？　遊び行こうよ！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "え、急に",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "急にでいいじゃん！　っていうかゆい、最近ずっとこうやってぼーっとしてるじゃん。見てらんないんだけど",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞は結の斜め前の机を引っ張り、逆向きにまたがってどかっと座る）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "べ、べつに……ぼーっとしてないし",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "してたじゃん。めちゃくちゃしてた。三十分前から見てたもん",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "え、見てたの！？",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（にやっと笑って）「廊下から。かわいかったよ、ぼーっとした顔」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "………",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（この子はなんで昔からこうなんだろ……）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結は観念したように鞄を引き寄せる）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……どこ行くの",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "サンリフモール！　クレープ食べて、ゲーセン行って、ウィンドウショッピング！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（苦笑しながら立ち上がる）「相変わらず計画性ないな」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "計画性より行動力！",
               "character": "mai-hinata.png"
             }
           ],
-          "next": "P1"
+          "next": "C2_S2"
         },
         {
-          "id": "P1",
+          "id": "C2_S2",
+          "title": "下校〜サンリフモールへの道",
+          "bg": "On-the-way-home.png",
           "events": [
             {
-              "type": "se",
-              "name": "dummy"
+              "type": "line",
+              "speaker": "",
+              "text": "（並んで歩く二人。夕日に伸びる長い影。住宅街を抜けると、大型ショッピングモールの看板が見えてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ねえねえ、ゆい。最近学校で変な噂聞いた？",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……変な噂って？",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "サンリフモールのゲーセンにある古いプリクラ機！　あれで特定のハンドサインをして撮ると、異世界に行けるって話！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……ああ、それ私も聞いた。帰り方があって、願いも叶うとか",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "そう！　で、帰るときに異世界のモノを一個持ってプリクラ撮れば戻れるって！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しばらく間があって）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "……試してみたくない？",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "は？",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "だって面白くない？　どうせ何もないだろうけどさ",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（少し考えて）「……どうせ何もないんでしょ」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "でしょ！　じゃあ行くよ！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（苦笑）「うん、まあ……どうせ何もないし」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（どうせ、何も起きない。いつもそう）",
+              "character": "yui-shitsuki.png"
+            }
+          ],
+          "next": "C2_S3"
+        },
+        {
+          "id": "C2_S3",
+          "title": "サンリフモール　ゲームセンター",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（賑やかなゲームセンター。クレーンゲーム、音楽ゲームの喧騒の奥──端の隅に、明らかに年季の入ったプリクラ機が一台だけ置かれている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（周囲の機械とは明らかに世代が違う。古い液晶。色あせたポップ。電源は入っているが、誰も近づかない）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "あれだ……なんか、雰囲気あるね",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……確かに古い",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "よし！　入ろ入ろ！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人でカーテンの中へ。狭い撮影スペースに肩が触れそうになって、結が無意識に体を壁側に寄せる）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（舞に触れないようにしないと……昔みたいに、また変なことになったら）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆい？　詰めてくれないと入れないんだけど",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "あ、ごめん",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（体を寄せる。ほんの少し腕が触れた瞬間）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "……んっ",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（焦って）「ご、ごめん！　ちょっと当たった」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（頬をほんのり赤くして）「べっつに……なんでもない。さっさと撮ろ」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（……また。舞だからまだいい、でも他の人だったら）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（コイン投入。画面が起動する。古いフォントのインターフェース）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（画面の指示に従って、二人でゆっくりとハンドサインを作る）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "こう？　なんか、呪文みたい",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……変な感じ",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（カウントダウン。シャッター音。完了のメロディが流れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その瞬間──）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "──っ",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "え、ゆい？　どうし──",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人同時に、頭を押さえる。ズキン、と鋭い頭痛）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（頭痛が引いていく。静寂）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（静寂？）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（目を開けて）「……あれ」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ゲームセンターの喧騒が、消えている）"
+            }
+          ],
+          "next": "C2_S4"
+        },
+        {
+          "id": "C2_S4",
+          "title": "異世界　プリクラブース内",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（カーテン越しの外が、暗い。ゲーセンの機械音が一切しない。蛍光灯のハム音だけが静かに響く）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（小声で）「……ゆい」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（同じく小声で）「……うん」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "なんか……静かじゃない？",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……うん",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、顔を見合わせる）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……まさかね",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "まさかだよね",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ゆっくりとカーテンを開ける）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（そこは──確かにサンリフモールのゲームセンターだった。しかし）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電源の切れたゲーム機が並ぶ。窓の外は真っ暗。天井の照明は半分以上が消えていて、残った蛍光灯だけが頼りなく点滅している）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（人の気配が、ない）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "……うそ",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……うそ、でしょ",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ゲームセンターを出て、モールのフロアへ踏み出す。エスカレーターは止まっている。フードコートの椅子が整然と並んだまま、誰もいない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（異様なほど静かで、異様なほど暗い）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（声が上ずりながら）「……本当に、異世界？　あの噂、マジだった？」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（なんとか冷静を保とうとしながら）「……プリクラ、ちゃんと出てきたか確認しよ。帰り方、あったじゃん。異世界のモノを持って撮れば帰れるって」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（プリクラの排出口から写真を取り出す。二人の顔が、たしかにそこに写っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（写真を眺めながら）「……ゆい、笑えてないよ。カメラ目線もできてないし」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "今それ言う？",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "だって！　せっかく撮ったのに！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（少し笑い合って、張り詰めていた空気が緩む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その瞬間）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……ね、舞",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（固まりながら）「……聞こえてる」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（足音が、近づいてくる。ゆっくりと。規則正しく。人のものにしては、少し重い）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗いフロアの奥。エスカレーターの脇から、影が現れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（長い──とても長い、シルエット。片手に、巨大なハサミを持っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔は、影の中にある）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（女の輪郭。しかし、何かが違う）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（静寂）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（そして）"
             },
             {
               "type": "line",
               "speaker": "口裂け女",
-              "text": "ねえ――私、きれい？",
+              "text": "……私、綺麗？",
               "character": "Slit-MouthWoman.png"
             },
             {
-              "type": "choices",
-              "options": [
-                {
-                  "id": "P1-C1",
-                  "text": "困ってるの？ 保健室、案内するよ。",
-                  "effects": {
-                    "kizuna": 1,
-                    "kegare": -1
-                  },
-                  "next": "P1_SHIFT"
-                },
-                {
-                  "id": "P1-C2",
-                  "text": "……はい（合わせる）",
-                  "effects": {
-                    "kegare": 1,
-                    "flags.F_KUCHI_FAV": "+1"
-                  },
-                  "next": "P1_SHIFT"
-                },
-                {
-                  "id": "P1-C3",
-                  "text": "（沈黙して百合香の手を握る）",
-                  "effects": {
-                    "kizuna": 2,
-                    "kyoko": -1,
-                    "flags.F_LOVE_HINT": true
-                  },
-                  "next": "P1_SHIFT"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "P1_SHIFT",
-          "events": [
-            {
-              "type": "flag",
-              "set": {
-                "world_shift": true
-              },
-              "description": "信号全黄点滅→緑逆流。掲示板が鏡写し。迷界に転移。"
+              "type": "line",
+              "speaker": "",
+              "text": "（低く、甘く、壊れたオルゴールのような声で)"
             }
           ],
-          "next": "P2"
-        },
-        {
-          "id": "P2",
           "qte": {
-            "type": "shrinking_ring",
-            "attempts": 3,
-            "success_threshold": 2,
+            "text": "生き残れ！",
             "labels": [
-              "振り向かない",
-              "歩幅を揃える",
-              "角で一呼吸"
+              "逃げる！"
             ],
-            "success_to": "1A",
-            "fail_to": "P2-F",
-            "effects_success": {
-              "kyoko": -1
-            },
-            "effects_fail": {
-              "kyoko": 1,
-              "kegare": 1,
-              "flags.F_KUCHI_FAV": "+1"
-            }
+            "duration": 5000,
+            "harem_label": "突っ込む！",
+            "success_to": "C2_Q1_SUCCESS",
+            "fail_to": "C2_Q1_FAIL",
+            "harem_to": "C2_Q1_HAREM"
           }
         },
         {
-          "id": "P2-F",
+          "id": "C2_Q1_SUCCESS",
           "events": [
             {
-              "type": "flag",
-              "description": "首筋に冷気。執着上昇。"
+              "type": "line",
+              "speaker": "",
+              "text": "二人で逃げる"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "舞、走って！！",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "え──ちょ、ゆい早っ！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人が走り出す。後ろから聞こえる足音が速くなる。ハサミの音。金属の軋む音）"
+            },
+            {
+              "type": "line",
+              "speaker": "口裂け女",
+              "text": "……綺麗って、言って",
+              "character": "Slit-MouthWoman.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人は振り返らず走る。フードコートを突っ切り、エスカレーターの脇を抜け、モール中央フロアへ）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "どこ！？　どこ逃げる！？",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "本屋！　奥の本屋！　人が多いとこなら──",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（走る。走る。暗いモールの中を、足音だけを頼りに）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（本屋の自動ドアが見えてくる。電源は切れているが──手で押せば開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人で体当たり気味にドアを押し開け、中へ飛び込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが閉まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（静寂）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、棚の陰にへたり込んで荒い息をつく）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（息を切らして）「……逃げ、た？」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（壁に背をもたれながら）「……たぶん」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しばらく沈黙。二人の息が整っていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（震える声で）「……ゆい、あれ」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……うん",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ハサミ持ってた",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……うん",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "怖かった",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（小さく、でも確かに）「……うん。怖かった」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗い本屋の中で、肩を寄せ合う二人）"
             }
           ],
-          "effects": {
-            "kyoko": 1,
-            "kegare": 1,
-            "flags.F_KUCHI_FAV": "+1"
-          },
-          "next": "1A"
+          "next": "C3_S1"
+        },
+        {
+          "id": "C2_Q1_FAIL",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "主人公、捕まる"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結の足がすくむ。声が出ない。体が動かない）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（動いて──動いてよ、私──！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "口裂け女",
+              "text": "（一歩、近づいてくる）「……綺麗って、言って」",
+              "character": "Slit-MouthWoman.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆい！　ゆい、逃げ──",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ハサミが伸びる。結の腕を、ひやりとした感触が掴む）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "──っ！　や、やめ──",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（力が強い。引き寄せられる。口裂け女の顔が、暗がりの中で近づいてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その瞬間）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆいいいいいいい！！！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（正面から、舞が体ごとぶつかっていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（鈍い衝撃音。口裂け女がよろめく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その隙に結の腕が解放される）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（結の手を掴んで）「走って！！　今だよ！！」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人が駆け出す。後ろから地面を踏みしめる重い音。ハサミの軋み）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（モールを突っ切って、本屋の自動ドアへ──）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（飛び込む。閉まる。静寂）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（棚の陰で膝をついた舞が、肩で息をしている）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "舞……！　大丈夫？！　怪我は？！",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（ゼーハーしながら）「……っ、平気。ちゃんと逃げれた、でしょ」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（舞に駆け寄ろうとして、寸前で手を止める）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（触れたら……でも）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（それでも、そっと舞の肩の近くに手を置いて）「……ありがとう。助けてくれて」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（顔を上げて、少し笑って）「当たり前じゃん。幼馴染でしょ」",
+              "character": "mai-hinata.png"
+            }
+          ],
+          "next": "C3_S1"
+        },
+        {
+          "id": "C2_Q1_HAREM",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "主人公、タックル"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（だめだ、逃げたって追いつかれる──なら！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆ、ゆい……？　なんでそっちに──",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が走り出す。口裂け女に向かって、まっすぐに）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "え、え、ちょっ──逆ーー！！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が渾身の体当たり。ドン、という鈍い音とともに、口裂け女がバランスを崩す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人もつれるように床に倒れ込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が上になった形で、口裂け女に覆いかぶさる）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（頭が真っ白で）「っ、え、えっ……」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（立ち上がろうとして、両手をつく。その手の位置が──）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（胸の上、だった）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（あっ──）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（反射的に動こうとした拍子に、膝が口裂け女の太ももの間に入ってしまう）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（立ち上がろうと体重をかけた瞬間、膝が相手の股間を強く押した）"
+            },
+            {
+              "type": "line",
+              "speaker": "口裂け女",
+              "text": "──……ぁ",
+              "character": "Slit-MouthWoman.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（低く甘い声。ハサミを持つ手の力が、抜ける）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（また、また出た……！　私の──この体質が……！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（胸を揉んでいた手を離せない。膝も動かせない。絡まって身動きが取れない）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（真っ赤な顔で）「え、あ、ちが、ちがいますこれは事故で────」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "口裂け女",
+              "text": "……ぁ、あ……っ、や……っ",
+              "character": "Slit-MouthWoman.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（巨大なハサミが床に落ちる。金属音が暗いモールに響く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女の体が、小さく震え出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（やばい、やばい、やばいやばいやばい────！！！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（呆然と見ていたが、はっとして）「──ゆい！　今！！」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が結の腕を掴んで強引に引き剥がす）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人が走り出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（後ろから、息の乱れた声）"
+            },
+            {
+              "type": "line",
+              "speaker": "口裂け女",
+              "text": "……ぁ……っ",
+              "character": "Slit-MouthWoman.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（追ってこない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（本屋のドアを押し開けて、二人が飛び込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（閉まる。静寂）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が棚に背をもたれてずるずるとへたり込む。顔が茹でたように赤い）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（棚に手をついて、結を見下ろして）「……ゆい」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……なんでもない",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "なんでもなくないでしょ。どう見ても",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "…………",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（口裂け女を……私の体質で……あんな風に……）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（少しの沈黙の後、静かに）「……また、出ちゃったね。ゆいの体質」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（小さく）「……うん」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（しゃがんで目線を合わせ、いつもと違う柔らかい声で）「……でも、おかげで助かった。ゆいが突っ込んでくれたから」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（舞の顔を見て、少しだけ、ほんの少しだけ）「……そう、かな」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "そうだよ",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、暗い本屋の中で肩を並べる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の手が、そっと結の手の甲に触れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結は動かない。今度は、動かない）"
+            }
+          ],
+          "next": "C3_S1"
         }
       ]
     },
     {
-      "id": "Chapter1",
+      "id": "C3",
+      "title": "第3章 暗い本屋とテケテケ",
       "scenes": [
         {
-          "id": "1A",
-          "bg": "On-the-way-home.png",
-          "bgm": "ingame_peace.mp3",
+          "id": "C3_S1",
+          "title": "サンリフモール　書店内",
           "events": [
             {
               "type": "line",
-              "speaker": "百合香",
-              "text": "手、放さないで。…ね？"
-            },
-            {
-              "type": "choices",
-              "options": [
-                {
-                  "id": "1A-C1",
-                  "text": "（しっかり手を握る）",
-                  "effects": {
-                    "kizuna": 2,
-                    "flags.F_LOVE_HINT": true
-                  },
-                  "next": "1A_ITEM"
-                },
-                {
-                  "id": "1A-C2",
-                  "text": "先に様子見てくる（単独偵察）",
-                  "skill_check": {
-                    "stat": "intuition",
-                    "success": {
-                      "kegare": -1,
-                      "next": "1A_ITEM"
-                    },
-                    "fail": {
-                      "kyoko": 1,
-                      "kizuna": -1,
-                      "next": "1A_ITEM"
-                    }
-                  }
-                },
-                {
-                  "id": "1A-C3",
-                  "text": "誰かいますか！",
-                  "effects": {
-                    "kyoko": 1,
-                    "kegare": 1
-                  },
-                  "next": "1A_ITEM"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "1A_ITEM",
-          "events": [
-            {
-              "type": "item_gain",
-              "item": "mirror_candy",
-              "value": true,
-              "description": "鏡の飴を入手（包みが逆文字）。"
-            }
-          ],
-          "next": "1B"
-        },
-        {
-          "id": "1B",
-          "events": [
-            {
-              "type": "line",
-              "speaker": "麻衣",
-              "text": "映像が…遅れてる？"
+              "speaker": "",
+              "text": "（薄暗い書店。棚の陰に二人でしゃがんでいる）"
             },
             {
               "type": "line",
-              "speaker": "百合香",
-              "text": "鏡の世界に引っ張られてるみたい。"
+              "speaker": "",
+              "text": "（外からの口裂け女の気配が消えるのを、息をひそめて待った）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（数分の沈黙の後、二人ともゆっくりと立ち上がる）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（小声で）「……帰り方を探さないといけない」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（周囲を見渡しながら）「本屋なら何か手がかりあるかもしれない。本棚、見てみよ」",
+              "character": "mai-hinata.png"
             }
           ],
-          "next": "1C"
+          "next": "C3_S2"
         },
         {
-          "id": "1C",
-          "condition": {
-            "kegare": {
-              ">=": 3
+          "id": "C3_S2",
+          "title": "書店内　奥書庫",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（棚の間を進む。スマホのライトで足元を照らす）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（店内は整然としている。まるで今も誰かが管理しているかのように）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（一番奥。黒いカーテンの向こうに「奥書庫」がある）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（カーテンを開けると──古い木の棚に、表紙のない手製の冊子が並んでいた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結がその一冊を手に取って開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "本の文字",
+              "text": "迷界に迷い込んだ者へ。帰り方を書く。このモールの外には鉄道がある。最初に撮ったプリクラの写真が、切符になる。地下通路の先に駅がある。ただし、各フロアに怪異がいる。怪異と話そうとするな。目を合わせるな。近づくな。ただ逃げろ"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（のぞき込んで）「プリクラが切符……じゃあ写真、大事にしないと」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（鞄を確認して）「……ある。じゃあまず地下通路へ──」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その時）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "固いものが床を叩く音。リズミカルで、速い。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（床を這う音だった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（棚の向こうの暗がりから）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（本棚の影から、それが現れた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（上半身だけの、女）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（腰から下がない。代わりに、その断面から暗い何かが滲んでいる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（着ているのは学生服の上着。顔は前を向いたまま、表情がない。目だけが光っている。白く、ギラギラと）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（腕が──異様に長い。床を叩くたびに体を引きずって前へ前へと進む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（一度止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（こちらを向く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（目が合った）"
             }
-          },
+          ],
           "qte": {
-            "type": "shrinking_ring",
-            "attempts": 3,
-            "success_threshold": 2,
+            "text": "生き残れ！",
             "labels": [
-              "耳を塞ぐ",
-              "視線を落とす",
-              "足音を合わせる"
+              "ノートを掴んで本棚の列を飛び越えて逃げる！"
             ],
-            "success_to": "2A",
-            "fail_to": "1C-F",
-            "effects_success": {
-              "kegare": -1
-            },
-            "effects_fail": {
-              "kegare": 1,
-              "flags.F_KUCHI_FAV": "+1"
-            }
+            "duration": 5000,
+            "harem_label": "転倒してテケテケに正面からぶつかる！",
+            "success_to": "C3_Q1_SUCCESS",
+            "fail_to": "C3_Q1_FAIL",
+            "harem_to": "C3_Q1_HAREM"
           }
         },
         {
-          "id": "1C-F",
+          "id": "C3_Q1_SUCCESS",
           "events": [
             {
-              "type": "flag",
-              "description": "幻聴『きれいって言って』が残響する。"
+              "type": "line",
+              "speaker": "",
+              "text": "本棚を乗り越えて逃走"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結がノートを鞄に突っ込んで、一番近い本棚の横板を踏み台にして飛び越える）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "舞！！　棚を跳んで！！",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "えっ",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（だが舞はもう走り出していた。棚の端を手で掴んで、勢いをつけて跳躍する）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケの腕が伸びてくる。棚の間をかき分けて、床を這って追ってくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケの速度が、上がる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケ、テケテケ、テケテケ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（リズムが崩れて、引きずる音が乱暴になっていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（正面出口。手動のドアを体当たりで開ける）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（飛び出す。廊下に転がり込む。二人でドアを体ごと押さえる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しばらく──音が、扉越しに聞こえた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケ、テケ、テケ……）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（やがて、遠ざかった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、床に座り込んで荒い息をつく）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "……あれ、何だったの",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（息を整えながら）「テケテケ。電車に轢かれて、上半身だけになった怪異」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "笑えない",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "笑えない",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ノートを開く。次の行動を確認する）"
             }
           ],
-          "effects": {
-            "kegare": 1,
-            "flags.F_KUCHI_FAV": "+1"
-          },
-          "next": "2A"
+          "next": "C4_S1"
+        },
+        {
+          "id": "C3_Q1_FAIL",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "テケテケに追いつかれる"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（足が固まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケが、床を猛烈な速度で這ってくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケテケテケテケテケ──）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（腕が伸びる。結の足首を掴む）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "──っ！",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（引っ張られる。床を引きずられる。冷たい床タイルが制服を削る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケの顔が、こちらを向く。白い目が近づいてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（離して──動いて──！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（腕がもう片方も伸びてきて、結の腰を掴む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（上から引きずり寄せてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆい！！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が本棚を全力で押す。棚が傾く。本が大量に落ちてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケの上に本の雪崩が直撃する）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（腕の力が、一瞬だけ緩む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その隙はない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（もう一本の腕が、結の腕を掴んでいる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（引き寄せられる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケの顔が、すぐそこまで来ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（白い目）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（目が、合う）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（……あ）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗転）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の声が、聞こえなくなる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケテケテケ、という音だけが、しばらく残る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（やがてそれも消える）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "ＧＡＭＥ　ＯＶＥＲ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "テケテケは満足した。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "書店の奥書庫に、新しいノートが一冊増えた。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "それを書いたのが誰か、知る者はいない。"
+            }
+          ],
+          "isEnding": true,
+          "endingId": "c3_q1_fail_death",
+          "ending_label": "BAD END"
+        },
+        {
+          "id": "C3_Q1_HAREM",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "テケテケに突っ込む"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケが迫ってくる。結は棚に向かって走りかけて──足を引っかけた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（盛大に転倒する）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆい！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケが腕を伸ばす。結に向かって一直線に）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（倒れ込んだ結の体が、テケテケの進路にある）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（接触する）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケの上半身が、倒れた結の上に乗り上げた形になる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が反射的に手をつく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その手が──）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケの、胸の上に、ついた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（沈黙）"
+            },
+            {
+              "type": "line",
+              "speaker": "テケテケ",
+              "text": "──……ッ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（これまで無表情だった顔に、初めて何かが走る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（白い目が、大きく開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（腕の動きが──止まった）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（また、また出た……！　なんで怪異にまで……！！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（全身が真っ赤になりながら、結は必死に手を引こうとする。でも体が絡まって動けない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（テケテケが、小さく震えている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（腕が、床をつかんでいるが、引っ張る力が入っていない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の手が入ってきて、結の腕を掴んで力任せに引き剥がす）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人が転がるように出口へ飛び出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（廊下。ドアが閉まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（静寂）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（後ろからは、テケテケの音が聞こえない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が壁に背をもたれてずるずるとへたり込む。顔が茹で上がっている）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（呆然と立ったまま、結を見下ろして）「……ゆい」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "事故だから。完全に事故だから",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（少し間を置いて）「うん。でも毎回事故なの、もはや体質じゃなくて才能では」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "才能って言わないで",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、暗い廊下でしばらく黙る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が、ゆっくりとしゃがんで結と目線を合わせる）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（小声で）「……でも、止まったね。あれで」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（同じく小声で）「……うん」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ノートを開く。次の行動を確認する）"
+            }
+          ],
+          "next": "C4_S1"
         }
       ]
     },
     {
-      "id": "Chapter2",
+      "id": "C4",
+      "title": "第4章 生きた人形の回廊",
       "scenes": [
         {
-          "id": "2A",
-          "bg": "school hallway02.png",
+          "id": "C4_S1",
+          "title": "サンリフモール　1Fフロア　アパレルゾーン",
           "events": [
             {
-              "type": "se",
-              "name": "dummy"
-            },
-            {
-              "type": "se",
-              "name": "dummy"
+              "type": "line",
+              "speaker": "",
+              "text": "（書店を出て、1Fのメインフロアへ）"
             },
             {
               "type": "line",
-              "speaker": "百合香",
-              "text": "...聞こえた？ 今の..."
+              "speaker": "",
+              "text": "（アパレルショップが並んでいる。どの店も電気が落ちている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その各店の中に──マネキンが立っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（何体も。何十体も）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ガラス越しに、こちらを向いているものがある）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（小声で）「……なんか、視線を感じる。気のせいかな」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（ノートを確認しながら）「ノートに『生きた人形が徘徊している』って書いてある。気のせいじゃない」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "……素直すぎてむしろ怖い",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、壁沿いに移動を始める）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ガラス越しのマネキンたちが──こちらを向いている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（入店していないのに。ガラス越しに、ただ、こちらを見ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（一体が、頭を傾けた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（首が、人間のものとは違う角度まで、がくん、と）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "っ……動いた",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……見ないで。急ごう",
+              "character": "yui-shitsuki.png"
             }
           ],
-          "next": "2B"
+          "next": "C4_S2"
         },
         {
-          "id": "2B",
-          "qte": {
-            "type": "shrinking_ring",
-            "attempts": 3,
-            "success_threshold": 2,
-            "labels": [
-              "屈む",
-              "機器箱に隠れる",
-              "渡る"
-            ],
-            "success_to": "2C",
-            "fail_to": "2B-F",
-            "effects_success": {
-              "kyoko": -1
+          "id": "C4_S2",
+          "title": "1F中央フロア　通路",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（メインの通路。B1へのエスカレーターまで、あと五十メートル）"
             },
-            "effects_fail": {
-              "kyoko": 2,
-              "flags.F_TEKE_FAV": "+1"
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（止まっていたはずのマネキンが、ショップの中に立っていない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（いない？）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、足が止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ガラス越しに、さっきまで確かにいたはずのマネキンが──いない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（どこに行った）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（振り返る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（通路の中ほどに、マネキンが立っていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（さっきまでガラスの向こうにいたやつだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（それが──通路に出ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（股関節が、膝が、肘が、関節という関節がひとつずつ動いて、こちらを向く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔のないつるつるの頭部が、こちらを向く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（次の瞬間、一体が足を踏み出した）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ぎこちなく。機械のように。でも確実に、前へ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（左右のショップから、新しいマネキンが通路に出てきていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（正面にも、後ろにも）"
             }
+          ],
+          "qte": {
+            "text": "生き残れ！",
+            "labels": [
+              "マネキンの隙間を縫って全力ダッシュ！"
+            ],
+            "duration": 5000,
+            "harem_label": "マネキンに体当たりして道を開ける！",
+            "success_to": "C4_Q1_SUCCESS",
+            "fail_to": "C4_Q1_FAIL",
+            "harem_to": "C4_Q1_HAREM"
           }
         },
         {
-          "id": "2B-F",
-          "events": [
-            {
-              "type": "flag",
-              "description": "追走演出。かすめ傷で恐慌上昇。"
-            }
-          ],
-          "effects": {
-            "kyoko": 2,
-            "kegare": 1,
-            "flags.F_TEKE_FAV": "+1"
-          },
-          "next": "2C"
-        },
-        {
-          "id": "2C",
-          "bgm": "ingame_peace.mp3",
+          "id": "C4_S3",
+          "title": "B1フロア入口",
           "events": [
             {
               "type": "line",
-              "speaker": "百合香",
-              "text": "怖いけど…麻衣がいると平気って思えるの。"
+              "speaker": "",
+              "text": "（B1は食品フロアだったはずだ。でも今は）"
             },
             {
-              "type": "choices",
-              "options": [
-                {
-                  "id": "2C-C1",
-                  "text": "私も。ゆりかがいるから。",
-                  "effects": {
-                    "kizuna": 2,
-                    "flags.F_LOVE_HINT": true
-                  }
-                },
-                {
-                  "id": "2C-C2",
-                  "text": "戻ったらプリン奢って。",
-                  "effects": {
-                    "kizuna": 1,
-                    "kyoko": -1
-                  }
-                },
-                {
-                  "id": "2C-C3",
-                  "text": "記録、撮っておく（写真）",
-                  "effects": {
-                    "kegare": 1,
-                    "flags.F_TEKE_FAV": "+1"
-                  }
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（冷たい）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（異様に冷たい）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（息が白くなっている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（棚に霜が下りている。天井から氷柱が垂れ下がっている）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（腕をさすって）「……なにこれ、冷凍庫の中みたい」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（ノートを開く）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "本の文字（続き）",
+              "text": "B1：八尺様の縄張り。声を出すな。目を合わせれば終わり。地下通路への非常口はB1最奥。とにかく急いで通り抜けろ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、顔を見合わせる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（こくり、と頷いて）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（奥へ、進み始める）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（→ 第５章　八尺様の領域）"
             }
           ],
-          "next": "2D"
+          "next": "C5_S1"
         },
         {
-          "id": "2D",
+          "id": "C4_Q1_SUCCESS",
           "events": [
             {
               "type": "line",
-              "speaker": "テケテケ(歪声)",
-              "text": "――追いつける？"
+              "speaker": "",
+              "text": "隙間を抜けてエスカレーターへ"
             },
             {
-              "type": "choices",
-              "options": [
-                {
-                  "id": "2D-C1",
-                  "text": "振り切る！",
-                  "qte_inline": {
-                    "type": "shrinking_ring",
-                    "attempts": 3,
-                    "success_threshold": 2,
-                    "labels": [
-                      "ステップ",
-                      "ジャンプ",
-                      "駆け抜け"
-                    ],
-                    "effects_success": {
-                      "kegare": -1
-                    }
-                  }
-                },
-                {
-                  "id": "2D-C2",
-                  "text": "走りを合わせる（試す）",
-                  "effects": {
-                    "kegare": 1,
-                    "flags.F_TEKE_FAV": "+1"
-                  }
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（結が前方のマネキンの動きを読む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（右足を踏み出すタイミングが──ほんの一瞬だけ遅い）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その隙間に、体を滑り込ませる）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "舞！！　私の後を！！",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マネキンの腕が伸びてくる。かすかに制服の裾をかすめる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（関節がぎこちなく動く音が、周囲から迫ってくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（でも二人はもう走っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（エスカレーターの入口が見えてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（飛び込む。段差を駆け下りる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マネキンたちが、エスカレーターの縁で止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（こちらを見下ろしているが──降りてこない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（規則があるのか、それとも足のつくりでは降りられないのか）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（とにかく、追ってこない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、B1フロアへ駆け込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（息を切らして）「……抜けた！」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（同じく肩で息をして）「……B1に入った」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ここで──初めて二人は冷気に気づく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（空気が、冷たい）"
             }
           ],
-          "next": "3A"
+          "next": "C4_S3"
+        },
+        {
+          "id": "C4_Q1_FAIL",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "マネキンに捕まる"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（体が動かない。マネキンが囲んでくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（一体が腕を伸ばして、結の肩をつかむ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（力が、強い。人形だとは思えない力で、動けない）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆい！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が別のマネキンを押しのけようとする。でも他のマネキンが舞の腕をつかむ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マネキンたちが二人を中心に囲む。円が縮まっていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（つるつるの顔のないマネキンたちが、間近に迫る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（腕が伸びてくる。体に触れる。次々と）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（放して──放して──！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マネキンの腕が、徐々に二人の体を包んでいく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（関節音が、止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その後に続くのは）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（沈黙だった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗転）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（翌日、そのフロアに二体の新しいマネキンが増えていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "ＧＡＭＥ　ＯＶＥＲ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "生きた人形たちは今日も整然と立っている。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "増えた二体は、やけに表情があるように見えた。"
+            }
+          ],
+          "isEnding": true,
+          "endingId": "c4_q1_fail_death",
+          "ending_label": "BAD END"
+        },
+        {
+          "id": "C4_Q1_HAREM",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "体当たりで突破"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（前のマネキンを崩せれば──！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が、正面のマネキンに向かって全力でぶつかる）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆい！？　なんで突っ込む方向に！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（体当たりが直撃する。マネキンがよろめく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しかし）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マネキンが、逆に結に覆いかぶさるように倒れてきた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人もつれて床に倒れ込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マネキンが、結の上にある）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（プラスチックの体が、結の上に）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その位置が──なんか、そういう体勢だった）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "っ……な、なんで──",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マネキンの関節が、動こうとする。でも上手く動かない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（関節がかちかちと音を立て始める。速く、不規則に）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（まるで焦っているような）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（また……！　人形にまで反応してる！！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（慌てて身をよじって、マネキンの下から抜け出そうとする）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その動きがさらに絡まって、制服のあちこちが引っ張られる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マネキンの関節音が止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（固まった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（周囲のマネキンも、連動するように足を止めている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が結の手を引いて、その隙に引き剥がす）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、一目散にエスカレーターへ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（B1に駆け込んだ後、しばらくして──マネキンは降りてこない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、壁に背をもたれる）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（しばらく間を置いて）「……人形に」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "言わないで",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "……人形にまで",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "言わないでって言った！！",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（笑いをこらえながら）「分かった。分かったから。でもまあ……抜けれたじゃん」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（膝を抱えてうずくまって）「……うん」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（冷気が二人を包む。B1フロアだ）"
+            }
+          ],
+          "next": "C4_S3"
         }
       ]
     },
     {
-      "id": "Chapter3",
+      "id": "C5",
+      "title": "第5章 八尺様の領域",
       "scenes": [
         {
-          "id": "3A",
-          "bg": "school hallway01.png",
+          "id": "C5_S1",
+          "title": "サンリフモール　B1フロア",
           "events": [
             {
-              "type": "se",
-              "name": "風鈴の低音"
+              "type": "line",
+              "speaker": "",
+              "text": "（冷気の中、二人で食品フロアを進む）"
             },
             {
               "type": "line",
-              "speaker": "百合香",
-              "text": "視線、合わせないほうがいい…はず。"
+              "speaker": "",
+              "text": "（声を出さない。足音を殺す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（霜のついた棚の列が左右に続いている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（スマホのライトだけが頼りだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（何もいない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（何も聞こえない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ただ、冷たい）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（口パクで）「……何もいない？」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（同じく口パクで）「……まだ」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（慎重に、一歩一歩）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（冷凍食品コーナーに差し掛かる。ここが一番寒い）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（霜の結晶が床全体を覆っていて、一面が白く輝いている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（まるで雪原のような、幻想的な光景）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（でもそこに──立っている何かがあった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（棚の陰から現れたのは）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（白い）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（とても大きな、白い）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（三メートルに近い、白い着物の女）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（長い黒髪が床につくほど垂れている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔は──俯いていて、見えない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ただ、立っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（こちらに気づいていない、かもしれない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（B1奥の非常口まで、あと三十メートル）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様の横を通らなければ、たどり着けない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、動けない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（一歩でも音を立てたら）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（そう思った瞬間）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様が──顔を上げた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（目が合った）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（白い目が、こちらを映している）"
+            },
+            {
+              "type": "line",
+              "speaker": "八尺様",
+              "text": "……ぽ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "八尺様が一歩、こちらへ踏み出す。"
             }
           ],
-          "next": "3B"
-        },
-        {
-          "id": "3B",
-          "events": [
-            {
-              "type": "choices",
-              "options": [
-                {
-                  "id": "3B-C1",
-                  "text": "視線を落とす／影だけ見る",
-                  "effects": {
-                    "kegare": -1
-                  },
-                  "next": "3C"
-                },
-                {
-                  "id": "3B-C2",
-                  "text": "御札を結び直す（霊感）",
-                  "skill_check": {
-                    "stat": "spirit",
-                    "success": {
-                      "set": {
-                        "items.ofuda_strengthened": true
-                      },
-                      "hint": "QTE猶予+0.1s"
-                    },
-                    "fail": {
-                      "kegare": 1
-                    }
-                  },
-                  "next": "3C"
-                },
-                {
-                  "id": "3B-C3",
-                  "text": "写真に収める（度胸）",
-                  "skill_check": {
-                    "stat": "bravery",
-                    "success": {
-                      "hint": "呼吸を合わせろ"
-                    },
-                    "fail": {
-                      "kyoko": 1,
-                      "flags.F_8SHAKU_FAV": "+1"
-                    }
-                  },
-                  "next": "3C"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "3C",
           "qte": {
-            "type": "shrinking_ring",
-            "attempts": 3,
-            "success_threshold": 2,
+            "text": "生き残れ！",
             "labels": [
-              "吸う",
-              "止める",
-              "吐く"
+              "目を逸らして非常口へ全力疾走！"
             ],
-            "success_to": "4A",
-            "fail_to": "3C-F",
-            "effects_success": {
-              "kyoko": -1
-            },
-            "effects_fail": {
-              "kyoko": 1,
-              "kegare": 1,
-              "flags.F_8SHAKU_FAV": "+1"
-            }
+            "duration": 5000,
+            "harem_label": "転倒して八尺様のスカートの中に飛び込む！",
+            "success_to": "C5_Q1_SUCCESS",
+            "fail_to": "C5_Q1_FAIL",
+            "harem_to": "C5_Q1_HAREM"
           }
         },
         {
-          "id": "3C-F",
-          "events": [
-            {
-              "type": "flag",
-              "description": "大きな影に覆われる。"
-            }
-          ],
-          "effects": {
-            "kyoko": 1,
-            "kegare": 1,
-            "flags.F_8SHAKU_FAV": "+1"
-          },
-          "next": "3D"
-        },
-        {
-          "id": "3D",
-          "condition": {
-            "kegare": {
-              ">=": 5
-            }
-          },
+          "id": "C5_S2",
+          "title": "地下通路。扉の前でへたり込む二人",
           "events": [
             {
               "type": "line",
-              "speaker": "八尺様(遠声)",
-              "text": "ここなら安全。長く、遠く…守ってあげる。"
+              "speaker": "",
+              "text": "（結が制服を整えながら、涙目で壁に背をもたれている）"
             },
             {
-              "type": "choices",
-              "options": [
-                {
-                  "id": "3D-C1",
-                  "text": "戻る場所がある。",
-                  "effects": {
-                    "kizuna": 1
-                  }
-                },
-                {
-                  "id": "3D-C2",
-                  "text": "…少しだけ。",
-                  "effects": {
-                    "kegare": 1,
-                    "flags.F_8SHAKU_FAV": "+1"
-                  }
-                }
-              ]
+              "type": "line",
+              "speaker": "舞",
+              "text": "（笑いをこらえるのを完全に諦めた顔で）「……ゆい」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "笑わないで",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "笑ってないよ、全然笑ってない（笑っている）",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "笑ってる！！　絶対笑ってる！！",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（ひとしきり笑ってから、真面目な顔で）「でも助かった。あれで無効化できるの、ゆいだけだよ」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（小声で）「……こんな体質、誰得なの」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（少し考えてから）「……私得かもしれない」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "え？",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（少し顔を赤くして、すぐ前を向いて）「何でもない。行こ。通路の先に駅があるって書いてあった」",
+              "character": "mai-hinata.png"
             }
           ],
-          "next": "4A"
+          "next": "C5_S3"
+        },
+        {
+          "id": "C5_S3",
+          "title": "地下通路",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（細いコンクリートの通路。非常灯だけが頼りなく点っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人で並んで進む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（通路の壁に、古い掲示が貼ってある）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（「◯◯線　迷界駅」と書いてある）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（掲示を見上げて）「……迷界駅」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……駅がある。本当に",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（通路の先に、光が見えてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（改札の灯りだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（→ 第６章　のっぺらぼうと、改札の向こう）"
+            }
+          ],
+          "next": "C6_S1"
+        },
+        {
+          "id": "C5_Q1_SUCCESS",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "目を逸らして非常口へ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が目を逸らす。同時に舞の腕を引く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（見ない。絶対に見ない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様の「ぽ」という声が、また聞こえる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（足音が、重く、床を揺らす）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（追ってくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（でも──前だけを見て、走る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（霜で足が滑る。転びかけて、でも止まらない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（非常口の扉が見えてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様の手が、後ろで空を切る音がする）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（非常口のバーを押す。扉が開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人が飛び込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（扉が閉まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（重い足音が、扉の向こうで止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ごん、と一度だけ扉を叩く音）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（それから、静寂）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、暗い通路の床にへたり込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（震えながら）「……抜けた」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（壁に手をついて立ち上がりながら）「……うん。ここが地下通路」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（細い通路が、先へ続いている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ノートには「通路の先に駅がある」と書いてあった）"
+            }
+          ],
+          "next": "C5_S3"
+        },
+        {
+          "id": "C5_Q1_FAIL",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "八尺様に連れていかれる"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（目が、離せない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様の白い目が、結を映している）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（頭の中が、空になっていくような感覚）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（思考が、消えていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆい！！　目を逸らして！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の声が、遠い。とても遠い）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（逸らさ……ないといけない……でも）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様が近づいてくる。一歩。また一歩）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（床が震える。冷気が増す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（大きな手が、結の頭の上に──置かれた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（重い。膝が折れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様が、低い声で）"
+            },
+            {
+              "type": "line",
+              "speaker": "八尺様",
+              "text": "……ぽ、ぽ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（それだけだった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その後）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結の口が動く）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……ぽ",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "──ゆい？！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結の目から、焦点が消える）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様と結が、同じ方向を向いて立っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様が歩き出す。結がその横で、同じ歩幅で歩き出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞だけが、その場に残される）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗転）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しばらくして、また白い閃光）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（B1フロアに──三メートルの影と、小さな影が並んで消えていった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "ＧＡＭＥ　ＯＶＥＲ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "八尺様に連れていかれた者は戻らない。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "それは都市伝説の、最初から決まったことだった。"
+            }
+          ],
+          "isEnding": true,
+          "endingId": "c5_q1_fail_death",
+          "ending_label": "BAD END"
+        },
+        {
+          "id": "C5_Q1_HAREM",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "スカートの中に突入"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が目を逸らそうとする。一歩踏み出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（霜の床で、盛大に足を滑らせた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（体が宙を飛ぶ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ちょうどそこに──八尺様が踏み出してきていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結の頭が、八尺様のスカートの裾に飛び込んだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（するっと）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗い布の中に、頭から突入した）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "──っ！？！？",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "八尺様",
+              "text": "──ッッッ！！！"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（これまでで一番大きな声）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（三メートルの巨体が、びくん、と大きく揺れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（大きな手が、スカートの上からばんばんと叩く）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（出なきゃ！　出なきゃ！！　でも布が！　方向が！！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗い布の中で方向感覚を失ってもがく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（もがくたびに、頭や肩が八尺様の太ももに当たる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（当たる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（当たる）"
+            },
+            {
+              "type": "line",
+              "speaker": "八尺様",
+              "text": "──……ぽ……ぽぽぽぽぽっ……ッ！"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（「ぽ」の声が異様な速度で連呼される）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様の膝がガクガクと震え始める）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（床が揺れる。体がよろめく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の手が布の外から入ってきて、結の足首を引っ張る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が引きずり出される）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、一目散に非常口へ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（扉を押す。飛び込む。閉まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（八尺様の足音が──扉の前で、止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しばらく、「ぽぽぽ……」という声がくぐもって聞こえていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（やがて、遠ざかる）"
+            }
+          ],
+          "next": "C5_S2"
         }
       ]
     },
     {
-      "id": "Chapter4",
+      "id": "C6",
+      "title": "第6章 のっぺらぼうと改札の向こう",
       "scenes": [
         {
-          "id": "4A",
-          "bg": "school hallway01.png",
+          "id": "C6_S1",
+          "title": "地下通路　迷界駅　改札前",
           "events": [
             {
-              "type": "se",
-              "name": "古い呼鈴の着信音"
+              "type": "line",
+              "speaker": "",
+              "text": "（通路の先に、駅の改札が現れた）"
             },
             {
               "type": "line",
-              "speaker": "百合香",
-              "text": "既読つけてないのに既読がついてる…"
+              "speaker": "",
+              "text": "（古い改札機が二台。その向こうにホームへ続く階段）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ホームからは、微かに風が吹いてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（線路の匂い）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（確かにここは駅だった）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（小声で）「……本当にあった。駅」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（ノートを確認して）「プリクラの写真が切符になる、って書いてあった。写真を改札に通せば──」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（改札の前に、人が立っていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（人の形をした、何かが）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（制服を着ている。駅員の制服。紺色の、正しい駅員の格好）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（でも）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔が）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（首から上は、ただの肌色の楕円だった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口も、目も、鼻も、何もない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ただ顔のない顔が、こちらを向いている）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（腕を掴んでくる）「……ゆい」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……うん。見えてる",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうが、一歩前に出た）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（音もなく。気配もなく。ただ滑るように）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（こちらの顔を──見ている気がする。目がないのに）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（手が伸びてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（するりと、音もなく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "目も口もない顔が迫ってくる恐怖。"
             }
           ],
-          "next": "4B"
-        },
-        {
-          "id": "4B",
           "qte": {
-            "type": "shrinking_ring",
-            "attempts": 3,
-            "success_threshold": 2,
+            "text": "生き残れ！",
             "labels": [
-              "背面カメラ起動",
-              "飴をレンズ前に",
-              "フラッシュ"
+              "プリクラ写真を改札にかざして突破する！"
             ],
-            "requires": {
-              "items.mirror_candy": true
-            },
-            "success_to": "4C",
-            "fail_to": "4B-F",
-            "effects_success": {
-              "kyoko": -1
-            },
-            "effects_fail": {
-              "kyoko": 1,
-              "kegare": 1,
-              "flags.F_MERRY_FAV": "+1"
-            }
+            "duration": 5000,
+            "harem_label": "のっぺらぼうに顔から突っ込む！",
+            "success_to": "C6_Q1_SUCCESS",
+            "fail_to": "C6_Q1_FAIL",
+            "harem_to": "C6_Q1_HAREM"
           }
         },
         {
-          "id": "4B-F",
-          "events": [
-            {
-              "type": "flag",
-              "description": "画面の影から手が伸びる。"
-            }
-          ],
-          "effects": {
-            "kyoko": 1,
-            "kegare": 1,
-            "flags.F_MERRY_FAV": "+1"
-          },
-          "next": "4C"
-        },
-        {
-          "id": "4C",
-          "bgm": "ingame_peace.mp3",
+          "id": "C6_S2",
+          "title": "迷界駅　ホーム",
           "events": [
             {
               "type": "line",
-              "speaker": "百合香",
-              "text": "迷いが晴れたら、ちゃんと伝える。…麻衣のこと。"
+              "speaker": "",
+              "text": "（階段を降りると、ホームに出た）"
             },
             {
-              "type": "choices",
-              "options": [
-                {
-                  "id": "4C-C1",
-                  "text": "待ってる。",
-                  "effects": {
-                    "kizuna": 2,
-                    "flags.F_LOVE_HINT": true
-                  }
-                },
-                {
-                  "id": "4C-C2",
-                  "text": "一緒に帰ることが答えだよ。",
-                  "effects": {
-                    "kizuna": 1
-                  }
-                },
-                {
-                  "id": "4C-C3",
-                  "text": "（無言で手を握る）",
-                  "effects": {
-                    "kizuna": 1
-                  }
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（古い駅のホーム。石造りの柱。古びたベンチ。照明は薄暗く、風が線路の方から吹いてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（路線図はない。行き先案内の電光掲示板には──何も表示されていない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ただ、風が来る方向に線路が伸びている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（遠くから──ガタン、ガタン、と電車の音が聞こえてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（ホームの端に立って線路を見て）「……電車、来るんだ」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（写真をもう一度確認して）「……これが切符。乗れるはず」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（少し不安そうに）「どこ行きの電車なの」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……帰る方向に、行くんだと思う",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しばらく二人で、電車が来るのを待つ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ホームに風が吹く。二人の髪が揺れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（ぽつりと）「……怖かったね。ここ、全部」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……うん",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "口裂け女、テケテケ、マネキン、八尺様、のっぺらぼう",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……全部本物だったね",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（少し笑って）「でも全部、なんとかなった」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（舞の方を向いて）「……舞がいたから」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（結を見て、少し照れて）「ゆいが、ゆいだったから」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車の音が、大きくなってくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ヘッドライトの光が、トンネルの奥から差してくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（→ 第７章　帰還列車と、願いの行方）"
             }
           ],
-          "next": "4D"
+          "next": "C7_S1"
         },
         {
-          "id": "4D",
-          "condition": {
-            "any": [
-              {
-                "kegare": {
-                  ">=": 6
-                }
-              },
-              {
-                "came_from": "4B-F"
-              }
-            ]
-          },
+          "id": "C6_Q1_SUCCESS",
           "events": [
             {
               "type": "line",
-              "speaker": "受話口",
-              "text": "いつでも、そばにいるから。"
+              "speaker": "",
+              "text": "プリクラ写真で改札を突破"
             },
             {
-              "type": "choices",
-              "options": [
-                {
-                  "id": "4D-C1",
-                  "text": "通話を切る。",
-                  "effects": {
-                    "kegare": -1
-                  }
-                },
-                {
-                  "id": "4D-C2",
-                  "text": "……うん。",
-                  "effects": {
-                    "kegare": 1,
-                    "flags.F_MERRY_FAV": "+1"
-                  }
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（結が鞄からプリクラ写真を取り出す。素早く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうの手が、あと少しで届く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（写真を、改札機にかざす）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（改札機が──ピ、と鳴った）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（バーが開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうが止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（改札を通った側では──のっぺらぼうは動けない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が改札の中へ飛び込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞も続いて飛び込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（バーが閉まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうが改札の外で、こちらを向いている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔のない顔が、じっとこちらを見ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（見ている、ような気がする）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（動かない）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（改札の中から、のっぺらぼうを見て）「……怖い」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……うん。でも改札の外には出てこれないみたい",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（写真を確認する。使われた形跡はない。まだ使えそうだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ホームへ続く階段を見下ろす）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（風が吹いてくる。遠くで、電車の音がする）"
             }
           ],
-          "next": "5A"
+          "next": "C6_S2"
+        },
+        {
+          "id": "C6_Q1_FAIL",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "のっぺらぼうに引き込まれる"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（目が、離せない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔のない顔が、こちらを見ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（見ているはずがないのに）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（なのに──見られている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（視線を感じる。ないはずの目から、確かに）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（目を逸らさないと……でも）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうの手が触れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（冷たい）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（指先が、結の顔に触れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（さわさわと、頬を撫でる感触）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（そこで）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結の顔から、何かが消えていく感覚があった）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（え）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口の感触が、消える）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（目の感覚が、薄くなる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔が、平らになっていくような）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（結を見て）「──ゆい！！　顔……顔が！！」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結には舞の声が聞こえているが、もう声が出せない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口が）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうが、また一体増えた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗転）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（静寂）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "ＧＡＭＥ　ＯＶＥＲ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "のっぺらぼうは静かに改札の前に立っていた。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "一体が二体になった。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "どちらがもとからいた方か、もう分からない。"
+            }
+          ],
+          "isEnding": true,
+          "endingId": "c6_q1_fail_death",
+          "ending_label": "BAD END"
+        },
+        {
+          "id": "C6_Q1_HAREM",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "顔のない顔に突っ込む"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（写真を出す時間がない──正面から突破する！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうの手が伸びてくるその瞬間、結が踏み込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結の顔が、のっぺらぼうの顔に──ぶつかった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（正面衝突）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ぐにゅ、とした感触）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうの顔が弾力のある何かで、結の顔がそこに埋まるような形になる）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（っ……やわらかい……？　なんで……？）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうの体が、がくん、と揺れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "のっぺらぼう",
+              "text": "──……っ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（声が出た）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口のないはずの顔から、声が）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しかも──女の声だった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうの手が、結の肩をつかんで押しやろうとする）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（でも力が入っていない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうの全身が、小刻みに震えている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が顔を離す。のっぺらぼうの顔は相変わらず何もない。でも）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その滑らかな顔に──かすかに、赤みが差していた）"
+            },
+            {
+              "type": "line",
+              "speaker": "のっぺらぼう",
+              "text": "（震える、かすれた声で）「……は、やく……改札を、通って」"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その声を聞いて、結は弾かれたように鞄から写真を取り出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（改札にかざす。ピ、と鳴る。バーが開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人が飛び込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうが改札の外で止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔のない顔が──なぜかうつむいている）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（改札の中から振り返って、呆然と）「……しゃべった。のっぺらぼうがしゃべった」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（同じく振り返りながら、顔が赤い）「……うん」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆいの顔が当たったとこ、赤くなってたよ……顔なのに",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……知ってる",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（のっぺらぼうは、しばらく改札の前でうつむいていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（それから静かに元の位置に戻って、また立った）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔のない駅員が、改札の前に、また立っている）"
+            }
+          ],
+          "next": "C6_S2"
         }
       ]
     },
     {
-      "id": "Chapter5",
+      "id": "C7",
+      "title": "第7章 帰還列車と願いの行方",
       "scenes": [
         {
-          "id": "5A",
-          "bg": "On-the-way-home.png",
+          "id": "C7_S1",
+          "title": "迷界駅　ホーム",
           "events": [
             {
-              "type": "se",
-              "name": "笑い声の輪唱"
+              "type": "line",
+              "speaker": "",
+              "text": "（電車がホームに入ってくる）"
             },
             {
               "type": "line",
-              "speaker": "人面犬(オフ)",
-              "text": "クスクス、道に迷った？"
+              "speaker": "",
+              "text": "（古い型の車両だった。窓の外に錆が浮いている。塗装が剥げかけている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（でも動いている。確かに）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人が乗り込もうとした──その瞬間）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（コツ、コツ、コツ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（足音）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ハサミを持った、長いシルエット）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女だ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（最初の章で出会って、逃げた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（また来た）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車のドアが、閉まり始める）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女が走ってくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ハサミが開く）"
             }
           ],
-          "next": "5B"
-        },
-        {
-          "id": "5B",
-          "events": [
-            {
-              "type": "choices",
-              "options": [
-                {
-                  "id": "5B-C1",
-                  "text": "犬笛アプリ（交渉）",
-                  "skill_check": {
-                    "stat": "talk",
-                    "success": {
-                      "kyoko": -1
-                    },
-                    "fail": {
-                      "kyoko": 1
-                    }
-                  },
-                  "next": "5C"
-                },
-                {
-                  "id": "5B-C2",
-                  "text": "駄菓子で道標を作る（観察）",
-                  "effects": {
-                    "kegare": -1
-                  },
-                  "next": "5C"
-                },
-                {
-                  "id": "5B-C3",
-                  "text": "直進（体力）",
-                  "next": "5C"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "5C",
           "qte": {
-            "type": "shrinking_ring",
-            "attempts": 3,
-            "success_threshold": 2,
+            "text": "生き残れ！",
             "labels": [
-              "歩幅を合わせる",
-              "フェイント右→左",
-              "最後に手を引く"
+              "ドアが閉まる前に飛び込む！"
             ],
-            "success_to": "FIN",
-            "fail_to": "5C-F",
-            "effects_success": {},
-            "effects_fail": {
-              "kyoko": 1,
-              "flags.F_DOG_FAV": "+1"
-            }
+            "duration": 5000,
+            "harem_label": "口裂け女に突っ込んで一緒に飛び込む！",
+            "success_to": "C7_Q1_SUCCESS",
+            "fail_to": "C7_Q1_FAIL",
+            "harem_to": "C7_Q1_HAREM"
           }
         },
         {
-          "id": "5C-F",
-          "events": [
-            {
-              "type": "flag",
-              "description": "群れに囲まれる。"
-            }
-          ],
-          "effects": {
-            "kyoko": 1,
-            "flags.F_DOG_FAV": "+1"
-          },
-          "next": "5D"
-        },
-        {
-          "id": "5D",
+          "id": "C7_S2",
+          "title": "電車内　走行中",
           "events": [
             {
               "type": "line",
-              "speaker": "人面犬",
-              "text": "ボクらの道、案内してあげようか。"
+              "speaker": "",
+              "text": "（電車が走る）"
             },
             {
-              "type": "choices",
-              "options": [
-                {
-                  "id": "5D-C1",
-                  "text": "大丈夫。帰る道は自分で探す。",
-                  "effects": {
-                    "kizuna": 1
-                  },
-                  "next": "FIN"
-                },
-                {
-                  "id": "5D-C2",
-                  "text": "……案内して。",
-                  "effects": {
-                    "kegare": 1,
-                    "flags.F_DOG_FAV": "+1"
-                  },
-                  "next": "FIN"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "Finale",
-      "scenes": [
-        {
-          "id": "FIN",
-          "events": [
+              "type": "line",
+              "speaker": "",
+              "text": "（ガタン、ガタン、ガタン）"
+            },
             {
-              "type": "flag",
-              "description": "交差点中央に帰還の裂け目が開く。"
+              "type": "line",
+              "speaker": "",
+              "text": "（規則的な揺れ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（窓の外は──トンネルだ。ずっとトンネル。暗い、暗いトンネル）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、シートに座っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（窓の外を見ながら）「……長いね、トンネル」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……うん",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ガタン、ガタン、ガタン）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その時）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（窓の外の景色が──変わった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（トンネルではない。暗い、暗い、何もない空間を走っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（地面もない。空もない。ただ黒い）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（そして）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（窓の外に──何かがいた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車と並走している）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（人の形。でも速い。電車と同じ速度で、窓の外を走っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔が──窓ガラスに寄ってくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ガラス一枚を隔てて、その顔が）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（笑っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "……ゆい",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……見ないで",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（でも、他にも来ていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（窓という窓に、顔が張り付いてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（天井から音がする。ドンドン、ドンドン）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（車両の連結部のドアの向こうに──影が立っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（影が、こちらへ向かって歩いてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（一歩。また一歩）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "迫ってくる影。電車が揺れる。BGMが崩れる。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結（心の声）：（見るな……声を出すな……動くな……！）"
             }
           ],
-          "endings": [
+          "qte": {
+            "text": "生き残れ！",
+            "labels": [
+              "目を閉じて、舞の手を握る"
+            ],
+            "harem_label": "舞に抱きつく（体質が暴発する）",
+            "duration": 5000,
+            "success_to": "C7_Q2_SUCCESS",
+            "fail_to": "C7_Q2_FAIL",
+            "harem_to": "C7_Q2_HAREM"
+          },
+          "_comment": "台本ではハーレム分岐は『体質の暴発』で選択肢が存在しないため、仮の選択肢ラベルを付与（要シナリオ確認）"
+        },
+        {
+          "id": "C7_S3",
+          "title": "サンリフモール　ゲームセンター　プリクラ機の中",
+          "events": [
             {
-              "id": "END-L1",
-              "name": "TRUE LOVE：放課後の約束",
-              "condition": {
-                "all": [
-                  {
-                    "kizuna": {
-                      ">=": 8
-                    }
-                  },
-                  {
-                    "kegare": {
-                      "<=": 4
-                    }
-                  },
-                  {
-                    "qte_success_count": {
-                      ">=": 3
-                    }
-                  },
-                  {
-                    "flags.F_KUCHI_FAV": {
-                      "<": 2
-                    }
-                  },
-                  {
-                    "flags.F_TEKE_FAV": {
-                      "<": 2
-                    }
-                  },
-                  {
-                    "flags.F_8SHAKU_FAV": {
-                      "<": 2
-                    }
-                  },
-                  {
-                    "flags.F_MERRY_FAV": {
-                      "<": 2
-                    }
-                  },
-                  {
-                    "flags.F_DOG_FAV": {
-                      "<": 2
-                    }
-                  }
-                ]
-              },
-              "epilogue": [
-                {
-                  "speaker": "麻衣",
-                  "text": "帰ってきた…"
-                },
-                {
-                  "speaker": "百合香",
-                  "text": "これからも、二人で。"
-                },
-                {
-                  "action": "抱擁"
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（目が覚める）"
             },
             {
-              "id": "END-L2",
-              "name": "QUIET HOPE：保留の想い",
-              "condition": {
-                "all": [
-                  {
-                    "kizuna": {
-                      ">=": 6
-                    }
-                  },
-                  {
-                    "qte_success_count": {
-                      "<": 3
-                    }
-                  }
-                ]
-              },
-              "epilogue": [
-                {
-                  "speaker": "百合香",
-                  "text": "今日を忘れない。…いつか、ちゃんと。"
-                },
-                {
-                  "speaker": "麻衣",
-                  "text": "うん。帰ろう。"
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（狭い）"
             },
             {
-              "id": "END-F",
-              "name": "FRIENDSHIP：相棒宣言",
-              "condition": {
-                "all": [
-                  {
-                    "kizuna": {
-                      ">=": 5
-                    }
-                  },
-                  {
-                    "flag": {
-                      "F_LOVE_HINT": false
-                    }
-                  }
-                ]
-              },
-              "epilogue": [
-                {
-                  "speaker": "二人",
-                  "text": "相棒でいよう。次に迷っても、今度はもっと上手くやる。"
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（カーテンに囲まれた、狭いスペース）"
             },
             {
-              "id": "END-B1",
-              "name": "BAD：すれ違う放課後",
-              "condition": {
-                "kyoko": {
-                  ">=": 7
-                }
-              },
-              "epilogue": [
-                {
-                  "narration": "麻衣だけ現実へ。百合香の声だけが残響。"
-                },
-                {
-                  "speaker": "麻衣",
-                  "text": "必ず、迎えにいく。"
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（液晶画面が前にある。古い、あのプリクラ機の画面だ）"
             },
             {
-              "id": "END-B2",
-              "name": "反転日常（迷界定着）",
-              "condition": {
-                "kegare": {
-                  ">=": 9
-                }
-              },
-              "epilogue": [
-                {
-                  "narration": "現実と同じ校舎、黒板の文字だけが逆。区別のつかない暮らしが始まる。"
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（ゲームセンターの音が、外から聞こえてくる）"
             },
             {
-              "id": "END-K-KUCHI",
-              "name": "怪異堕ち：鏡の案内人（口裂け女）",
-              "condition": {
-                "all": [
-                  {
-                    "flags.F_KUCHI_FAV": {
-                      ">=": 3
-                    }
-                  },
-                  {
-                    "kegare": {
-                      ">=": 7
-                    }
-                  }
-                ]
-              },
-              "epilogue": [
-                {
-                  "narration": "割れた鏡片が星のように浮遊し、迷い人を導く案内人となる。"
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（クレーンゲームの電子音。音楽ゲームのビート。人の声）"
             },
             {
-              "id": "END-K-TEKE",
-              "name": "怪異堕ち：走者の影（テケテケ）",
-              "condition": {
-                "all": [
-                  {
-                    "flags.F_TEKE_FAV": {
-                      ">=": 3
-                    }
-                  },
-                  {
-                    "kegare": {
-                      ">=": 7
-                    }
-                  }
-                ]
-              },
-              "epilogue": [
-                {
-                  "narration": "終わらないプラットフォームを影が並走し続ける。"
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が、隣でまだ目を閉じている）"
             },
             {
-              "id": "END-K-8SHAKU",
-              "name": "怪異堕ち：影の守り子（八尺様）",
-              "condition": {
-                "all": [
-                  {
-                    "flags.F_8SHAKU_FAV": {
-                      ">=": 3
-                    }
-                  },
-                  {
-                    "kegare": {
-                      ">=": 7
-                    }
-                  }
-                ]
-              },
-              "epilogue": [
-                {
-                  "narration": "長い影に小さな影が寄り添い、社を守り続ける。"
-                }
-              ]
+              "type": "line",
+              "speaker": "結",
+              "text": "（舞の肩を揺すって、小声で）「……舞。舞、起きて」",
+              "character": "yui-shitsuki.png"
             },
             {
-              "id": "END-K-MERRY",
-              "name": "怪異堕ち：受話器の向こう（メリーさん）",
-              "condition": {
-                "all": [
-                  {
-                    "flags.F_MERRY_FAV": {
-                      ">=": 3
-                    }
-                  },
-                  {
-                    "kegare": {
-                      ">=": 7
-                    }
-                  }
-                ]
-              },
-              "epilogue": [
-                {
-                  "narration": "受話器の向こうで安堵の吐息が続く。いつでも繋がる声となる。"
-                }
-              ]
+              "type": "line",
+              "speaker": "舞",
+              "text": "（ゆっくりと目を開ける）「……ん……」",
+              "character": "mai-hinata.png"
             },
             {
-              "id": "END-K-DOG",
-              "name": "怪異堕ち：交差点の道標（人面犬）",
-              "condition": {
-                "all": [
-                  {
-                    "flags.F_DOG_FAV": {
-                      ">=": 3
-                    }
-                  },
-                  {
-                    "kegare": {
-                      ">=": 7
-                    }
-                  }
-                ]
-              },
-              "epilogue": [
-                {
-                  "narration": "白線が矢印を描き、迷い人を導く道標となる。"
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、数秒、状況を把握できずにいる）"
             },
             {
-              "id": "END-HR",
-              "name": "HAREM：囲いの守護（複合守護）",
-              "condition": {
-                "all": [
-                  {
-                    "flags.F_KUCHI_FAV": {
-                      ">=": 2
-                    }
-                  },
-                  {
-                    "flags.F_TEKE_FAV": {
-                      ">=": 2
-                    }
-                  },
-                  {
-                    "flags.F_8SHAKU_FAV": {
-                      ">=": 2
-                    }
-                  },
-                  {
-                    "flags.F_MERRY_FAV": {
-                      ">=": 2
-                    }
-                  },
-                  {
-                    "flags.F_DOG_FAV": {
-                      ">=": 2
-                    }
-                  },
-                  {
-                    "kegare": {
-                      ">=": 8
-                    }
-                  }
-                ]
-              },
-              "epilogue": [
-                {
-                  "narration": "五方向の影が輪を成し、二人を『守る対象』として囲う。帰れない安寧の選択。"
-                }
-              ]
+              "type": "line",
+              "speaker": "",
+              "text": "（プリクラ機の中だ。最初に入ったあの機械の中だ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ここはゲームセンターだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（元の世界のゲームセンターだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "店員",
+              "text": "（中をのぞいて、驚いた顔で）「あ、あれ！？　お客様！？　閉店時間ですよ！！中で寝てたんですか！？」"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "──あ、す、すみません！！",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "っ、ごめんなさい！！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、慌てて外に出る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ゲームセンター。照明が落ちかけている。閉店間際だ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（他の客は誰もいない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（店員さんが困惑した顔で二人を見ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "店員",
+              "text": "大丈夫ですか？　プリクラの中で眠ってたなんて……体調悪いですか？"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "い、いえ……大丈夫です。その、疲れてて",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（へらっと笑って）「すみません。もう帰ります！」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人で店を出る。シャッターが下りかけているモールの出入り口から外へ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（夜の空気が、冷たい）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（道路の向こうに、住宅街の灯りが見える）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（普通の夜）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（普通の、元の世界の夜）"
             }
-          ]
+          ],
+          "next": "C7_S4"
+        },
+        {
+          "id": "C7_S4",
+          "title": "モール前の広場",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、立ち止まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しばらく、何も言えない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ようやく）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（震える声で）「……帰ってきた？」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……帰ってきた",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の目から、涙がこぼれた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（声を出さずに、ただ涙が流れていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（驚いて）「舞……？」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（声が震えながら）「……こわかった。ずっとこわかった。でもゆいの前だから笑ってた。ずっと」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（なんと言えばいいか分からなくて）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ただ、手を伸ばした）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の手を、握った）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞がびっくりして顔を上げる）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……私も怖かった。舞がいたから、平気だった",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が、また泣く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（今度は顔をくしゃくしゃにして、泣く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結は繋いだ手を、離さない）"
+            },
+            {
+              "type": "line",
+              "speaker": "【 エンディングＡ",
+              "text": "トゥルーエンド 】"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "「体質が消えた朝」"
+            }
+          ],
+          "next": "C7_S5"
+        },
+        {
+          "id": "C7_S5",
+          "title": "エンディングA：体質が消えた朝",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（しばらくして）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が泣き止んだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人で並んで、夜空を見上げる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（星が出ている。元の世界の、普通の星空）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（涙をぬぐいながら）「……ゆい。願いが叶うって言ってたじゃん。帰ってきたら」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……そうだったね",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "何か、感じる？",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結は自分の手を見る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（体質が──）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の手を握っている。でも）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（何も、来ない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（あの「暴発」が、ない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ただ、手の温かさだけがある）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（体質が……消えた？）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（そっと、もう少しだけ舞の手を握る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞がこちらを見る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（何も、来ない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ただ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の顔が、近くにある）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（それだけだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（小声で）「……体質、消えたかもしれない」",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（驚いて）「え、本当に？」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……うん。何も来ない",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が、少し考えるように)"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "……それでも、手、繋いでていい？",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "え",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（ちょっとだけ照れて、でも真っ直ぐ結を見て）「体質とか関係なく、繋ぎたい」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が、しばらく何も言えない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（それから、小さく)"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "……うん",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、手をつないで歩き出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（夜道を、並んで）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（体質がなくなっても）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（繋いだ手は離さない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "「ふつうの手で、ふつうの帰り道。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "それだけで、十分だった」"
+            },
+            {
+              "type": "line",
+              "speaker": "【 エンディングＢ",
+              "text": "ハーレムエンド 】"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "「満員電車の君へ」"
+            }
+          ],
+          "isEnding": true,
+          "endingId": "true_end",
+          "ending_label": "エンディングA：体質が消えた朝",
+          "ending_image": "trueend.png"
+        },
+        {
+          "id": "C7_S6",
+          "title": "ハーレムルート",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が、一人でモールの前に立っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車のドアが閉まる瞬間の、結の顔が頭から離れない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞！　と叫んでいた。手を伸ばしていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（届かなかった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞は、ゲームセンターの入り口を見る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（入る。プリクラ機の前に立つ。コインを入れる。撮影する）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（待つ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（何も起きない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（当たり前だ。異世界のモノを持っていない。ただのプリクラだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（写真が出てくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞だけが写っている。隣は空白だ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞はその写真をじっと見る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ゲームセンターが閉店する。シャッターが下りる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞は一人で、夜道を歩いて帰る）"
+            }
+          ],
+          "next": "C7_S7"
+        },
+        {
+          "id": "C7_S7",
+          "title": "エンディングB：満員電車の君へ",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（大学二年生の小暮舞。スマホを見ながら電車に揺られている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（あの日から、ゆいのことを毎日考えた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（両親にも、学校にも、「友人が行方不明になった」と報告した）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（捜索願が出た。でも見つからなかった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車通学を始めてからも、ふと電車の中でゆいを探してしまう）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（今日も、混んでいる車内に乗り込んで）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（スマホを見ながら、ふと顔を上げる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その時）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（車内の、少し離れた場所に）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（制服を着た女の子がいた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（高校生くらいの）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（混雑した車内で、その子だけが妙に浮いて見える）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔が──）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の心臓が、跳ねた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔が、ゆいに似ていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（いや）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ゆいだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（背格好も、髪の長さも、うつむいた角度も）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ゆいだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（でも）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その顔が、ゆっくりと上を向く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（目が合いそうになって──）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その子の目が、白い）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ゆいだったものが、こちらを見ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の体が固まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その子が、かすかに口を動かす）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（唇の形が読めた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（「舞」と）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の目に、涙が盛り上がる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（次の駅のアナウンスが流れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その子が──人混みの中に、消えていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が飛び出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（人混みをかき分けながら）「待って！！　ゆい！！　ゆい！！！」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（人が振り返る。白い目をした女の子の姿は、もうない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が、ホームに立つ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が、ドアを閉める）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞は、ホームで立ち尽くす）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（写真を取り出す。高校一年生の夏に撮った、二人のプリクラ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（あの日のプリクラ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人でちゃんと笑えていた、あの写真）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞は写真を握って）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（スマホを開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（「サンリフモール　怪異　電車」と検索する）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結果が出てくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（満員電車に現れる怪異）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（女子高生の姿をした）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（知っている人の顔をして、現れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞は、スマホを閉じる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ホームから、次の電車のライトが見えてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の目が、決まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（小声で）「……待ってて、ゆい。絶対、助けに行くから」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗転）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "舞が、その電車に再び乗ったのは──"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "また別の話だ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "「怪異になった結と、助けに行く舞の話。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "続きは、いつか」"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗転）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "「サンリフモールのゲームセンターに、古いプリクラ機がある」"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "「特定のハンドサインで撮影すると、異世界に行けるという」"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "「帰り方もあって、願いが叶うという」"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "「それは本当の話だ」"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "「ただし、帰れるとは限らない」"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（END）"
+            }
+          ],
+          "isEnding": true,
+          "endingId": "harem_end",
+          "ending_label": "エンディングB：満員電車の君へ",
+          "ending_image": "SMDend.png"
+        },
+        {
+          "id": "C7_Q1_SUCCESS",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "ドアが閉まる前に乗り込む"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、同時に飛び込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが閉まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女の手がガラスを叩く音がする）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が動き出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ホームが遠ざかっていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ガラスの向こうで口裂け女がこちらを見ていた。ハサミを持ったまま、ただ見ていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（やがて、暗いトンネルに入る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ホームが消える）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車は走る）"
+            }
+          ],
+          "next": "C7_S2"
+        },
+        {
+          "id": "C7_Q1_FAIL",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "口裂け女に捕まる"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女の問いかけが、頭に張り付く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（「綺麗？」）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（「綺麗？」）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが閉まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が動き出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ホームに──二人は残っていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女が、ゆっくりと近づいてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ハサミが、開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "──舞！　走って！！",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（逃げ場はない。電車は行ってしまった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女のハサミが、空気を切る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗転）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（静寂）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "ＧＡＭＥ　ＯＶＥＲ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "帰りの電車に乗れなかった者の行方は、"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "誰も知らない。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "口裂け女だけが知っている。"
+            }
+          ],
+          "isEnding": true,
+          "endingId": "c7_q1_fail_death",
+          "ending_label": "BAD END"
+        },
+        {
+          "id": "C7_Q1_HAREM",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "口裂け女と一緒に飛び込む"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女がすぐそこまで来ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが、閉まりかけている）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（このままじゃ舞だけ乗れる！　一緒に──！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が逆に、口裂け女に向かって走る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ぶつかる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女がよろめく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（もつれたまま二人でドアの中に転がり込む）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが閉まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が動き出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（車内の床に、結と口裂け女が絡まって倒れている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が唖然として見ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女が、結の上に覆いかぶさる形になっている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マスクが──ずれていた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マスクの下から見えたのは──大きく裂けた口ではなく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ただの、驚いた顔の女だった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（裂けていない、口が）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（目が合う）"
+            },
+            {
+              "type": "line",
+              "speaker": "口裂け女",
+              "text": "──……！",
+              "character": "Slit-MouthWoman.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔が──赤い）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（マスクを慌てて直す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が起き上がろうとする。手をつく位置が──）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女の胸の上、だった）"
+            },
+            {
+              "type": "line",
+              "speaker": "口裂け女",
+              "text": "──ッ！！！",
+              "character": "Slit-MouthWoman.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ハサミがガタンと床に落ちる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が揺れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女が起き上がって、車両の端まで飛びのく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ハサミを拾い直して、じっと床を見ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（もう攻撃してこない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が結を引き起こす）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、そっと反対側のシートに座る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（口裂け女は端のシートで、膝を揃えてうつむいている）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（小声で）「……何が起きたの）",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "（同じく小声で）「……分からない。でも、乗れた）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車は、暗いトンネルを走っていく）"
+            }
+          ],
+          "next": "C7_S2"
+        },
+        {
+          "id": "C7_Q2_SUCCESS",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "目を閉じて嵐をやり過ごす"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が目を閉じる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の手を探す。見つける。握る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞も目を閉じる。結の手を強く握り返す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドン、ドン、天井の音が続く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（窓に張り付く顔が、こちらを見ている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（影が、また一歩近づく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（でも）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人は動かない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（声を出さない）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ただ手を握っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が揺れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（揺れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ガタン、ガタン、ガタン）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（やがて）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（音が、消えていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（窓の外が、また普通のトンネルに戻っていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（影が、消えている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が、減速する）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、まだ手を握ったまま、ゆっくりと目を開ける）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（窓の外に──光が見える）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ホームの光だ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（温かい空気が入ってくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（どこかで電子音楽が聞こえる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（クレーンゲームの、音楽ゲームの、ゲームセンターの音だ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人、顔を見合わせる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（この音を知っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（まぶたが、重くなってくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（揺れる電車の余韻が、眠気を呼ぶ）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（着い、た……帰れ、た……）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（目が閉じていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（意識が、沈んでいく）"
+            }
+          ],
+          "next": "C7_S3"
+        },
+        {
+          "id": "C7_Q2_FAIL",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "影に引き込まれる"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（窓の外に目が行ってしまう）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（顔が笑っている。窓ガラス一枚の向こうで）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（目が合う）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（影が、走ってくる。速く。速く。速く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（連結部のドアが、開いた）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（影が、車内に入ってくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が揺れる。明かりが消える）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆい！！　ゆい！！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗闇の中で、舞の声が聞こえる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（だんだん遠くなる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（だんだん、遠く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "ＧＡＭＥ　ＯＶＥＲ"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "電車は終点に着かなかった。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "あるいは、着いたのかもしれない。"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "ただしそこは、帰りたかった場所ではなかった。"
+            }
+          ],
+          "isEnding": true,
+          "endingId": "c7_q2_fail_death",
+          "ending_label": "BAD END"
+        },
+        {
+          "id": "C7_Q2_HAREM",
+          "events": [
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "体質が暴発して、結だけが取り残される"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結が舞の手を探す。握る）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が握り返す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドン、ドン、天井の音が続く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（影が近づいてくる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が激しく揺れる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（揺れのせいで、結と舞の体が密着する）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その瞬間）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結の体が──かっと熱くなる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（体質が、暴発した）"
+            },
+            {
+              "type": "line",
+              "speaker": "結（心の声）",
+              "text": "（っ、今は──今は！！　頼むから！！）",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞の顔が赤くなる）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "っ……ゆ、ゆい……？　なんか、急に……",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（二人が声を出してしまった）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（影が反応する）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（窓の顔たちが、一斉にこちらを向く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が急減速する）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが開く）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ホームが見えた──元の世界への出口が）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が結の手を引く）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "行くよ！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（走る。ドアへ。ホームへ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞が飛び出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（その瞬間）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（影の手が、結の腕を掴んだ）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（強い。引っ張られる。後ろへ）"
+            },
+            {
+              "type": "line",
+              "speaker": "結",
+              "text": "──舞！！",
+              "character": "yui-shitsuki.png"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "（ホームから振り返って）「ゆい！！！」",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが閉まり始める）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結の手が、舞の方へ伸びる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（届かない）"
+            },
+            {
+              "type": "line",
+              "speaker": "舞",
+              "text": "ゆい！！！！！！",
+              "character": "mai-hinata.png"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（ドアが閉まる）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が動き出す）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（舞だけが、ホームに立っている）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（電車が、トンネルへ消えていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（結の叫ぶ声が、トンネルの奥へ消えていく）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "（暗転）"
+            },
+            {
+              "type": "line",
+              "speaker": "",
+              "text": "→ ハーレムエンドへ続く"
+            }
+          ],
+          "next": "C7_S6"
         }
       ]
     }

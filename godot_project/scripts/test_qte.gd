@@ -19,8 +19,8 @@ func _ready() -> void:
 	qte.qte_completed.connect(_on_qte_completed)
 	qte.start_qte(test_data)
 
-func _on_qte_completed(success: bool) -> void:
-	print("[Test] QTE Completed. Success: ", success)
+func _on_qte_completed(result: String) -> void:
+	print("[Test] QTE Completed. Result: ", result)
 	# もう一度テスト
 	await get_tree().create_timer(2.0).timeout
 	

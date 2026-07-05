@@ -36,6 +36,15 @@ var text_display_tween: Tween
 # 選択肢ボタンテンプレート
 var choice_button_scene: PackedScene
 
+# メニュー/オーバーレイ状態
+const TITLE_SCENE := "res://scenes/ui/title.tscn"
+var pause_menu: PauseMenu = null
+var save_load_menu: SaveLoadMenu = null
+var overlay_layer: CanvasLayer = null
+var is_game_over: bool = false
+var is_ending_shown: bool = false
+var can_return_to_title: bool = false
+
 func _ready() -> void:
 	# シグナル接続
 	ScenarioManager.scene_changed.connect(_on_scene_changed)
@@ -43,9 +52,15 @@ func _ready() -> void:
 	ScenarioManager.character_display_requested.connect(_on_character_display_requested)
 	ScenarioManager.choices_display_requested.connect(_on_choices_display_requested)
 	ScenarioManager.qte_requested.connect(_on_qte_requested)
-	
+	ScenarioManager.ending_reached.connect(_on_ending_reached)
+
 	GameManager.parameter_changed.connect(_on_parameter_changed)
 	GameManager.game_over.connect(_on_game_over)
+
+	# オーバーレイ用レイヤー（ゲームオーバー/エンディング/メニュー表示先）
+	overlay_layer = CanvasLayer.new()
+	overlay_layer.layer = 100
+	add_child(overlay_layer)
 	
 	# CommandExecutor設定
 	if command_executor:
@@ -68,14 +83,23 @@ func _ready() -> void:
 	
 	# シナリオ開始
 	GameManager.load_system_data()
-	GameManager.reset_game()
-	
-	# 最初のシーンを開始
+
+	# 最初のシーンを開始（つづきからの場合はセーブ地点から再開）
 	call_deferred("_start_first_scene")
-	
+
 	print("[Main] Ready")
 
 func _start_first_scene() -> void:
+	# タイトル画面「つづきから」経由の場合
+	if GameManager.pending_load_slot >= 0:
+		var slot = GameManager.pending_load_slot
+		GameManager.pending_load_slot = -1
+		if GameManager.resume_from_save(slot):
+			return
+		push_warning("[Main] Failed to resume from slot %d, starting new game" % slot)
+
+	GameManager.reset_game()
+
 	# シナリオの最初のシーンを特定して開始
 	var scene_ids = ScenarioManager.get_all_scene_ids()
 	if scene_ids.size() > 0:
@@ -90,21 +114,37 @@ func _start_first_scene() -> void:
 			push_error("[Main] No starting scene found")
 
 func _input(event: InputEvent) -> void:
+	# ゲームオーバー/エンディング表示中はクリックでタイトルへ
+	if is_game_over or is_ending_shown:
+		if can_return_to_title and event.is_action_pressed("ui_accept"):
+			_return_to_title()
+		return
+
 	if event.is_action_pressed("ui_accept"):
 		handle_click()
+	elif event.is_action_pressed("ui_cancel"):
+		toggle_pause_menu()
 	elif event.is_action_pressed("debug_toggle"):
 		toggle_debug_ui()
 
 func handle_click() -> void:
+	if _is_menu_open():
+		return  # メニュー表示中はクリック無効
+	if GameManager.current_state == GameManager.GameState.QTE:
+		return
 	if choices_container.visible:
 		return  # 選択肢表示中はクリック無効
-	
+
 	if is_text_displaying:
 		# テキスト表示中→全文表示
 		complete_text_display()
 	else:
 		# テキスト表示完了→次へ
 		ScenarioManager.advance_text()
+
+func _is_menu_open() -> bool:
+	return (pause_menu != null and is_instance_valid(pause_menu)) \
+		or (save_load_menu != null and is_instance_valid(save_load_menu))
 
 func _on_scene_changed(scene_data: Dictionary) -> void:
 	# 背景変更
@@ -137,15 +177,122 @@ func _on_parameter_changed(_param_name: String, _new_value: int) -> void:
 	update_parameter_display()
 
 func _on_game_over() -> void:
+	if is_game_over:
+		return
 	print("[Main] GAME OVER!")
-	# ゲームオーバー処理
-	dialog_text.text = "[center][color=red]GAME OVER[/color][/center]"
-	speaker_name.text = ""
-	# 数秒後にタイトルへ戻る
-	get_tree().create_timer(3.0).timeout.connect(func():
-		# タイトル画面へ遷移（実装時に追加）
-		pass
+	is_game_over = true
+	_close_menus()
+	_show_fullscreen_message("GAME OVER", Color(0.8, 0.1, 0.1), null)
+
+func _on_ending_reached(scene: Dictionary) -> void:
+	if is_ending_shown:
+		return
+	is_ending_shown = true
+	_close_menus()
+	var ending_id: String = scene.get("endingId", "")
+	var label: String = scene.get("ending_label", "")
+	if label == "":
+		label = "BAD END" if "death" in ending_id else "THE END"
+	var image: Texture2D = null
+	var image_path: String = scene.get("ending_image", "")
+	if image_path != "":
+		var full_path = image_path if image_path.begins_with("res://") else "res://assets/images/%s" % image_path
+		if ResourceLoader.exists(full_path):
+			image = load(full_path)
+	_show_fullscreen_message(label, Color.WHITE, image)
+
+# ゲームオーバー/エンディング共通の全画面表示。表示後クリックでタイトルへ戻れる。
+func _show_fullscreen_message(message: String, color: Color, image: Texture2D) -> void:
+	var overlay = Control.new()
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay_layer.add_child(overlay)
+
+	var black = ColorRect.new()
+	black.color = Color(0, 0, 0, 1)
+	black.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(black)
+
+	if image:
+		var tex = TextureRect.new()
+		tex.texture = image
+		tex.set_anchors_preset(Control.PRESET_FULL_RECT)
+		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		overlay.add_child(tex)
+
+	var label = Label.new()
+	label.text = message
+	label.add_theme_font_size_override("font_size", 72)
+	label.add_theme_color_override("font_color", color)
+	label.set_anchors_preset(Control.PRESET_CENTER)
+	label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	label.grow_vertical = Control.GROW_DIRECTION_BOTH
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	overlay.add_child(label)
+
+	var hint = Label.new()
+	hint.text = "クリックでタイトルへ"
+	hint.add_theme_font_size_override("font_size", 24)
+	hint.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	hint.position.y -= 80
+	hint.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.visible = false
+	overlay.add_child(hint)
+
+	# 誤クリック防止のため少し待ってから遷移を許可
+	overlay.modulate.a = 0.0
+	var tween = create_tween()
+	tween.tween_property(overlay, "modulate:a", 1.0, 1.0)
+	tween.tween_interval(0.5)
+	tween.tween_callback(func():
+		can_return_to_title = true
+		hint.visible = true
 	)
+
+func _return_to_title() -> void:
+	get_tree().change_scene_to_file(TITLE_SCENE)
+
+# ---- ポーズメニュー / セーブ・ロード ----
+
+func toggle_pause_menu() -> void:
+	if save_load_menu != null and is_instance_valid(save_load_menu):
+		return  # セーブ/ロード画面表示中（閉じる操作はメニュー側で処理）
+	if GameManager.current_state == GameManager.GameState.QTE:
+		return  # QTE中はメニュー禁止
+	if pause_menu != null and is_instance_valid(pause_menu):
+		_close_menus()
+		return
+	pause_menu = PauseMenu.new()
+	pause_menu.resume_requested.connect(_close_menus)
+	pause_menu.save_requested.connect(func(): _open_save_load_menu("save"))
+	pause_menu.load_requested.connect(func(): _open_save_load_menu("load"))
+	pause_menu.title_requested.connect(_return_to_title)
+	overlay_layer.add_child(pause_menu)
+
+func _open_save_load_menu(mode: String) -> void:
+	if pause_menu != null and is_instance_valid(pause_menu):
+		pause_menu.queue_free()
+		pause_menu = null
+	save_load_menu = SaveLoadMenu.new(mode)
+	save_load_menu.slot_activated.connect(_on_save_load_slot_activated)
+	save_load_menu.closed.connect(func(): save_load_menu = null)
+	overlay_layer.add_child(save_load_menu)
+
+func _on_save_load_slot_activated(slot: int, mode: String) -> void:
+	if mode == "load":
+		if save_load_menu != null and is_instance_valid(save_load_menu):
+			save_load_menu.queue_free()
+			save_load_menu = null
+		GameManager.resume_from_save(slot)
+
+func _close_menus() -> void:
+	if pause_menu != null and is_instance_valid(pause_menu):
+		pause_menu.queue_free()
+		pause_menu = null
+	if save_load_menu != null and is_instance_valid(save_load_menu):
+		save_load_menu.queue_free()
+		save_load_menu = null
 
 func load_background(bg_path: String) -> void:
 	var full_path = bg_path
@@ -256,15 +403,17 @@ func start_qte(qte_data: Dictionary) -> void:
 	
 	print("[Main] QTE Started: %s" % str(qte_data))
 	current_qte_data = qte_data
-	
+	GameManager.current_state = GameManager.GameState.QTE
+
 	# ダイアログを非表示にしてQTEを開始
 	dialog_box.visible = false
 	qte_controller.start_qte(qte_data)
 
-func _on_qte_completed(success: bool) -> void:
-	print("[Main] QTE Completed: %s" % ("SUCCESS" if success else "FAILED"))
+func _on_qte_completed(result: String) -> void:
+	print("[Main] QTE Completed: %s" % result)
+	GameManager.current_state = GameManager.GameState.GAME
 	dialog_box.visible = true
-	ScenarioManager.handle_qte_result(success, current_qte_data)
+	ScenarioManager.handle_qte_result_typed(result, current_qte_data)
 	current_qte_data = {}
 
 func update_parameter_display() -> void:
