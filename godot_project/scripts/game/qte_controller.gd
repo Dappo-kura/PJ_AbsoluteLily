@@ -1,173 +1,204 @@
-# QTEController - Shrinking Ring QTE システム
+# QTEController - 新QTE（複数選択肢・ランダム配置・即死ルート）システム
 extends Control
 
 signal qte_completed(success: bool)
 
-@onready var ring_outer: Control = $RingOuter
-@onready var ring_shrinking: Control = $RingShrinking
-@onready var target_zone: Control = $TargetZone
 @onready var action_text: Label = $ActionText
 @onready var result_label: Label = $ResultLabel
+@onready var background: VideoStreamPlayer = $Background
+@onready var choices_container: Control = $ChoicesContainer
+
+var qte_choice_scene = preload("res://scenes/game/qte_choice.tscn")
 
 # QTEパラメータ
-var duration: float = 2.0  # ms -> sec
-var ring_size: float = 300.0
-var zone_inner_ratio: float = 0.65
-var zone_outer_ratio: float = 0.80
+var duration: float = 2.0
 var display_text: String = "タップ!"
-var attempts: int = 3
-var success_threshold: int = 2
-
-# 状態
 var is_active: bool = false
-var current_attempt: int = 0
-var success_count: int = 0
-var shrink_tween: Tween
 var current_qte_data: Dictionary = {}
+var timer: float = 0.0
+
+# 選択肢用の定数とリスト
+var death_texts: Array = ["逃げる", "動かない", "諦める", "目を閉じる", "声を上げる", "後ずさる"]
 
 func _ready() -> void:
 	visible = false
 	result_label.visible = false
-	print("[QTEController] Initialized")
+	# 背景動画をVideoStreamTheoraで設定
+	var stream = VideoStreamTheora.new()
+	stream.file = "res://assets/images/Wan22_i2v_00001_1.ogv"
+	background.stream = stream
+	background.expand = true
+	print("[QTEController] Initialized (New Spec)")
+
+func _process(delta: float) -> void:
+	if not is_active:
+		return
+	
+	timer -= delta
+	if timer <= 0:
+		_on_time_out()
 
 func start_qte(qte_data: Dictionary) -> void:
 	current_qte_data = qte_data
 	
-	# パラメータ設定
-	duration = qte_data.get("duration", 2000) / 1000.0
-	ring_size = qte_data.get("size", 300)
-	zone_inner_ratio = qte_data.get("zone_inner_ratio", 0.65)
-	zone_outer_ratio = qte_data.get("zone_outer_ratio", 0.80)
-	display_text = qte_data.get("text", "タップ!")
-	attempts = qte_data.get("attempts", 3)
-	success_threshold = qte_data.get("success_threshold", 2)
+	# パラメータ設定 (最低4秒を保証)
+	var req_duration = qte_data.get("duration", 4000) / 1000.0
+	duration = max(4.0, req_duration)
+	display_text = qte_data.get("text", "生き残れ！")
 	
-	# ラベル配列がある場合
-	if qte_data.has("labels") and qte_data["labels"].size() > 0:
-		attempts = qte_data["labels"].size()
-	
-	current_attempt = 0
-	success_count = 0
+	action_text.text = display_text
 	
 	visible = true
 	is_active = true
 	result_label.visible = false
+	timer = duration
 	
-	start_attempt()
+	# 背景動画の再生を開始
+	background.play()
+	
+	# 既存の選択肢をクリア
+	for child in choices_container.get_children():
+		child.queue_free()
+	
+	var labels = qte_data.get("labels", ["生きる"])
+	
+	# 今回正解となるテキスト
+	var correct_text = labels[0] if labels.size() > 0 else "生きる"
+	
+	# 生存(SURVIVAL) か エッチ(EROTIC) かの判定
+	var correct_type = 0 # SURVIVAL
+	if "触れる" in correct_text or "キス" in correct_text or "抱きつく" in correct_text:
+		correct_type = 1 # EROTIC
+	
+	# --- グリッドを利用した分散配置 ---
+	var viewport_size = get_viewport_rect().size
+	var margin = 60
+	var safe_rect = Rect2(margin, margin, viewport_size.x - margin * 2, viewport_size.y - margin * 2)
+	
+	# 4x3 のグリッド (最大12個のセル)
+	var cols = 4
+	var rows = 3
+	var cell_w = safe_rect.size.x / cols
+	var cell_h = safe_rect.size.y / rows
+	
+	# 利用可能なセルのインデックスリスト (0 ~ 11)
+	var available_cells = []
+	for i in range(cols * rows):
+		available_cells.append(i)
+	
+	# シャッフルしてランダムなセルを選ぶ
+	available_cells.shuffle()
+	
+	# --- 死亡(DEATH)選択肢の生成 (3 ~ 9個追加して最大10個) ---
+	# 利用可能なセル12個のうち、正解1つ＋死亡Max9つ＝10個であれば必ず収まる
+	var death_count = randi_range(3, 9)
+	var total_choices = 1 + death_count
+	
+	# スポーンデータを配列にまとめる（後でシャッフルして順番をランダムに）
+	var spawn_list = []
+	
+	for i in range(total_choices):
+		if available_cells.size() == 0:
+			break
+			
+		var cell_index = available_cells.pop_back()
+		var col = cell_index % cols
+		var row = cell_index / cols
+		
+		# セルの矩形
+		var cell_rect = Rect2(
+			safe_rect.position.x + col * cell_w,
+			safe_rect.position.y + row * cell_h,
+			cell_w,
+			cell_h
+		)
+		
+		var choice_size = 160
+		# セル内で少しだけランダムにずらす余裕を計算
+		var padding_x = max(0.0, cell_rect.size.x - choice_size)
+		var padding_y = max(0.0, cell_rect.size.y - choice_size)
+		
+		var rx = cell_rect.position.x + randf_range(0, padding_x)
+		var ry = cell_rect.position.y + randf_range(0, padding_y)
+		var pos = Vector2(rx, ry)
+		
+		if i == 0:
+			# 正解ルート
+			spawn_list.append({"type": correct_type, "text": correct_text, "pos": pos})
+		else:
+			# 死亡ルート
+			var d_text = death_texts[randi() % death_texts.size()]
+			spawn_list.append({"type": 2, "text": d_text, "pos": pos})
+	
+	# 出現順をシャッフル（正解が最初に出るとは限らないように）
+	spawn_list.shuffle()
+	
+	# 選択肢を次々に表示する（非同期）
+	_spawn_choices_sequentially(spawn_list)
 
-func start_attempt() -> void:
-	if current_attempt >= attempts:
-		finish_qte()
-		return
-	
-	# テキスト設定
-	if current_qte_data.has("labels") and current_attempt < current_qte_data["labels"].size():
-		action_text.text = current_qte_data["labels"][current_attempt]
-	else:
-		action_text.text = display_text
-	
-	# リングサイズ設定
-	ring_outer.custom_minimum_size = Vector2(ring_size, ring_size)
-	ring_outer.size = Vector2(ring_size, ring_size)
-	ring_outer.position = (get_viewport_rect().size - ring_outer.size) / 2
-	
-	ring_shrinking.custom_minimum_size = Vector2(ring_size, ring_size)
-	ring_shrinking.size = Vector2(ring_size, ring_size)
-	ring_shrinking.position = ring_outer.position
-	ring_shrinking.scale = Vector2(1.5, 1.5)  # 外側から開始
-	
-	# ターゲットゾーン設定
-	var zone_size = ring_size * zone_outer_ratio
-	target_zone.custom_minimum_size = Vector2(zone_size, zone_size)
-	target_zone.size = Vector2(zone_size, zone_size)
-	target_zone.position = ring_outer.position + Vector2((ring_size - zone_size) / 2, (ring_size - zone_size) / 2)
-	
-	# 収縮アニメーション開始
-	if shrink_tween and shrink_tween.is_valid():
-		shrink_tween.kill()
-	
-	shrink_tween = create_tween()
-	shrink_tween.tween_property(ring_shrinking, "scale", Vector2(zone_inner_ratio, zone_inner_ratio), duration)
-	shrink_tween.tween_callback(_on_time_out)
+func _spawn_choices_sequentially(spawn_list: Array) -> void:
+	for data in spawn_list:
+		if not is_active:
+			break
+		# 0.2～0.5秒のランダム間隔で次の選択肢を出現させる
+		await get_tree().create_timer(randf_range(0.2, 0.5)).timeout
+		if not is_active:
+			break
+		_spawn_choice(data["type"], data["text"], data["pos"])
 
-func _input(event: InputEvent) -> void:
+func _spawn_choice(type: int, text: String, pos: Vector2) -> void:
+	var choice = qte_choice_scene.instantiate()
+	choices_container.add_child(choice)
+	
+	choice.position = pos
+	choice.setup(type, text, duration)
+	choice.choice_selected.connect(_on_choice_selected)
+
+func _on_choice_selected(type: int) -> void:
 	if not is_active:
 		return
+		
+	# 選択されたら他の全選択肢を無効化
+	is_active = false
+	for child in choices_container.get_children():
+		child.is_active = false
 	
-	if event.is_action_pressed("qte_action"):
-		check_input()
-
-func check_input() -> void:
-	if shrink_tween and shrink_tween.is_valid():
-		shrink_tween.kill()
-	
-	var current_scale = ring_shrinking.scale.x
-	
-	# 判定
-	var success = current_scale >= zone_inner_ratio and current_scale <= zone_outer_ratio
-	
-	if success:
-		success_count += 1
+	if type == 2: # DEATH
+		show_result("DEATH END", Color.DARK_RED)
+		AudioManager.play_se("miss", 1.0, 1.0)
+		finish_qte(false)
+	else: # SURVIVAL or EROTIC
 		show_result("SUCCESS!", Color.GREEN)
 		AudioManager.play_se("success", 1.0, 1.0)
-	else:
-		show_result("MISS!", Color.RED)
-		AudioManager.play_se("miss", 1.0, 1.0)
-	
-	current_attempt += 1
-	
-	# 次のアテンプトへ
-	await get_tree().create_timer(0.5).timeout
-	result_label.visible = false
-	start_attempt()
+		finish_qte(true)
 
 func _on_time_out() -> void:
+	if not is_active: return
+	is_active = false
+	
+	for child in choices_container.get_children():
+		child.is_active = false
+		
 	# タイムアウト = 失敗
-	show_result("MISS!", Color.RED)
+	show_result("TIME OUT", Color.RED)
 	AudioManager.play_se("miss", 1.0, 1.0)
-	
-	current_attempt += 1
-	
-	await get_tree().create_timer(0.5).timeout
-	result_label.visible = false
-	start_attempt()
+	finish_qte(false)
 
 func show_result(text: String, color: Color) -> void:
 	result_label.text = text
 	result_label.modulate = color
 	result_label.visible = true
 
-func finish_qte() -> void:
-	is_active = false
-	
-	var overall_success = success_count >= success_threshold
-	
-	if overall_success:
-		show_result("CLEAR!", Color.GOLD)
-	else:
-		show_result("FAILED...", Color.DARK_RED)
-	
+func finish_qte(success: bool) -> void:
 	await get_tree().create_timer(1.0).timeout
-	
 	visible = false
-	qte_completed.emit(overall_success)
+	qte_completed.emit(success)
 
-# デバッグ用: パラメータを直接設定してテスト
+# デバッグ用
 func test_run(test_duration: float, test_size: float, test_text: String) -> void:
 	var test_data = {
 		"duration": test_duration * 1000,
-		"size": test_size,
 		"text": test_text,
-		"attempts": 1,
-		"success_threshold": 1
+		"labels": ["生き延びる"]
 	}
 	start_qte(test_data)
-
-func get_current_params() -> Dictionary:
-	return {
-		"duration": duration * 1000,
-		"size": ring_size,
-		"zone_inner_ratio": zone_inner_ratio,
-		"zone_outer_ratio": zone_outer_ratio,
-		"text": display_text
-	}

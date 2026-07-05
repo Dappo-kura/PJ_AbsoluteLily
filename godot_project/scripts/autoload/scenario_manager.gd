@@ -79,6 +79,7 @@ func start_scene(scene_id: String) -> void:
 		current_scene_id = scene_id
 		current_event_index = 0
 		current_scene_events = scene.get("events", [])
+		_root_content_processed = false  # シーン開始時にリセット
 		GameManager.mark_scene_visited(scene_id)
 		scene_changed.emit(scene)
 		print("[ScenarioManager] Starting scene: %s" % scene_id)
@@ -145,18 +146,25 @@ func process_next_event() -> void:
 			execute_command(event)
 			current_event_index += 1
 			process_next_event()
-	
-	# rootレベルのQTEや選択肢をチェック（eventsが空または終わった場合）
-	_check_root_level_content()
+	# 注意: rootレベルQTEチェックはここでは行わない（シーン終了時のみ）
+
+# rootレベルQTE/選択肢処理済みフラグ
+var _root_content_processed: bool = false
 
 func _check_root_level_content() -> void:
+	if _root_content_processed:
+		return
+	
 	var scene = find_scene(current_scene_id)
 	if not scene: return
 	
 	if scene.has("qte"):
+		_root_content_processed = true
 		handle_qte_event(scene["qte"])
 	elif scene.has("choices"):
+		_root_content_processed = true
 		handle_choices_event(scene["choices"])
+
 
 func handle_line_event(event: Dictionary) -> void:
 	var speaker = event.get("speaker", "")

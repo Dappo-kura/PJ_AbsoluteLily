@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/debug_ui.tscn" id="3"]
 [ext_resource type="Shader" uid="uid://bvj78bgbk123v" path="res://assets/shaders/liquid_glass.gdshader" id="4"]
 [ext_resource type="Shader" uid="uid://by3flvmur7f5e" path="res://assets/shaders/background_blur.gdshader" id="5"]
+[ext_resource type="PackedScene" uid="uid://qte_scene" path="res://scenes/game/qte.tscn" id="6"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bg_blur"]
 shader = ExtResource("5")
@@ -318,6 +319,8 @@ offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 16
+
+[node name="QTEController" parent="UI" instance=ExtResource("6")]
 
 [node name="ScreenEffects" type="CanvasLayer" parent="."]
 layer = 100

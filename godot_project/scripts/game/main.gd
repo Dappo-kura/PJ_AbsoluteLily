@@ -22,6 +22,10 @@ extends Node
 
 @onready var screen_effects: CanvasLayer = $ScreenEffects
 @onready var command_executor: Node = $CommandExecutor
+@onready var qte_controller: Control = $UI/QTEController
+
+# QTE用
+var current_qte_data: Dictionary = {}
 
 # テキスト表示設定
 var text_speed: float = 0.03  # 1文字あたりの秒数
@@ -46,6 +50,10 @@ func _ready() -> void:
 	# CommandExecutor設定
 	if command_executor:
 		command_executor.set_screen_effects(screen_effects)
+	
+	# QTE シグナル接続
+	if qte_controller:
+		qte_controller.qte_completed.connect(_on_qte_completed)
 	
 	# 初期化
 	update_parameter_display()
@@ -241,10 +249,23 @@ func select_choice(index: int) -> void:
 	ScenarioManager.select_choice(index)
 
 func start_qte(qte_data: Dictionary) -> void:
-	# QTE UIを表示（別途実装）
+	if not qte_controller:
+		push_error("[Main] QTEController not found!")
+		ScenarioManager.handle_qte_result(true, qte_data)
+		return
+	
 	print("[Main] QTE Started: %s" % str(qte_data))
-	# 仮実装: 自動成功
-	ScenarioManager.handle_qte_result(true, qte_data)
+	current_qte_data = qte_data
+	
+	# ダイアログを非表示にしてQTEを開始
+	dialog_box.visible = false
+	qte_controller.start_qte(qte_data)
+
+func _on_qte_completed(success: bool) -> void:
+	print("[Main] QTE Completed: %s" % ("SUCCESS" if success else "FAILED"))
+	dialog_box.visible = true
+	ScenarioManager.handle_qte_result(success, current_qte_data)
+	current_qte_data = {}
 
 func update_parameter_display() -> void:
 	if fear_label_left: fear_label_left.text = "恐怖度: %d" % GameManager.fear

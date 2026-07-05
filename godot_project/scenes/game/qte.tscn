@@ -1,6 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://qte_scene"]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/game/qte_controller.gd" id="1"]
+[ext_resource type="Shader" path="res://assets/shaders/glitch.gdshader" id="2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_glitch"]
+shader = ExtResource("2")
+shader_parameter/noise_amount = 0.02
+shader_parameter/offset_intensity = 0.005
+shader_parameter/color_offset = 0.01
 
 [node name="QTEController" type="Control"]
 layout_mode = 3
@@ -11,105 +18,60 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="VideoStreamPlayer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.5)
+autoplay = true
+expand = true
+loop = true
 
-[node name="RingOuter" type="Control" parent="."]
-custom_minimum_size = Vector2(300, 300)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -150.0
-offset_right = 150.0
-offset_bottom = 150.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="OuterCircle" type="ColorRect" parent="RingOuter"]
+[node name="DarkenLayer" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.2, 0.2, 0.8)
+mouse_filter = 2
+color = Color(0, 0, 0, 0.3)
 
-[node name="TargetZone" type="Control" parent="."]
-custom_minimum_size = Vector2(240, 240)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -120.0
-offset_top = -120.0
-offset_right = 120.0
-offset_bottom = 120.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ZoneCircle" type="ColorRect" parent="TargetZone"]
+[node name="GlitchOverlay" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_glitch")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.8, 0.2, 0.5)
+mouse_filter = 2
 
-[node name="RingShrinking" type="Control" parent="."]
-custom_minimum_size = Vector2(300, 300)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -150.0
-offset_right = 150.0
-offset_bottom = 150.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(150, 150)
-
-[node name="ShrinkCircle" type="ColorRect" parent="RingShrinking"]
+[node name="ChoicesContainer" type="Control" parent="."]
+z_index = 10
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.9, 0.3, 0.3, 0.8)
+mouse_filter = 2
 
 [node name="ActionText" type="Label" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -200.0
-offset_right = 100.0
-offset_bottom = -150.0
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 80.0
+offset_bottom = 180.0
 grow_horizontal = 2
-grow_vertical = 2
-text = "タップ!"
+text = "生き残れ!"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 36
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 44
 
 [node name="ResultLabel" type="Label" parent="."]
 layout_mode = 1
@@ -118,13 +80,15 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = 150.0
-offset_right = 100.0
-offset_bottom = 200.0
+offset_left = -200.0
+offset_top = -50.0
+offset_right = 200.0
+offset_bottom = 50.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "SUCCESS!"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 32
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 64
