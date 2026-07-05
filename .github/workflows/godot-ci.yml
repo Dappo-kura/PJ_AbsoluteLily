@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  GODOT_VERSION: 4.3
+  GODOT_VERSION: 4.5
 
 jobs:
   # Validate project files
