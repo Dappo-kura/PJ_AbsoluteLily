@@ -51,6 +51,19 @@ CHARACTER_IMAGES = {
 
 # 場面ヘッダのキーワード → 背景画像
 BG_KEYWORDS = [
+    # 具体的な複合ロケーションを先に判定する（先頭一致採用）
+    ("迷界駅", "bg-meikai-station.png"),
+    ("満員電車", "bg-meikai-station.png"),
+    ("電車内", "bg-meikai-station.png"),
+    ("プリクラ", "bg-liminal-arcade.png"),
+    ("ゲームセンター", "bg-liminal-arcade.png"),
+    ("奥書庫", "bg-dark-bookstore.png"),
+    ("書店", "bg-dark-bookstore.png"),
+    ("アパレル", "bg-mannequin-mall.png"),
+    ("中央フロア", "bg-mannequin-mall.png"),
+    ("B1", "bg-mannequin-mall.png"),
+    ("地下通路", "bg-mannequin-mall.png"),
+    ("モール前", "On-the-way-home.png"),
     ("教室", "classroom-evening.png"),
     ("廊下", "school hallway01.png"),
     ("下校", "On-the-way-home.png"),

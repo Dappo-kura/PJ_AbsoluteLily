@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "generated_by": "tools/scenario_converter.py",
     "generated_from": "scenario/*.txt",
-    "generated_at": "2026-07-05 16:48:54",
+    "generated_at": "2026-07-19 19:25:34",
     "notes": "自動生成ファイル。手動編集せず、台本(.txt)と scenario_overrides.json を編集して再生成すること。"
   },
   "chapters": [
@@ -394,6 +394,7 @@
         {
           "id": "C2_S3",
           "title": "サンリフモール　ゲームセンター",
+          "bg": "bg-liminal-arcade.png",
           "events": [
             {
               "type": "line",
@@ -551,6 +552,7 @@
         {
           "id": "C2_S4",
           "title": "異世界　プリクラブース内",
+          "bg": "bg-liminal-arcade.png",
           "events": [
             {
               "type": "line",
@@ -1300,6 +1302,7 @@
         {
           "id": "C3_S1",
           "title": "サンリフモール　書店内",
+          "bg": "bg-dark-bookstore.png",
           "events": [
             {
               "type": "line",
@@ -1334,6 +1337,7 @@
         {
           "id": "C3_S2",
           "title": "書店内　奥書庫",
+          "bg": "bg-dark-bookstore.png",
           "events": [
             {
               "type": "line",
@@ -1922,6 +1926,7 @@
         {
           "id": "C4_S1",
           "title": "サンリフモール　1Fフロア　アパレルゾーン",
+          "bg": "bg-mannequin-mall.png",
           "events": [
             {
               "type": "line",
@@ -2009,6 +2014,7 @@
         {
           "id": "C4_S2",
           "title": "1F中央フロア　通路",
+          "bg": "bg-mannequin-mall.png",
           "events": [
             {
               "type": "line",
@@ -2106,6 +2112,7 @@
         {
           "id": "C4_S3",
           "title": "B1フロア入口",
+          "bg": "bg-mannequin-mall.png",
           "events": [
             {
               "type": "line",
@@ -2566,6 +2573,7 @@
         {
           "id": "C5_S1",
           "title": "サンリフモール　B1フロア",
+          "bg": "bg-mannequin-mall.png",
           "events": [
             {
               "type": "line",
@@ -2745,6 +2753,7 @@
         {
           "id": "C5_S2",
           "title": "地下通路。扉の前でへたり込む二人",
+          "bg": "bg-mannequin-mall.png",
           "events": [
             {
               "type": "line",
@@ -2811,6 +2820,7 @@
         {
           "id": "C5_S3",
           "title": "地下通路",
+          "bg": "bg-mannequin-mall.png",
           "events": [
             {
               "type": "line",
@@ -3294,6 +3304,7 @@
         {
           "id": "C6_S1",
           "title": "地下通路　迷界駅　改札前",
+          "bg": "bg-meikai-station.png",
           "events": [
             {
               "type": "line",
@@ -3440,6 +3451,7 @@
         {
           "id": "C6_S2",
           "title": "迷界駅　ホーム",
+          "bg": "bg-meikai-station.png",
           "events": [
             {
               "type": "line",
@@ -3995,6 +4007,7 @@
         {
           "id": "C7_S1",
           "title": "迷界駅　ホーム",
+          "bg": "bg-meikai-station.png",
           "events": [
             {
               "type": "line",
@@ -4082,6 +4095,7 @@
         {
           "id": "C7_S2",
           "title": "電車内　走行中",
+          "bg": "bg-meikai-station.png",
           "events": [
             {
               "type": "line",
@@ -4249,6 +4263,7 @@
         {
           "id": "C7_S3",
           "title": "サンリフモール　ゲームセンター　プリクラ機の中",
+          "bg": "bg-liminal-arcade.png",
           "events": [
             {
               "type": "line",
@@ -4402,6 +4417,7 @@
         {
           "id": "C7_S4",
           "title": "モール前の広場",
+          "bg": "On-the-way-home.png",
           "events": [
             {
               "type": "line",
@@ -4798,6 +4814,7 @@
         {
           "id": "C7_S7",
           "title": "エンディングB：満員電車の君へ",
+          "bg": "bg-meikai-station.png",
           "events": [
             {
               "type": "line",
