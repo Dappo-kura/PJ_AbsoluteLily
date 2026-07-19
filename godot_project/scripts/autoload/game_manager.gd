@@ -50,6 +50,9 @@ const SAVE_SLOT_COUNT: int = 3
 # タイトル画面「つづきから」用: main.tscn 起動後にこのスロットをロードする（-1 = 新規開始）
 var pending_load_slot: int = -1
 
+# QTE失敗時の再挑戦用。永続化せず、現在のプレイセッション内だけで保持する。
+var _qte_retry_checkpoint: Dictionary = {}
+
 # 既読シーン
 var visited_scenes: Array[String] = []
 
@@ -60,6 +63,7 @@ func _ready() -> void:
 	print("[GameManager] Initialized")
 
 func reset_game() -> void:
+	clear_qte_retry_checkpoint()
 	fear = 0
 	kizuna = 0
 	kegare = 0
@@ -68,6 +72,43 @@ func reset_game() -> void:
 	qte_success_count = 0
 	current_state = GameState.GAME
 	print("[GameManager] Game reset")
+
+# QTE直前の進行状態をメモリに退避する。ネストしたフラグも失敗ルートから分離する。
+func capture_qte_checkpoint(scene_id: String, event_index: int) -> void:
+	_qte_retry_checkpoint = {
+		"scene_id": scene_id,
+		"event_index": event_index,
+		"fear": fear,
+		"kizuna": kizuna,
+		"kegare": kegare,
+		"flags": flags.duplicate(true),
+		"hidden_params": hidden_params.duplicate(true),
+		"qte_success_count": qte_success_count
+	}
+
+func has_qte_retry_checkpoint() -> bool:
+	return not _qte_retry_checkpoint.is_empty()
+
+# ゲーム状態を復元し、Mainが再開に使うシナリオ位置を返す。
+func restore_qte_checkpoint() -> Dictionary:
+	if _qte_retry_checkpoint.is_empty():
+		return {}
+	current_state = GameState.GAME
+	fear = int(_qte_retry_checkpoint.get("fear", 0))
+	kizuna = int(_qte_retry_checkpoint.get("kizuna", 0))
+	kegare = int(_qte_retry_checkpoint.get("kegare", 0))
+	flags = _qte_retry_checkpoint.get("flags", {}).duplicate(true)
+	hidden_params = _qte_retry_checkpoint.get(
+		"hidden_params", {"courage": 0, "curiosity": 0}
+	).duplicate(true)
+	qte_success_count = int(_qte_retry_checkpoint.get("qte_success_count", 0))
+	return {
+		"scene_id": str(_qte_retry_checkpoint.get("scene_id", "")),
+		"event_index": int(_qte_retry_checkpoint.get("event_index", 0))
+	}
+
+func clear_qte_retry_checkpoint() -> void:
+	_qte_retry_checkpoint.clear()
 
 func apply_effects(effects: Dictionary) -> void:
 	if effects.has("fear"):
@@ -152,6 +193,7 @@ func load_game(slot: int) -> bool:
 	var data = read_save_data(slot)
 	if data.is_empty():
 		return false
+	clear_qte_retry_checkpoint()
 	fear = data.get("fear", 0)
 	kizuna = data.get("kizuna", 0)
 	kegare = data.get("kegare", 0)

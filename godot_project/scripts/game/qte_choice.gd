@@ -15,28 +15,38 @@ var current_time: float = 2.0
 var is_active: bool = false
 var base_color: Color = Color.WHITE
 var ring_color: Color = Color.WHITE
+var _hovered: bool = false
+var _focused: bool = false
+var _flash: float = 0.0
 
 # UI References
 @onready var button: Button = $Button
 @onready var label: Label = $Button/Label
 
 func _ready() -> void:
-	button.pressed.connect(_on_button_pressed)
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
+	focus_entered.connect(_on_focus_entered)
+	focus_exited.connect(_on_focus_exited)
 
 func _process(delta: float) -> void:
-	if not is_active:
-		return
-	
-	if current_time > 0:
+	var should_redraw := false
+	if is_active and current_time > 0.0:
 		current_time -= delta
-		queue_redraw()
-		if current_time <= 0:
-			current_time = 0
+		current_time = maxf(current_time, 0.0)
+		should_redraw = true
 
-func setup(type: ChoiceType, text: String, time: float) -> void:
+	if _flash > 0.0:
+		_flash = maxf(_flash - delta * 6.0, 0.0)
+		should_redraw = true
+
+	if should_redraw:
+		queue_redraw()
+
+func setup(type: ChoiceType, text: String, remaining: float, total: float) -> void:
 	current_type = type
-	max_time = time
-	current_time = time
+	max_time = total
+	current_time = remaining
 	label.text = text
 	is_active = true
 	
@@ -57,25 +67,82 @@ func setup(type: ChoiceType, text: String, time: float) -> void:
 			
 	queue_redraw()
 
+func set_interactable(active: bool) -> void:
+	is_active = active
+	if not active and has_focus():
+		release_focus()
+	queue_redraw()
+
+func _has_point(point: Vector2) -> bool:
+	var center := size / 2.0
+	var radius := minf(size.x, size.y) / 2.0 * 0.8
+	return point.distance_to(center) <= radius + 10.0
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
+			_confirm_choice()
+			accept_event()
+			return
+
+	if event.is_action_pressed("ui_accept"):
+		_confirm_choice()
+		accept_event()
+
 func _draw() -> void:
-	var center = size / 2.0
-	var radius = size.x / 2.0 * 0.8 # 少し内側に本体を描画
+	var center := size / 2.0
+	var radius := minf(size.x, size.y) / 2.0 * 0.8 # 少し内側に本体を描画
+	var display_color := base_color.lightened(0.12) if _hovered and is_active else base_color
+	if not is_active:
+		display_color = display_color.darkened(0.2)
+	if _flash > 0.0:
+		display_color = display_color.lerp(Color.WHITE, _flash * 0.45)
 	
 	# 背景の円を描画
-	draw_circle(center, radius, base_color)
+	draw_circle(center, radius, display_color)
+
+	# マウスオーバー中は本体のすぐ外側を細く強調する
+	if _hovered and is_active:
+		draw_arc(center, radius + 4.0, 0.0, TAU, 64, ring_color.lightened(0.25), 2.0, true)
 	
 	# 外側の残り時間プログレスバー（サークル）を描画
 	if is_active and max_time > 0:
-		var ratio = current_time / max_time
-		var start_angle = -PI / 2.0 # 12時の位置から開始
-		var end_angle = start_angle + (PI * 2.0 * ratio)
+		var ratio := clampf(current_time / max_time, 0.0, 1.0)
+		var start_angle := -PI / 2.0 # 12時の位置から開始
+		var end_angle := start_angle + (TAU * ratio)
 		
 		# 円弧を描画（太めの線でプログレスバーを表現）
 		if ratio > 0.01: # わずかな残りでも描画が崩れないように
 			draw_arc(center, radius + 10.0, start_angle, end_angle, 64, ring_color, 8.0, true)
 
-func _on_button_pressed() -> void:
+	# キーボードフォーカスは時間リングより外側へ太く描いて明示する
+	if _focused and is_active:
+		draw_arc(center, radius + 17.0, 0.0, TAU, 64, Color.WHITE.lerp(ring_color, 0.35), 4.0, true)
+
+	# 確定直後は短いフラッシュリングを表示する
+	if _flash > 0.0:
+		draw_arc(center, radius + 10.0 + _flash * 8.0, 0.0, TAU, 64, Color(1.0, 1.0, 1.0, _flash), 3.0 + _flash * 3.0, true)
+
+func _confirm_choice() -> void:
 	if not is_active:
 		return
-	is_active = false
+	_flash = 1.0
+	set_interactable(false)
 	choice_selected.emit(current_type)
+
+func _on_mouse_entered() -> void:
+	_hovered = true
+	queue_redraw()
+
+func _on_mouse_exited() -> void:
+	_hovered = false
+	queue_redraw()
+
+func _on_focus_entered() -> void:
+	_focused = true
+	queue_redraw()
+
+func _on_focus_exited() -> void:
+	_focused = false
+	queue_redraw()

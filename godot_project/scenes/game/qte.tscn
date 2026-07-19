@@ -73,6 +73,25 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 44
 
+[node name="TimerBarBg" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.25
+anchor_right = 0.75
+offset_top = 200.0
+offset_bottom = 216.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="TimerBarFill" type="ColorRect" parent="TimerBarBg"]
+layout_mode = 1
+anchors_preset = -1
+anchor_bottom = 1.0
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.4, 0.9, 0.7, 1)
+
 [node name="ResultLabel" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 8

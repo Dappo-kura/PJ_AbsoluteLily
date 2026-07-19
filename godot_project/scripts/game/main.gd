@@ -16,9 +16,18 @@ extends Node
 @onready var status_left_image: TextureRect = $UI/NovelUI/StatusLeft/Image
 @onready var status_right_image: TextureRect = $UI/NovelUI/StatusRight/Image
 @onready var fear_label_left: Label = $UI/NovelUI/StatusLeft/InfoBox/FearLabel
-@onready var fear_label_right: Label = $UI/NovelUI/StatusRight/InfoBox/FearPanel/FearLabel
-@onready var kizuna_label: Label = $UI/NovelUI/StatusRight/InfoBox/IntimacyPanel/IntimacyLabel
+@onready var fear_bar: ProgressBar = $UI/NovelUI/StatusLeft/InfoBox/FearBar
+@onready var kizuna_label: Label = $UI/NovelUI/StatusRight/InfoBox/IntimacyLabel
+@onready var kizuna_bar: ProgressBar = $UI/NovelUI/StatusRight/InfoBox/IntimacyBar
 # @onready var kegare_label: Label = $UI/NovelUI/ParameterDisplay/KegareLabel
+
+# パラメータバーの塗り色（恐怖度は危険度で色が変わる）
+var _fear_fill_style: StyleBoxFlat = null
+var _kizuna_fill_style: StyleBoxFlat = null
+var _fear_color_normal := Color(0.55, 0.75, 0.45, 1.0)   # 平常（緑）
+var _fear_color_warn := Color(0.95, 0.8, 0.25, 1.0)      # 警戒（黄, fear>=70）
+var _fear_color_danger := Color(0.9, 0.2, 0.2, 1.0)      # 危険（赤, fear>=90）
+var _kizuna_color := Color(0.92, 0.42, 0.68, 1.0)        # 親密度（ピンク）
 
 @onready var screen_effects: CanvasLayer = $ScreenEffects
 @onready var command_executor: Node = $CommandExecutor
@@ -32,6 +41,18 @@ var text_speed: float = 0.03  # 1文字あたりの秒数
 var current_full_text: String = ""
 var is_text_displaying: bool = false
 var text_display_tween: Tween
+var _advance_guard_until_ms: int = 0  # この時刻までは手動の次送りを抑止
+const ADVANCE_GUARD_MS: int = 150
+var _click_indicator_tween: Tween = null
+
+# ADV送り制御（オート/スキップ）。周回テンポ改善用。設定はセッション内のみ（セーブ非依存）
+var is_auto_mode: bool = false          # オートモード（トグル）
+var auto_advance_delay: float = 1.2     # テキスト完了からオート送りまでの待機秒
+var _auto_timer: float = 0.0            # オート送りの残り待機時間
+var skip_interval: float = 0.04         # スキップ時の送り間隔（秒）
+var _skip_accum: float = 0.0            # スキップ送りの間隔計測
+var auto_indicator: Label = null        # 「AUTO」表示
+var skip_indicator: Label = null        # 「SKIP」表示
 
 # 選択肢ボタンテンプレート
 var choice_button_scene: PackedScene
@@ -43,7 +64,7 @@ var save_load_menu: SaveLoadMenu = null
 var overlay_layer: CanvasLayer = null
 var is_game_over: bool = false
 var is_ending_shown: bool = false
-var can_return_to_title: bool = false
+var end_overlay: Control = null
 
 func _ready() -> void:
 	# シグナル接続
@@ -71,9 +92,11 @@ func _ready() -> void:
 		qte_controller.qte_completed.connect(_on_qte_completed)
 	
 	# 初期化
+	_setup_parameter_bars()
 	update_parameter_display()
 	hide_choices()
 	click_indicator.visible = false
+	_setup_adv_indicators()
 	
 	# Load Status Images (PNG versions)
 	if ResourceLoader.exists("res://assets/images/mai-hinata.png"):
@@ -114,18 +137,112 @@ func _start_first_scene() -> void:
 			push_error("[Main] No starting scene found")
 
 func _input(event: InputEvent) -> void:
-	# ゲームオーバー/エンディング表示中はクリックでタイトルへ
+	# 終了画面は専用ボタンで操作する。ここでui_acceptを処理するとボタン入力を横取りしてしまう。
 	if is_game_over or is_ending_shown:
-		if can_return_to_title and event.is_action_pressed("ui_accept"):
-			_return_to_title()
+		return
+
+	# オートモードのトグル（Aキー）
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_A:
+		if _can_auto_advance():
+			toggle_auto_mode()
 		return
 
 	if event.is_action_pressed("ui_accept"):
+		# 手動送りしたらオートは解除（誤操作防止）
+		if is_auto_mode:
+			set_auto_mode(false)
 		handle_click()
 	elif event.is_action_pressed("ui_cancel"):
 		toggle_pause_menu()
 	elif event.is_action_pressed("debug_toggle"):
 		toggle_debug_ui()
+
+# 毎フレーム、オート/スキップ送りを処理する（周回テンポ改善）
+func _process(delta: float) -> void:
+	var can_advance := _can_auto_advance()
+	# スキップ（Ctrl押下中）を最優先で判定
+	var skip_held := can_advance and Input.is_key_pressed(KEY_CTRL)
+	_update_skip_indicator(skip_held)
+
+	if not can_advance:
+		_skip_accum = 0.0
+		return
+
+	if skip_held:
+		if is_auto_mode:
+			# スキップ解除直後に古い待機時間でAUTO送りされないよう満タンに戻す
+			_auto_timer = auto_advance_delay
+		if is_text_displaying:
+			# 表示中は即座に全文表示してから次フレームで送る
+			complete_text_display()
+		else:
+			_skip_accum += delta
+			if _skip_accum >= skip_interval:
+				_skip_accum = 0.0
+				ScenarioManager.advance_text()
+		return
+	_skip_accum = 0.0
+
+	# オートモード：表示完了後、一定待機してから次へ
+	if is_auto_mode:
+		if is_text_displaying:
+			_auto_timer = auto_advance_delay  # 表示中は待機時間をリセット
+		else:
+			_auto_timer -= delta
+			if _auto_timer <= 0.0:
+				_auto_timer = auto_advance_delay
+				ScenarioManager.advance_text()
+
+# オート/スキップ送りが許可される状況か（メニュー/選択肢/QTE/終了画面では不許可）
+func _can_auto_advance() -> bool:
+	if is_game_over or is_ending_shown:
+		return false
+	if _is_menu_open():
+		return false
+	if GameManager.current_state == GameManager.GameState.QTE:
+		return false
+	if choices_container.visible:
+		return false
+	return true
+
+# AUTO/SKIP インジケータをコード構築（tscn非依存）
+func _setup_adv_indicators() -> void:
+	auto_indicator = _make_adv_indicator("AUTO", Color(1.0, 0.85, 0.3), 16)
+	skip_indicator = _make_adv_indicator("SKIP", Color(0.5, 0.8, 1.0), 44)
+
+func _make_adv_indicator(text: String, color: Color, top: float) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", 22)
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
+	label.add_theme_constant_override("outline_size", 4)
+	# 画面右上に固定（トップレベルControlとしてビューポート基準でアンカー）
+	label.anchor_left = 1.0
+	label.anchor_right = 1.0
+	label.anchor_top = 0.0
+	label.anchor_bottom = 0.0
+	label.offset_left = -130.0
+	label.offset_right = -20.0
+	label.offset_top = top
+	label.offset_bottom = top + 28.0
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	label.visible = false
+	overlay_layer.add_child(label)
+	return label
+
+func toggle_auto_mode() -> void:
+	set_auto_mode(not is_auto_mode)
+
+func set_auto_mode(enabled: bool) -> void:
+	is_auto_mode = enabled
+	_auto_timer = auto_advance_delay
+	if auto_indicator:
+		auto_indicator.visible = enabled
+
+func _update_skip_indicator(active: bool) -> void:
+	if skip_indicator and skip_indicator.visible != active:
+		skip_indicator.visible = active
 
 func handle_click() -> void:
 	if _is_menu_open():
@@ -140,6 +257,8 @@ func handle_click() -> void:
 		complete_text_display()
 	else:
 		# テキスト表示完了→次へ
+		if Time.get_ticks_msec() < _advance_guard_until_ms:
+			return
 		ScenarioManager.advance_text()
 
 func _is_menu_open() -> bool:
@@ -173,11 +292,26 @@ func _on_choices_display_requested(choices: Array) -> void:
 func _on_qte_requested(qte_data: Dictionary) -> void:
 	start_qte(qte_data)
 
-func _on_parameter_changed(_param_name: String, _new_value: int) -> void:
+func _on_parameter_changed(param_name: String, _new_value: int) -> void:
 	update_parameter_display()
+	# 変化したパラメータのバーを一瞬強調して気づきやすくする
+	if param_name == "fear":
+		_pulse_node(fear_bar)
+		_pulse_node(fear_label_left)
+	elif param_name == "kizuna":
+		_pulse_node(kizuna_bar)
+		_pulse_node(kizuna_label)
+
+# バー/ラベルを一瞬明るくして戻す（パラメータ変化のフィードバック）
+func _pulse_node(node: CanvasItem) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	var tween := create_tween()
+	node.modulate = Color(1.6, 1.6, 1.6, 1.0)
+	tween.tween_property(node, "modulate", Color(1, 1, 1, 1), 0.35)
 
 func _on_game_over() -> void:
-	if is_game_over:
+	if is_game_over or is_ending_shown:
 		return
 	print("[Main] GAME OVER!")
 	is_game_over = true
@@ -185,7 +319,7 @@ func _on_game_over() -> void:
 	_show_fullscreen_message("GAME OVER", Color(0.8, 0.1, 0.1), null)
 
 func _on_ending_reached(scene: Dictionary) -> void:
-	if is_ending_shown:
+	if is_game_over or is_ending_shown:
 		return
 	is_ending_shown = true
 	_close_menus()
@@ -201,16 +335,19 @@ func _on_ending_reached(scene: Dictionary) -> void:
 			image = load(full_path)
 	_show_fullscreen_message(label, Color.WHITE, image)
 
-# ゲームオーバー/エンディング共通の全画面表示。表示後クリックでタイトルへ戻れる。
+# ゲームオーバー/エンディング共通の全画面表示。誤操作防止のため明示ボタンで遷移する。
 func _show_fullscreen_message(message: String, color: Color, image: Texture2D) -> void:
-	var overlay = Control.new()
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	overlay_layer.add_child(overlay)
+	if end_overlay != null and is_instance_valid(end_overlay):
+		return
+	end_overlay = Control.new()
+	end_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	end_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay_layer.add_child(end_overlay)
 
 	var black = ColorRect.new()
 	black.color = Color(0, 0, 0, 1)
 	black.set_anchors_preset(Control.PRESET_FULL_RECT)
-	overlay.add_child(black)
+	end_overlay.add_child(black)
 
 	if image:
 		var tex = TextureRect.new()
@@ -218,7 +355,7 @@ func _show_fullscreen_message(message: String, color: Color, image: Texture2D) -
 		tex.set_anchors_preset(Control.PRESET_FULL_RECT)
 		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		overlay.add_child(tex)
+		end_overlay.add_child(tex)
 
 	var label = Label.new()
 	label.text = message
@@ -228,29 +365,80 @@ func _show_fullscreen_message(message: String, color: Color, image: Texture2D) -
 	label.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	label.grow_vertical = Control.GROW_DIRECTION_BOTH
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	overlay.add_child(label)
+	end_overlay.add_child(label)
 
-	var hint = Label.new()
-	hint.text = "クリックでタイトルへ"
-	hint.add_theme_font_size_override("font_size", 24)
-	hint.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	hint.position.y -= 80
-	hint.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hint.visible = false
-	overlay.add_child(hint)
+	var button_box = VBoxContainer.new()
+	button_box.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	button_box.position.x -= 210.0
+	button_box.position.y -= 150.0
+	button_box.custom_minimum_size = Vector2(420, 0)
+	button_box.add_theme_constant_override("separation", 12)
+	button_box.visible = false
+	end_overlay.add_child(button_box)
 
-	# 誤クリック防止のため少し待ってから遷移を許可
-	overlay.modulate.a = 0.0
+	var first_button: Button = null
+	if GameManager.has_qte_retry_checkpoint():
+		var retry_button = Button.new()
+		retry_button.text = "QTE直前からやり直す"
+		retry_button.custom_minimum_size = Vector2(420, 58)
+		retry_button.disabled = true
+		retry_button.pressed.connect(_retry_from_qte_checkpoint)
+		button_box.add_child(retry_button)
+		first_button = retry_button
+
+	var title_button = Button.new()
+	title_button.text = "タイトルへ戻る"
+	title_button.custom_minimum_size = Vector2(420, 58)
+	title_button.disabled = true
+	title_button.pressed.connect(_return_to_title)
+	button_box.add_child(title_button)
+	if first_button == null:
+		first_button = title_button
+
+	# 直前の決定入力を拾わないよう、フェード完了後に操作を解禁する。
+	end_overlay.modulate.a = 0.0
 	var tween = create_tween()
-	tween.tween_property(overlay, "modulate:a", 1.0, 1.0)
+	tween.tween_property(end_overlay, "modulate:a", 1.0, 1.0)
 	tween.tween_interval(0.5)
 	tween.tween_callback(func():
-		can_return_to_title = true
-		hint.visible = true
+		if button_box == null or not is_instance_valid(button_box):
+			return
+		button_box.visible = true
+		for child in button_box.get_children():
+			var child_button := child as Button
+			if child_button != null:
+				child_button.disabled = false
+		if first_button != null and is_instance_valid(first_button):
+			first_button.grab_focus()
 	)
 
+func _retry_from_qte_checkpoint() -> void:
+	if not GameManager.has_qte_retry_checkpoint():
+		return
+	# 終了状態を先に解除し、復元時の表示更新シグナルを通常状態として受ける。
+	is_game_over = false
+	is_ending_shown = false
+	if end_overlay != null and is_instance_valid(end_overlay):
+		end_overlay.queue_free()
+	end_overlay = null
+	set_auto_mode(false)
+	_update_skip_indicator(false)
+	if text_display_tween and text_display_tween.is_valid():
+		text_display_tween.kill()
+	is_text_displaying = false
+	current_qte_data = {}
+	hide_choices()
+
+	var resume_position := GameManager.restore_qte_checkpoint()
+	var scene_id: String = str(resume_position.get("scene_id", ""))
+	if scene_id == "":
+		push_error("[Main] QTE retry checkpoint has no scene id")
+		_return_to_title()
+		return
+	ScenarioManager.start_scene_at(scene_id, int(resume_position.get("event_index", 0)))
+
 func _return_to_title() -> void:
+	GameManager.clear_qte_retry_checkpoint()
 	get_tree().change_scene_to_file(TITLE_SCENE)
 
 # ---- ポーズメニュー / セーブ・ロード ----
@@ -348,6 +536,7 @@ func show_text(speaker: String, text: String) -> void:
 	dialog_text.text = ""
 	dialog_text.visible_ratio = 0.0
 	click_indicator.visible = false
+	_stop_click_indicator_anim()
 	is_text_displaying = true
 	
 	# タイプライター効果
@@ -361,6 +550,7 @@ func show_text(speaker: String, text: String) -> void:
 	text_display_tween.tween_callback(func():
 		is_text_displaying = false
 		click_indicator.visible = true
+		_start_click_indicator_anim()
 	)
 
 func complete_text_display() -> void:
@@ -369,6 +559,24 @@ func complete_text_display() -> void:
 	dialog_text.visible_ratio = 1.0
 	is_text_displaying = false
 	click_indicator.visible = true
+	_start_click_indicator_anim()
+	_advance_guard_until_ms = Time.get_ticks_msec() + ADVANCE_GUARD_MS
+
+# 次送り可能であることを示すインジケータを緩やかに明滅させる
+func _start_click_indicator_anim() -> void:
+	if _click_indicator_tween and _click_indicator_tween.is_valid():
+		_click_indicator_tween.kill()
+	click_indicator.modulate.a = 1.0
+	_click_indicator_tween = create_tween()
+	_click_indicator_tween.set_loops()
+	_click_indicator_tween.tween_property(click_indicator, "modulate:a", 0.35, 0.6)
+	_click_indicator_tween.tween_property(click_indicator, "modulate:a", 1.0, 0.6)
+
+func _stop_click_indicator_anim() -> void:
+	if _click_indicator_tween and _click_indicator_tween.is_valid():
+		_click_indicator_tween.kill()
+	_click_indicator_tween = null
+	click_indicator.modulate.a = 1.0
 
 func show_choices(choices: Array) -> void:
 	# 既存のボタンをクリア
@@ -376,6 +584,7 @@ func show_choices(choices: Array) -> void:
 		child.queue_free()
 	
 	# 選択肢ボタンを生成
+	var first_button: Button = null
 	for i in choices.size():
 		var option = choices[i]
 		var button = Button.new()
@@ -383,8 +592,12 @@ func show_choices(choices: Array) -> void:
 		button.custom_minimum_size = Vector2(400, 50)
 		button.pressed.connect(func(): select_choice(i))
 		choices_container.add_child(button)
+		if first_button == null:
+			first_button = button
 	
 	choices_container.visible = true
+	if first_button != null:
+		first_button.call_deferred("grab_focus")
 	dialog_box.visible = false
 
 func hide_choices() -> void:
@@ -398,10 +611,15 @@ func select_choice(index: int) -> void:
 func start_qte(qte_data: Dictionary) -> void:
 	if not qte_controller:
 		push_error("[Main] QTEController not found!")
+		GameManager.clear_qte_retry_checkpoint()
 		ScenarioManager.handle_qte_result(true, qte_data)
 		return
 	
 	print("[Main] QTE Started: %s" % str(qte_data))
+	GameManager.capture_qte_checkpoint(
+		ScenarioManager.current_scene_id,
+		ScenarioManager.current_event_index
+	)
 	current_qte_data = qte_data
 	GameManager.current_state = GameManager.GameState.QTE
 
@@ -413,13 +631,45 @@ func _on_qte_completed(result: String) -> void:
 	print("[Main] QTE Completed: %s" % result)
 	GameManager.current_state = GameManager.GameState.GAME
 	dialog_box.visible = true
+	if result == "success" or result == "harem":
+		GameManager.clear_qte_retry_checkpoint()
 	ScenarioManager.handle_qte_result_typed(result, current_qte_data)
 	current_qte_data = {}
 
+# パラメータバーの塗りスタイルを生成し、色を動的に変えられるようにする
+func _setup_parameter_bars() -> void:
+	if fear_bar:
+		_fear_fill_style = StyleBoxFlat.new()
+		_fear_fill_style.bg_color = _fear_color_normal
+		_fear_fill_style.corner_radius_top_left = 3
+		_fear_fill_style.corner_radius_top_right = 3
+		_fear_fill_style.corner_radius_bottom_left = 3
+		_fear_fill_style.corner_radius_bottom_right = 3
+		fear_bar.add_theme_stylebox_override("fill", _fear_fill_style)
+	if kizuna_bar:
+		_kizuna_fill_style = StyleBoxFlat.new()
+		_kizuna_fill_style.bg_color = _kizuna_color
+		_kizuna_fill_style.corner_radius_top_left = 3
+		_kizuna_fill_style.corner_radius_top_right = 3
+		_kizuna_fill_style.corner_radius_bottom_left = 3
+		_kizuna_fill_style.corner_radius_bottom_right = 3
+		kizuna_bar.add_theme_stylebox_override("fill", _kizuna_fill_style)
+
 func update_parameter_display() -> void:
 	if fear_label_left: fear_label_left.text = "恐怖度: %d" % GameManager.fear
-	if fear_label_right: fear_label_right.text = "恐怖度: %d" % GameManager.fear
 	if kizuna_label: kizuna_label.text = "親密度: %d" % GameManager.kizuna
+	if fear_bar:
+		fear_bar.value = GameManager.fear
+	if kizuna_bar:
+		kizuna_bar.value = GameManager.kizuna
+	# 恐怖度が高いほど危険色へ（100でゲームオーバーの予兆を可視化）
+	if _fear_fill_style:
+		if GameManager.fear >= 90:
+			_fear_fill_style.bg_color = _fear_color_danger
+		elif GameManager.fear >= 70:
+			_fear_fill_style.bg_color = _fear_color_warn
+		else:
+			_fear_fill_style.bg_color = _fear_color_normal
 	# kegare_label.text = "穢れ: %d" % GameManager.kegare
 
 func toggle_debug_ui() -> void:
